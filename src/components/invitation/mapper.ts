@@ -19,7 +19,9 @@ export function toInvitationViewModel(
       invitation.groomName && invitation.brideName
         ? { first: invitation.groomName, second: invitation.brideName }
         : null,
-    tagline: invitation.description ? invitation.description.split("\n")[0] : null,
+    tagline: invitation.description
+      ? invitation.description.split("\n")[0] ?? null
+      : null,
     quote: invitation.quote,
     description: invitation.description,
     coverImageUrl: invitation.coverImageUrl,
