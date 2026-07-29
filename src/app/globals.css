@@ -1,0 +1,61 @@
+@import "tailwindcss";
+
+/*
+  Momena dashboard design tokens.
+  Palet: kertas hangat + aksen mauve (mengacu ke dunia undangan/stationery),
+  bukan cream+terracotta atau dark+neon generik.
+*/
+@theme {
+  --font-display: var(--font-fraunces);
+  --font-sans: var(--font-inter);
+
+  --color-paper: #f7f6f3;
+  --color-surface: #ffffff;
+  --color-ink: #211d1a;
+  --color-ink-soft: #6b6560;
+  --color-line: #e6e2da;
+
+  --color-accent: #8c4f63;
+  --color-accent-soft: #f3e6ea;
+  --color-accent-ink: #5c3241;
+
+  --color-success: #4c7a5f;
+  --color-success-soft: #e3efe7;
+
+  --color-warning: #a9782e;
+  --color-warning-soft: #f5ecd9;
+
+  --color-neutral-status: #6b6560;
+  --color-neutral-status-soft: #edebe6;
+}
+
+:root {
+  color-scheme: light;
+}
+
+html {
+  /* Cegah horizontal scroll tak sengaja di semua halaman. */
+  overflow-x: hidden;
+}
+
+body {
+  background-color: var(--color-paper);
+  color: var(--color-ink);
+  overflow-x: hidden;
+}
+
+/* Font input/textarea/select minimal 16px — di bawah itu Safari iOS
+   otomatis zoom-in saat elemen di-fokus, mengganggu di HP. */
+input,
+textarea,
+select {
+  font-size: 16px;
+}
+
+/* Safe area iPhone (notch/home indicator) untuk elemen yang menempel tepi layar. */
+.safe-top {
+  padding-top: env(safe-area-inset-top);
+}
+.safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
+}
