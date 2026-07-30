@@ -7,6 +7,14 @@ Vercel akan `npm install` lalu langsung `next build` tanpa pernah generate
 Prisma Client — persis error yang kamu alami di lokal
 (`@prisma/client did not initialize yet`). **Jangan hapus script ini.**
 
+Project ini juga sudah dimigrasi ke **Prisma 7** (breaking change: koneksi
+database sekarang di `prisma.config.ts`, bukan `schema.prisma`; `PrismaClient`
+wajib pakai driver adapter `@prisma/adapter-pg`). Vercel harus install
+`@prisma/adapter-pg` dan `pg` juga — sudah ditambahkan ke `package.json`,
+tidak perlu tindakan tambahan, tapi kalau lihat error soal "adapter" atau
+"datasource property url", itu tandanya `package.json` di Vercel belum
+ke-update (redeploy dari commit terbaru).
+
 ## 1. Siapkan Database (Supabase)
 
 1. Buat project di [supabase.com](https://supabase.com) kalau belum ada.

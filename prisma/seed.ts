@@ -1,7 +1,13 @@
+import "dotenv/config";
+
+import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
 
-const prisma = new PrismaClient();
+// Seed dijalankan standalone via `tsx` — pakai DIRECT_URL (sama seperti
+// prisma.config.ts), bukan pooled DATABASE_URL.
+const adapter = new PrismaPg({ connectionString: process.env.DIRECT_URL });
+const prisma = new PrismaClient({ adapter });
 
 async function seedAdmin() {
   const passwordHash = await bcrypt.hash("admin12345", 10);

@@ -155,6 +155,43 @@ Beberapa keputusan yang perlu diketahui saat lanjut kerja di area ini:
 - Landing page sengaja **tidak punya `loading.tsx`** — halamannya statis,
   tidak ada fetch data yang bisa di-suspend, jadi skeleton tidak akan pernah
   terpicu.
+- **`typedRoutes` sengaja TIDAK dipakai** (dihapus dari `next.config.ts`).
+  Project ini banyak dynamic route (`/i/[slug]`, `/templates/preview/[slug]`,
+  `/invitations/[id]/edit`, `/invitations/[id]/rsvp`) yang href-nya dibangun
+  dari template string — typed routes memaksa cast `as Route` di banyak
+  tempat tanpa manfaat sepadan untuk project seukuran ini. Kalau nanti mau
+  diaktifkan lagi, audit ulang semua `<Link href>`, `router.push`,
+  `router.replace`, dan `redirect` sekaligus (jangan sedikit-sedikit).
+
+## Prisma 7
+
+Project ini pakai **Prisma 7** (rilis November 2025) — kalau kamu terbiasa
+dengan Prisma 6, ada beberapa perubahan besar yang perlu diketahui:
+
+- **`schema.prisma` tidak lagi boleh berisi `url`/`directUrl`** di block
+  `datasource`. Connection string sekarang diatur di **`prisma.config.ts`**
+  (file baru di root project) — dipakai Prisma CLI untuk migrate/seed, isinya
+  `DIRECT_URL` (bukan `DATABASE_URL`, karena migrate butuh koneksi langsung,
+  bukan lewat pgbouncer).
+- **`PrismaClient` wajib driver adapter** — tidak bisa lagi
+  `new PrismaClient()` polos. `src/lib/db.ts` dan `prisma/seed.ts`
+  masing-masing bikin `PrismaPg` adapter sendiri (`@prisma/adapter-pg` + `pg`):
+  `db.ts` pakai `DATABASE_URL` (pooled, untuk runtime app di Next.js),
+  `seed.ts` pakai `DIRECT_URL` (dijalankan standalone via `tsx`, bukan
+  lewat Next.js).
+- **Generator tetap `prisma-client-js`** (bukan `prisma-client` yang baru,
+  yang direkomendasikan Prisma) — sengaja, karena `prisma-client` dengan
+  custom `output` punya bug module-resolution yang dikenal dengan Turbopack
+  (`next dev --turbopack`, yang dipakai project ini). Kombinasi
+  `prisma-client-js` + tanpa `output` = tetap generate ke `node_modules`
+  seperti biasa, semua import `from "@prisma/client"` di project ini tidak
+  perlu berubah.
+- Kalau nanti upgrade Prisma lagi dan ada error mirip
+  `The datasource property 'url' is no longer supported` atau
+  `requires either "adapter"... to be provided to PrismaClient constructor` —
+  itu tanda ada breaking change baru, cek
+  [dokumentasi upgrade Prisma](https://www.prisma.io/docs/guides/upgrade-prisma-orm)
+  dulu sebelum ubah kode.
 
 ## Alias import
 
