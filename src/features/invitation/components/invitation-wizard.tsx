@@ -119,7 +119,10 @@ export function InvitationWizard({
     setStep((s) => Math.max(s - 1, 0));
   }
 
-  function formatError(result: { error: string; fieldErrors?: Record<string, string[]> }) {
+  function formatError(result: {
+    error: string;
+    fieldErrors?: Record<string, string[]>;
+  }) {
     const details = result.fieldErrors
       ? Object.entries(result.fieldErrors)
           .filter(([, msgs]) => msgs && msgs.length > 0)

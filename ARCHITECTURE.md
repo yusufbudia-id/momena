@@ -152,6 +152,15 @@ Beberapa keputusan yang perlu diketahui saat lanjut kerja di area ini:
 - Template (`elegant`/`minimal`/`modern`) semuanya `"use client"` — wajib,
   karena `next/dynamic` dengan `{ ssr: false }` (dipakai untuk `Countdown`)
   tidak diizinkan Next.js di Server Component.
+- **`DataTable`/`ColumnDef` HARUS didefinisikan di dalam Client Component**,
+  tidak boleh di Server Component lalu dioper sebagai prop. `columns` berisi
+  fungsi (`cell: (row) => ...`), dan fungsi tidak bisa "menyeberang" dari
+  Server ke Client Component lewat props (RSC serialization error saat
+  runtime — `tsc`/`eslint` tidak mendeteksi ini, cuma ketahuan saat
+  `next dev` beneran jalan). Polanya: buat komponen client kecil yang
+  membungkus `columns` + `<DataTable>` sekaligus (lihat
+  `features/invitation/components/invitations-table.tsx`), Server Component
+  cukup oper `data` (plain object/array, aman diserialisasi) ke situ.
 - Landing page sengaja **tidak punya `loading.tsx`** — halamannya statis,
   tidak ada fetch data yang bisa di-suspend, jadi skeleton tidak akan pernah
   terpicu.
@@ -278,9 +287,16 @@ terhadap schema — kalau ada perbedaan, Prisma akan menandainya.
   `[]` karena belum ada tabelnya di schema. Begitu tabelnya ada, cukup ubah
   `mapper.ts` — section tidak perlu disentuh.
 - Konsep **Theme** (varian warna/font per template, terpisah dari layout) —
-  `TemplateManifest` sudah punya slot untuk berkembang ke arah ini, tapi
-  field skema/warna belum ditambahkan. Template saat ini beda di urutan
-  section saja, belum ada varian warna.
+  `TemplateManifest` sudah punya slot untuk berkembang ke arah ini, field
+  skema/warna belum ditambahkan secara formal. Tapi sudah ada preseden
+  nyata: **Elegant** override palet lewat CSS custom property di wrapper
+  template (`luxuryTheme` di `templates/elegant/index.tsx`) — karena semua
+  section pakai class seperti `bg-paper`/`text-ink` yang resolve ke
+  `var(--color-*)`, override di level template "menembus" ke semua section
+  tanpa section-nya diubah. Kalau nanti Theme jadi formal (mis. tabel
+  `Theme` dengan pilihan warna dari admin), pola CSS-variable-per-wrapper
+  ini bisa langsung dipakai — tinggal generate object `luxuryTheme`-nya
+  dari data, bukan hardcode.
 - Halaman `/settings` — link di sidebar sudah ada, halamannya belum
   (`/templates` sudah ada, katalog gaya Canva dengan Preview & Use Template).
 - Thumbnail template asli — `manifest.thumbnail` & `Template.thumbnailUrl`

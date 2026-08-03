@@ -1,74 +1,15 @@
-import type { ColumnDef } from "@tanstack/react-table";
 import { Mail, Search } from "lucide-react";
 import Link from "next/link";
 
-import { DataTable } from "@/components/shared/data-table";
 import { EmptyState } from "@/components/shared/empty-state";
 import { PageHeader } from "@/components/shared/page-header";
 import { Pagination } from "@/components/shared/pagination";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { InvitationActionsCell } from "@/features/invitation/components/invitation-actions-cell";
+import { InvitationsTable } from "@/features/invitation/components/invitations-table";
 import { getInvitationsPage } from "@/features/invitation/repository";
-import type { InvitationListItem, InvitationStatus } from "@/features/invitation/types";
 import { getCurrentUserId } from "@/lib/temp-auth";
 
 const PAGE_SIZE = 10;
-
-const statusLabel: Record<InvitationStatus, string> = {
-  DRAFT: "Draft",
-  PUBLISHED: "Published",
-  ARCHIVED: "Archived",
-};
-
-const statusTone: Record<InvitationStatus, "warning" | "success" | "neutral"> = {
-  DRAFT: "warning",
-  PUBLISHED: "success",
-  ARCHIVED: "neutral",
-};
-
-const columns: ColumnDef<InvitationListItem>[] = [
-  {
-    accessorKey: "title",
-    header: "Nama Acara",
-    cell: ({ row }) => <span className="font-medium">{row.original.title}</span>,
-  },
-  {
-    accessorKey: "slug",
-    header: "Slug",
-    cell: ({ row }) => <span className="text-ink-soft">/i/{row.original.slug}</span>,
-  },
-  {
-    id: "template",
-    header: "Template",
-    cell: ({ row }) => row.original.template.name,
-  },
-  {
-    accessorKey: "status",
-    header: "Status",
-    cell: ({ row }) => (
-      <Badge variant={statusTone[row.original.status]}>
-        {statusLabel[row.original.status]}
-      </Badge>
-    ),
-  },
-  {
-    accessorKey: "eventDate",
-    header: "Tanggal",
-    cell: ({ row }) =>
-      row.original.eventDate
-        ? new Intl.DateTimeFormat("id-ID", { dateStyle: "medium" }).format(
-            row.original.eventDate,
-          )
-        : "—",
-  },
-  {
-    id: "actions",
-    header: "Aksi",
-    enableSorting: false,
-    cell: ({ row }) => <InvitationActionsCell invitation={row.original} />,
-  },
-];
 
 interface InvitationsPageProps {
   searchParams: Promise<{ q?: string; page?: string }>;
@@ -136,7 +77,7 @@ export default async function InvitationsPage({ searchParams }: InvitationsPageP
         />
       ) : (
         <>
-          <DataTable columns={columns} data={result.data} />
+          <InvitationsTable data={result.data} />
           <Pagination
             page={result.page}
             pageCount={result.pageCount}
