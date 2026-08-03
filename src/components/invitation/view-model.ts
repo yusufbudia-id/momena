@@ -61,4 +61,11 @@ export interface InvitationViewModel {
   story: StoryItemView[];
   guestBook: GuestBookEntryView[];
   templateSlug: string;
+  /**
+   * True hanya untuk `demoInvitationViewModel` (dipakai halaman preview
+   * template). Section yang melakukan write (mis. Rsvp) HARUS cek ini dan
+   * tidak benar-benar mengirim data — invitation "demo" tidak ada di
+   * database, submit sungguhan akan gagal (foreign key violation).
+   */
+  isPreview?: boolean;
 }

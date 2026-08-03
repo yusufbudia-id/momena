@@ -18,7 +18,10 @@ const invitationBaseSchema = {
   title: z.string().min(3, "Judul minimal 3 karakter").max(150),
   groomName: z.string().max(100).optional().nullable(),
   brideName: z.string().max(100).optional().nullable(),
-  eventDate: z.coerce.date().optional().nullable(),
+  eventDate: z.preprocess(
+    (val) => (val === "" || val === null ? undefined : val),
+    z.coerce.date().optional().nullable(),
+  ),
   eventLocation: z.string().max(150).optional().nullable(),
   eventAddress: z.string().max(255).optional().nullable(),
   eventMapsUrl: z

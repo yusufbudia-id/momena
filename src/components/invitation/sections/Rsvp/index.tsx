@@ -57,6 +57,12 @@ export function Rsvp({ invitation }: SectionProps) {
   });
 
   function onSubmit(data: RsvpFormValues) {
+    if (invitation.isPreview) {
+      toast.info("ℹ️ Ini halaman preview — RSVP tidak benar-benar dikirim.");
+      reset();
+      return;
+    }
+
     startTransition(async () => {
       const result = await submitRsvp(invitation.id, invitation.slug, data);
       if (result.success) {

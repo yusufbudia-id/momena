@@ -119,6 +119,15 @@ export function InvitationWizard({
     setStep((s) => Math.max(s - 1, 0));
   }
 
+  function formatError(result: { error: string; fieldErrors?: Record<string, string[]> }) {
+    const details = result.fieldErrors
+      ? Object.entries(result.fieldErrors)
+          .filter(([, msgs]) => msgs && msgs.length > 0)
+          .map(([field, msgs]) => `${field}: ${msgs.join(", ")}`)
+      : [];
+    return details.length > 0 ? `${result.error} — ${details.join(" · ")}` : result.error;
+  }
+
   async function submitAs(action: "draft" | "publish", data: InvitationWizardFormValues) {
     setServerError(null);
     setIsSubmitting(true);
@@ -126,8 +135,9 @@ export function InvitationWizard({
     const result = await onSubmit(data);
 
     if (!result.success) {
-      setServerError(result.error);
-      toast.error(result.error);
+      const message = formatError(result);
+      setServerError(message);
+      toast.error(message);
       setIsSubmitting(false);
       return;
     }
@@ -142,8 +152,9 @@ export function InvitationWizard({
     setIsSubmitting(false);
 
     if (!publishResult.success) {
-      setServerError(publishResult.error);
-      toast.error(publishResult.error);
+      const message = formatError(publishResult);
+      setServerError(message);
+      toast.error(message);
       return;
     }
 
