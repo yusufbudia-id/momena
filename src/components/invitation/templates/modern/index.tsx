@@ -29,7 +29,7 @@ const Countdown = dynamic(
  * Modern: Gallery → Hero → Couple → Video → Countdown → Event(Location) →
  * Quote → Gift → RSVP → Footer, full-bleed, video-forward.
  */
-export function ModernTemplate({ invitation }: SectionProps) {
+export function ModernTemplate({ invitation, guestName }: SectionProps) {
   return (
     <>
       <div className="mx-auto max-w-4xl pb-20">
@@ -54,7 +54,7 @@ export function ModernTemplate({ invitation }: SectionProps) {
           <Gift invitation={invitation} />
         </Reveal>
         <Reveal>
-          <Rsvp invitation={invitation} />
+          <Rsvp invitation={invitation} guestName={guestName} />
         </Reveal>
         <Footer invitation={invitation} />
       </div>

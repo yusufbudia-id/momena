@@ -34,6 +34,7 @@ export default async function TemplatePreviewPage({ params }: TemplatePreviewPag
       </div>
       <Template
         invitation={{ ...demoInvitationViewModel, templateSlug: manifest.slug }}
+        guestName="Bapak/Ibu Tamu Undangan"
       />
     </div>
   );

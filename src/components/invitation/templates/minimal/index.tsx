@@ -28,7 +28,7 @@ const Countdown = dynamic(
  * RSVP → Footer, kolom sempit. Sengaja tidak pakai Story/Quote/Video —
  * "minimal" berarti lebih sedikit ornamen, bukan cuma lebih sempit.
  */
-export function MinimalTemplate({ invitation }: SectionProps) {
+export function MinimalTemplate({ invitation, guestName }: SectionProps) {
   return (
     <>
       <div className="mx-auto max-w-lg pb-20">
@@ -49,7 +49,7 @@ export function MinimalTemplate({ invitation }: SectionProps) {
           <Gift invitation={invitation} />
         </Reveal>
         <Reveal>
-          <Rsvp invitation={invitation} />
+          <Rsvp invitation={invitation} guestName={guestName} />
         </Reveal>
         <Footer invitation={invitation} />
       </div>

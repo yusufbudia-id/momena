@@ -60,5 +60,6 @@ export function toInvitationViewModel(
         createdAt: rsvp.createdAt,
       })),
     templateSlug: invitation.template.slug,
+    musicUrl: invitation.settings?.musicUrl ?? null,
   };
 }

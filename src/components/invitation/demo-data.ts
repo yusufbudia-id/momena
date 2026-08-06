@@ -50,5 +50,6 @@ export const demoInvitationViewModel: InvitationViewModel = {
   story: [],
   guestBook: [],
   templateSlug: "elegant",
+  musicUrl: null,
   isPreview: true,
 };

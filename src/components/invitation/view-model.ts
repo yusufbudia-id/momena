@@ -61,6 +61,8 @@ export interface InvitationViewModel {
   story: StoryItemView[];
   guestBook: GuestBookEntryView[];
   templateSlug: string;
+  /** Dari Settings.musicUrl — null kalau belum diisi (belum ada UI edit Settings). */
+  musicUrl: string | null;
   /**
    * True hanya untuk `demoInvitationViewModel` (dipakai halaman preview
    * template). Section yang melakukan write (mis. Rsvp) HARUS cek ini dan

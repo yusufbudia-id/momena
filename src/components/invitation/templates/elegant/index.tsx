@@ -1,6 +1,9 @@
 "use client";
 
+import { Pause, Play } from "lucide-react";
+import { AnimatePresence, motion } from "motion/react";
 import dynamic from "next/dynamic";
+import { useEffect, useRef, useState } from "react";
 
 import { Reveal } from "../../reveal";
 import {
@@ -48,8 +51,8 @@ const luxuryTheme = {
 } as React.CSSProperties;
 
 /* ────────────────────────────────────────────────────────────────
- * Elemen dekoratif khusus template ini (bukan Section — tidak dipakai
- * template lain, jadi aman ditaruh lokal di file ini).
+ * Elemen dekoratif & fitur khusus template ini (bukan Section — tidak
+ * dipakai template lain, jadi aman ditaruh lokal di file ini).
  * ──────────────────────────────────────────────────────────────── */
 
 /** Sprig daun kecil — dipakai berpasangan (cermin) di ornamen "laurel". */
@@ -187,8 +190,107 @@ function AtmosphereBackground() {
 }
 
 /**
- * Elegant: Monogram → Hero → Couple → Event(Location) → Countdown →
- * Gallery → Story → Quote → Video → Gift → RSVP → Footer.
+ * FITUR: Cover/gate screen — layar pembuka penuh sebelum konten undangan
+ * ditampilkan. Standar di undangan digital premium Indonesia. Juga
+ * berguna teknis: klik tombol ini adalah "user interaction" yang
+ * dibutuhkan browser sebelum audio (`MusicToggle`) boleh diputar.
+ * Menampilkan nama tamu (`guestName`, dari `?to=` di URL) kalau ada.
+ */
+function CoverGate({
+  invitation,
+  guestName,
+  onOpen,
+}: SectionProps & { onOpen: () => void }) {
+  const coupleName = invitation.couple
+    ? `${invitation.couple.first} & ${invitation.couple.second}`
+    : invitation.title;
+
+  return (
+    <motion.div
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.7, ease: "easeInOut" }}
+      className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-6 overflow-hidden bg-[var(--color-paper)] px-6 text-center"
+    >
+      {invitation.coverImageUrl && (
+        <div
+          aria-hidden
+          className="absolute inset-0 bg-cover bg-center opacity-20"
+          style={{ backgroundImage: `url(${invitation.coverImageUrl})` }}
+        />
+      )}
+
+      <div className="relative flex flex-col items-center gap-6">
+        <p className="text-xs tracking-[0.45em] text-[var(--color-ink-soft)] uppercase">
+          The Wedding Of
+        </p>
+        <h1 className="font-display max-w-xs text-4xl text-[var(--color-ink)] italic">
+          {coupleName}
+        </h1>
+
+        {guestName && (
+          <div className="mt-2">
+            <p className="text-[11px] tracking-[0.3em] text-[var(--color-ink-soft)] uppercase">
+              Kepada Yth.
+            </p>
+            <p className="font-display mt-1 text-lg text-[var(--color-accent-ink)] italic">
+              {guestName}
+            </p>
+          </div>
+        )}
+
+        <button
+          onClick={onOpen}
+          className="mt-4 flex h-12 items-center justify-center rounded-full border border-[var(--color-accent)] px-9 text-xs tracking-[0.25em] text-[var(--color-accent-ink)] uppercase transition-colors hover:bg-[var(--color-accent-soft)]"
+        >
+          Buka Undangan
+        </button>
+      </div>
+    </motion.div>
+  );
+}
+
+/**
+ * FITUR: Toggle musik latar. Dibangun dari field `Settings.musicUrl` yang
+ * sudah ada di schema sejak awal tapi belum pernah disambungkan ke mana pun
+ * — di sinilah dipakai pertama kali. Tombol mengambang, muncul cuma kalau
+ * `musicUrl` diisi (lewat wizard/DB langsung — belum ada UI edit Settings).
+ */
+function MusicToggle({ musicUrl }: { musicUrl: string }) {
+  const audioRef = useRef<HTMLAudioElement>(null);
+  const [playing, setPlaying] = useState(false);
+
+  function toggle() {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    if (playing) {
+      audio.pause();
+    } else {
+      audio.play().catch(() => {
+        // Browser bisa saja tetap menolak play() di luar user gesture —
+        // diamkan saja, tombol tetap bisa dicoba lagi.
+      });
+    }
+    setPlaying((prev) => !prev);
+  }
+
+  return (
+    <>
+      <audio ref={audioRef} src={musicUrl} loop />
+      <button
+        onClick={toggle}
+        aria-label={playing ? "Matikan musik" : "Putar musik"}
+        className="fixed right-4 bottom-24 z-40 flex size-11 items-center justify-center rounded-full border border-[var(--color-accent)] bg-[var(--color-surface)] text-[var(--color-accent-ink)] shadow-md"
+      >
+        {playing ? <Pause className="size-4" /> : <Play className="ml-0.5 size-4" />}
+      </button>
+    </>
+  );
+}
+
+/**
+ * Elegant: Cover Gate → Monogram → Hero → Couple → Event(Location) →
+ * Countdown → Gallery → Story → Quote → Video → Gift → RSVP → Footer.
  *
  * Gaya "old money": ivory/charcoal/gold, whitespace lega, kartu berbingkai
  * untuk section informasi resmi, ornamen bervariasi (bukan 1 motif
@@ -197,13 +299,34 @@ function AtmosphereBackground() {
  * menyembunyikan diri sendiri seperti biasa — bingkai di sekitarnya juga
  * ikut tidak render karena kontennya kosong.
  */
-export function ElegantTemplate({ invitation }: SectionProps) {
+export function ElegantTemplate({ invitation, guestName }: SectionProps) {
+  const [isOpen, setIsOpen] = useState(false);
+
+  // Kunci scroll body selama cover gate tampil, supaya konten di
+  // belakangnya tidak ikut ter-scroll diam-diam.
+  useEffect(() => {
+    document.body.style.overflow = isOpen ? "" : "hidden";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isOpen]);
+
   return (
     <div
       style={luxuryTheme}
       className="bg-[var(--color-paper)] [&_h1]:tracking-wide [&_h2]:font-medium [&_h2]:tracking-wide"
     >
       <AtmosphereBackground />
+
+      <AnimatePresence>
+        {!isOpen && (
+          <CoverGate
+            invitation={invitation}
+            guestName={guestName}
+            onOpen={() => setIsOpen(true)}
+          />
+        )}
+      </AnimatePresence>
 
       <div className="mx-auto max-w-2xl pb-28">
         <MonogramHeader invitation={invitation} />
@@ -240,7 +363,7 @@ export function ElegantTemplate({ invitation }: SectionProps) {
             aria-hidden
             className="font-display pointer-events-none absolute inset-x-0 -top-10 text-center text-[9rem] leading-none text-[var(--color-accent)]/15 italic select-none"
           >
-            “
+            &ldquo;
           </span>
           <Quote invitation={invitation} />
         </Reveal>
@@ -259,7 +382,7 @@ export function ElegantTemplate({ invitation }: SectionProps) {
 
         <Reveal duration={0.9} distance={24} className="my-12 sm:my-16">
           <FramedCard>
-            <Rsvp invitation={invitation} />
+            <Rsvp invitation={invitation} guestName={guestName} />
           </FramedCard>
         </Reveal>
 
@@ -269,6 +392,7 @@ export function ElegantTemplate({ invitation }: SectionProps) {
       </div>
 
       <StickyCta invitation={invitation} />
+      {invitation.musicUrl && <MusicToggle musicUrl={invitation.musicUrl} />}
     </div>
   );
 }

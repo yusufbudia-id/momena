@@ -11,6 +11,12 @@ export type { InvitationViewModel } from "./view-model";
  */
 export interface SectionProps {
   invitation: InvitationViewModel;
+  /**
+   * Nama tamu dari URL (`?to=...`) — konteks PER KUNJUNGAN, bukan bagian
+   * data invitation itu sendiri (makanya bukan di ViewModel). Opsional,
+   * section boleh mengabaikannya kalau tidak relevan.
+   */
+  guestName?: string;
 }
 
 export type InvitationTemplate = ComponentType<SectionProps>;

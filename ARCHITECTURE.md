@@ -91,12 +91,21 @@ template tetap sama persis, tidak disentuh.
 
 ### Section Library
 
-`sections/` — 12 komponen Lego, semua menerima `{ invitation: InvitationViewModel }`
+`sections/` — 12 komponen Lego, semua menerima `{ invitation: InvitationViewModel, guestName? }`
 yang sama persis dan tidak tahu dirinya dipanggil dari template mana:
 `Hero`, `BrideGroom`, `Quote`, `LoveStory`, `Timeline`, `Countdown`, `Gallery`,
 `Video`, `Location`, `Gift`, `Rsvp`, `Footer`. Section yang datanya kosong
 (`quote` null, `gallery` `[]`, dst) me-render `null` sendiri — template tidak
 perlu tahu/cek itu.
+
+`guestName` (dari `?to=` di URL `/i/[slug]`) itu **konteks per-kunjungan**,
+bukan bagian data invitation — makanya prop terpisah, bukan field di
+`InvitationViewModel` (yang sama untuk semua pengunjung). `Rsvp` pakai ini
+untuk prefill nama; template boleh mengabaikannya kalau tidak relevan.
+
+`InvitationViewModel.musicUrl` (dari `Settings.musicUrl`) tersedia untuk
+semua template tapi baru dipakai di Elegant (`MusicToggle`) — Minimal/Modern
+belum punya UI musik, tinggal contek pola yang sama kalau mau ditambah.
 
 ### Template + Manifest
 

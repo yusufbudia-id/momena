@@ -36,7 +36,7 @@ const statusTone: Record<AttendanceStatus, "success" | "neutral" | "warning"> = 
   MAYBE: "warning",
 };
 
-export function Rsvp({ invitation }: SectionProps) {
+export function Rsvp({ invitation, guestName }: SectionProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
@@ -48,7 +48,7 @@ export function Rsvp({ invitation }: SectionProps) {
   } = useForm<RsvpFormValues>({
     resolver: zodResolver(rsvpFormSchema),
     defaultValues: {
-      guestName: "",
+      guestName: guestName ?? "",
       phone: "",
       attendeeCount: 1,
       status: "ATTENDING",

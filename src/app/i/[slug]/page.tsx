@@ -7,6 +7,7 @@ import { getInvitationBySlug } from "@/features/invitation/repository";
 
 interface InvitationPageProps {
   params: Promise<{ slug: string }>;
+  searchParams: Promise<{ to?: string }>;
 }
 
 export async function generateMetadata({
@@ -40,8 +41,11 @@ export async function generateMetadata({
  * TIDAK PERNAH tahu isi/layout template, dan tidak pernah meneruskan entity
  * Prisma mentah ke template — selalu lewat mapper (lihat components/invitation/mapper.ts).
  */
-export default async function InvitationPage({ params }: InvitationPageProps) {
-  const { slug } = await params;
+export default async function InvitationPage({
+  params,
+  searchParams,
+}: InvitationPageProps) {
+  const [{ slug }, { to }] = await Promise.all([params, searchParams]);
   const invitation = await getInvitationBySlug(slug);
 
   // Draft/archived sengaja ikut 404 di sisi publik — link baru "hidup"
@@ -57,5 +61,5 @@ export default async function InvitationPage({ params }: InvitationPageProps) {
     notFound();
   }
 
-  return <Template invitation={toInvitationViewModel(invitation)} />;
+  return <Template invitation={toInvitationViewModel(invitation)} guestName={to} />;
 }
