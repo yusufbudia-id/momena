@@ -103,9 +103,35 @@ bukan bagian data invitation — makanya prop terpisah, bukan field di
 `InvitationViewModel` (yang sama untuk semua pengunjung). `Rsvp` pakai ini
 untuk prefill nama; template boleh mengabaikannya kalau tidak relevan.
 
-`InvitationViewModel.musicUrl` (dari `Settings.musicUrl`) tersedia untuk
-semua template tapi baru dipakai di Elegant (`MusicToggle`) — Minimal/Modern
-belum punya UI musik, tinggal contek pola yang sama kalau mau ditambah.
+### Cover Gate & Music Toggle
+
+Ketiga template (Elegant/Minimal/Modern) punya layar pembuka "Buka
+Undangan" (`CoverGate`) dan tombol musik latar (`MusicToggle`) — dipakai di
+semua, tampilannya beda-beda sesuai karakter tiap template.
+
+- **State-nya dipusatkan di hook** (`components/invitation/hooks/`):
+  `useInvitationGate()` (buka/tutup + kunci scroll body) dan
+  `useMusicToggle()` (play/pause + `play()` terpisah untuk autoplay).
+  Template manapun yang mau nambah gate/musik tinggal pakai hook ini,
+  tidak perlu tulis ulang logic-nya.
+- **`CoverGate` sengaja LOKAL per template** (bukan shared component) —
+  visualnya beda jauh per karakter (Elegant: hairline emas + serif italic;
+  Minimal: polos, tombol garis bawah; Modern: full-bleed foto gelap +
+  huruf kapital). Kalau dipaksa jadi 1 komponen shared, propnya akan penuh
+  flag `variant` yang lebih ribet daripada tiga fungsi kecil terpisah.
+- **`MusicToggle` (tombolnya) shared** (`components/invitation/music-toggle.tsx`)
+  — presentational murni, style default pakai token warna global
+  (`bg-surface`, `border-accent`, dst) yang otomatis ikut palet tiap
+  template lewat CSS variable cascade (lihat bagian palet Elegant di atas),
+  jadi tidak perlu override manual di Minimal/Modern.
+- Klik tombol "Buka Undangan" = user-gesture, dipakai juga untuk memicu
+  `music.play()` (autoplay) — di luar momen itu browser akan block
+  `audio.play()` diam-diam (sudah ditangani, gagal-senyap, tombol toggle
+  tetap bisa dicoba manual).
+- `InvitationViewModel.musicUrl` (dari `Settings.musicUrl`, field yang
+  sudah ada di schema sejak Sprint 1 tapi baru dipakai sekarang) — semua
+  template otomatis sembunyikan `MusicToggle` kalau kosong (belum ada UI
+  edit Settings, jadi untuk sekarang harus diisi manual lewat DB).
 
 ### Template + Manifest
 

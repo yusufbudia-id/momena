@@ -1,10 +1,11 @@
 "use client";
 
-import { Pause, Play } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import dynamic from "next/dynamic";
-import { useEffect, useRef, useState } from "react";
 
+import { useInvitationGate } from "../../hooks/use-invitation-gate";
+import { useMusicToggle } from "../../hooks/use-music-toggle";
+import { MusicToggle } from "../../music-toggle";
 import { Reveal } from "../../reveal";
 import {
   BrideGroom,
@@ -250,45 +251,6 @@ function CoverGate({
 }
 
 /**
- * FITUR: Toggle musik latar. Dibangun dari field `Settings.musicUrl` yang
- * sudah ada di schema sejak awal tapi belum pernah disambungkan ke mana pun
- * — di sinilah dipakai pertama kali. Tombol mengambang, muncul cuma kalau
- * `musicUrl` diisi (lewat wizard/DB langsung — belum ada UI edit Settings).
- */
-function MusicToggle({ musicUrl }: { musicUrl: string }) {
-  const audioRef = useRef<HTMLAudioElement>(null);
-  const [playing, setPlaying] = useState(false);
-
-  function toggle() {
-    const audio = audioRef.current;
-    if (!audio) return;
-
-    if (playing) {
-      audio.pause();
-    } else {
-      audio.play().catch(() => {
-        // Browser bisa saja tetap menolak play() di luar user gesture —
-        // diamkan saja, tombol tetap bisa dicoba lagi.
-      });
-    }
-    setPlaying((prev) => !prev);
-  }
-
-  return (
-    <>
-      <audio ref={audioRef} src={musicUrl} loop />
-      <button
-        onClick={toggle}
-        aria-label={playing ? "Matikan musik" : "Putar musik"}
-        className="fixed right-4 bottom-24 z-40 flex size-11 items-center justify-center rounded-full border border-[var(--color-accent)] bg-[var(--color-surface)] text-[var(--color-accent-ink)] shadow-md"
-      >
-        {playing ? <Pause className="size-4" /> : <Play className="ml-0.5 size-4" />}
-      </button>
-    </>
-  );
-}
-
-/**
  * Elegant: Cover Gate → Monogram → Hero → Couple → Event(Location) →
  * Countdown → Gallery → Story → Quote → Video → Gift → RSVP → Footer.
  *
@@ -300,16 +262,15 @@ function MusicToggle({ musicUrl }: { musicUrl: string }) {
  * ikut tidak render karena kontennya kosong.
  */
 export function ElegantTemplate({ invitation, guestName }: SectionProps) {
-  const [isOpen, setIsOpen] = useState(false);
+  const { isOpen, open } = useInvitationGate();
+  const music = useMusicToggle();
 
-  // Kunci scroll body selama cover gate tampil, supaya konten di
-  // belakangnya tidak ikut ter-scroll diam-diam.
-  useEffect(() => {
-    document.body.style.overflow = isOpen ? "" : "hidden";
-    return () => {
-      document.body.style.overflow = "";
-    };
-  }, [isOpen]);
+  function handleOpen() {
+    open();
+    // Klik "Buka Undangan" adalah user-gesture — momen yang tepat (dan
+    // satu-satunya yang diizinkan browser) untuk autoplay musik.
+    if (invitation.musicUrl) music.play();
+  }
 
   return (
     <div
@@ -320,11 +281,7 @@ export function ElegantTemplate({ invitation, guestName }: SectionProps) {
 
       <AnimatePresence>
         {!isOpen && (
-          <CoverGate
-            invitation={invitation}
-            guestName={guestName}
-            onOpen={() => setIsOpen(true)}
-          />
+          <CoverGate invitation={invitation} guestName={guestName} onOpen={handleOpen} />
         )}
       </AnimatePresence>
 
@@ -392,7 +349,14 @@ export function ElegantTemplate({ invitation, guestName }: SectionProps) {
       </div>
 
       <StickyCta invitation={invitation} />
-      {invitation.musicUrl && <MusicToggle musicUrl={invitation.musicUrl} />}
+      {invitation.musicUrl && (
+        <MusicToggle
+          musicUrl={invitation.musicUrl}
+          audioRef={music.audioRef}
+          playing={music.playing}
+          onToggle={music.toggle}
+        />
+      )}
     </div>
   );
 }
