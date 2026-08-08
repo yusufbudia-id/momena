@@ -1,7 +1,10 @@
 "use client";
 
-import { AnimatePresence, motion } from "motion/react";
+import { CalendarPlus, Share2 } from "lucide-react";
+import { AnimatePresence, motion, useScroll } from "motion/react";
 import dynamic from "next/dynamic";
+import { useState } from "react";
+import { toast } from "sonner";
 
 import { useInvitationGate } from "../../hooks/use-invitation-gate";
 import { useMusicToggle } from "../../hooks/use-music-toggle";
@@ -21,6 +24,7 @@ import {
   Video,
 } from "../../sections";
 import type { SectionProps } from "../../types";
+import type { InvitationViewModel } from "../../view-model";
 
 // Countdown butuh interval client-side — dynamic import (ssr:false) supaya
 // tidak menambah bundle server & tidak memblokir render pertama.
@@ -190,12 +194,174 @@ function AtmosphereBackground() {
   );
 }
 
+/** FITUR: garis progres scroll tipis di atas layar — detail kecil yang
+ * sering dipakai situs premium. */
+function ScrollProgressBar() {
+  const { scrollYProgress } = useScroll();
+  return (
+    <motion.div
+      aria-hidden
+      style={{ scaleX: scrollYProgress }}
+      className="fixed inset-x-0 top-0 z-40 h-[3px] origin-left bg-[var(--color-accent)]"
+    />
+  );
+}
+
+/** FITUR: kata sambutan (`invitation.description`) — sebelumnya diisi di
+ * wizard tapi TIDAK PERNAH ditampilkan di undangan mana pun (cuma dipakai
+ * untuk meta description SEO). Ditambahkan di sini dengan drop-cap klasik. */
+function WelcomeNote({ invitation }: SectionProps) {
+  if (!invitation.description) return null;
+
+  return (
+    <div className="mx-auto max-w-md px-6 text-center">
+      <p className="first-letter:font-display text-[var(--color-ink-soft)] first-letter:float-left first-letter:mr-1.5 first-letter:text-5xl first-letter:leading-[0.8] first-letter:text-[var(--color-accent-ink)] first-letter:italic">
+        {invitation.description}
+      </p>
+    </div>
+  );
+}
+
+/** Bangun file .ics dari data invitation, dipicu lewat link download —
+ * bekerja untuk Google Calendar, Apple Calendar, Outlook, dst (bukan
+ * cuma satu penyedia). Asumsi durasi acara 2 jam kalau tidak ada info lain. */
+function buildIcsHref(invitation: InvitationViewModel): string | null {
+  if (!invitation.eventDate) return null;
+
+  const start = invitation.eventDate;
+  const end = new Date(start.getTime() + 2 * 60 * 60 * 1000);
+  const toIcsDate = (date: Date) =>
+    date.toISOString().replace(/[-:]/g, "").split(".")[0] + "Z";
+
+  const lines = [
+    "BEGIN:VCALENDAR",
+    "VERSION:2.0",
+    "BEGIN:VEVENT",
+    `SUMMARY:${invitation.title}`,
+    `DTSTART:${toIcsDate(start)}`,
+    `DTEND:${toIcsDate(end)}`,
+    invitation.eventLocation ? `LOCATION:${invitation.eventLocation}` : "",
+    invitation.eventAddress ? `DESCRIPTION:${invitation.eventAddress}` : "",
+    "END:VEVENT",
+    "END:VCALENDAR",
+  ]
+    .filter(Boolean)
+    .join("\r\n");
+
+  return `data:text/calendar;charset=utf8,${encodeURIComponent(lines)}`;
+}
+
+const utilityButtonClassName =
+  "border-accent text-accent-ink flex h-10 items-center gap-2 rounded-full border px-5 text-xs tracking-wide transition-colors hover:bg-[var(--color-accent-soft)]";
+
+/** FITUR: "Tambah ke Kalender" + "Bagikan" — dari wishlist Guest Experience
+ * yang sempat dibahas tapi belum pernah dibangun. Add-to-calendar murni
+ * dari data yang sudah ada, tidak butuh field baru. */
+function UtilityActions({ invitation }: SectionProps) {
+  const icsHref = buildIcsHref(invitation);
+
+  async function handleShare() {
+    const url = typeof window !== "undefined" ? window.location.href : "";
+    if (typeof navigator !== "undefined" && navigator.share) {
+      try {
+        await navigator.share({ title: invitation.title, url });
+      } catch {
+        // Dibatalkan user — diamkan, bukan error.
+      }
+      return;
+    }
+    await navigator.clipboard.writeText(url);
+    toast.success("Link undangan disalin ke clipboard");
+  }
+
+  return (
+    <div className="my-8 flex flex-wrap items-center justify-center gap-3 px-6 sm:my-12">
+      {icsHref && (
+        <a href={icsHref} download="undangan.ics" className={utilityButtonClassName}>
+          <CalendarPlus className="size-3.5" />
+          Tambah ke Kalender
+        </a>
+      )}
+      <button onClick={handleShare} className={utilityButtonClassName}>
+        <Share2 className="size-3.5" />
+        Bagikan
+      </button>
+    </div>
+  );
+}
+
+/** FITUR: bingkai emas di sekeliling Gallery + lightbox (klik foto untuk
+ * perbesar). Tidak mengubah `Gallery.tsx` sama sekali — pakai event
+ * delegation (dengar klik di elemen `<img>` mana pun di dalam wrapper). */
+function FramedGallery({ invitation }: SectionProps) {
+  const [lightboxSrc, setLightboxSrc] = useState<string | null>(null);
+
+  if (invitation.gallery.length === 0) return null;
+
+  function handleClick(event: React.MouseEvent<HTMLDivElement>) {
+    const target = event.target as HTMLElement;
+    if (target.tagName === "IMG") {
+      setLightboxSrc((target as HTMLImageElement).src);
+    }
+  }
+
+  return (
+    <>
+      <div
+        onClick={handleClick}
+        className="cursor-zoom-in border border-[var(--color-line)] bg-[var(--color-surface)]/50 p-3 sm:p-5"
+      >
+        <Gallery invitation={invitation} />
+      </div>
+
+      <AnimatePresence>
+        {lightboxSrc && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setLightboxSrc(null)}
+            className="fixed inset-0 z-[60] flex cursor-zoom-out items-center justify-center bg-black/90 p-6"
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element -- lightbox pakai src dari elemen next/image yang diklik, bukan next/image itu sendiri */}
+            <img
+              src={lightboxSrc}
+              alt=""
+              className="max-h-full max-w-full rounded-sm object-contain"
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
+  );
+}
+
+const gatePanelVariants = {
+  visible: { opacity: 1 },
+  hidden: { opacity: 0, transition: { duration: 0.8, ease: "easeInOut", delay: 0.25 } },
+} as const;
+
+const gateContentVariants = {
+  visible: { opacity: 1, y: 0, scale: 1 },
+  hidden: {
+    opacity: 0,
+    y: -16,
+    scale: 0.94,
+    transition: { duration: 0.4, ease: "easeIn" },
+  },
+} as const;
+
 /**
  * FITUR: Cover/gate screen — layar pembuka penuh sebelum konten undangan
  * ditampilkan. Standar di undangan digital premium Indonesia. Juga
  * berguna teknis: klik tombol ini adalah "user interaction" yang
  * dibutuhkan browser sebelum audio (`MusicToggle`) boleh diputar.
  * Menampilkan nama tamu (`guestName`, dari `?to=` di URL) kalau ada.
+ *
+ * Animasi keluar dua lapis (lewat variants propagation Motion): konten
+ * "terangkat" & memudar duluan (0.4s, cepat), baru panel latar ikut
+ * memudar sesudahnya (0.8s + delay 0.25s) — kesan amplop terbuka
+ * bertahap, bukan cuma fade rata.
  */
 function CoverGate({
   invitation,
@@ -208,8 +374,10 @@ function CoverGate({
 
   return (
     <motion.div
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.7, ease: "easeInOut" }}
+      variants={gatePanelVariants}
+      initial="visible"
+      animate="visible"
+      exit="hidden"
       className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-6 overflow-hidden bg-[var(--color-paper)] px-6 text-center"
     >
       {invitation.coverImageUrl && (
@@ -220,7 +388,10 @@ function CoverGate({
         />
       )}
 
-      <div className="relative flex flex-col items-center gap-6">
+      <motion.div
+        variants={gateContentVariants}
+        className="relative flex flex-col items-center gap-6"
+      >
         <p className="text-xs tracking-[0.45em] text-[var(--color-ink-soft)] uppercase">
           The Wedding Of
         </p>
@@ -245,14 +416,15 @@ function CoverGate({
         >
           Buka Undangan
         </button>
-      </div>
+      </motion.div>
     </motion.div>
   );
 }
 
 /**
  * Elegant: Cover Gate → Monogram → Hero → Couple → Event(Location) →
- * Countdown → Gallery → Story → Quote → Video → Gift → RSVP → Footer.
+ * Welcome Note → Utility Actions → Countdown → Gallery(+lightbox) → Story
+ * → Quote → Video → Gift → RSVP → Footer.
  *
  * Gaya "old money": ivory/charcoal/gold, whitespace lega, kartu berbingkai
  * untuk section informasi resmi, ornamen bervariasi (bukan 1 motif
@@ -278,6 +450,7 @@ export function ElegantTemplate({ invitation, guestName }: SectionProps) {
       className="bg-[var(--color-paper)] [&_h1]:tracking-wide [&_h2]:font-medium [&_h2]:tracking-wide"
     >
       <AtmosphereBackground />
+      <ScrollProgressBar />
 
       <AnimatePresence>
         {!isOpen && (
@@ -300,13 +473,19 @@ export function ElegantTemplate({ invitation, guestName }: SectionProps) {
         </Reveal>
 
         <Reveal duration={0.9} distance={24} className="my-12 sm:my-16">
+          <WelcomeNote invitation={invitation} />
+        </Reveal>
+
+        <UtilityActions invitation={invitation} />
+
+        <Reveal duration={0.9} distance={24} className="my-12 sm:my-16">
           <FramedCard>
             <Countdown invitation={invitation} />
           </FramedCard>
         </Reveal>
 
         <Reveal duration={0.9} distance={24} className="my-12 sm:my-16">
-          <Gallery invitation={invitation} />
+          <FramedGallery invitation={invitation} />
         </Reveal>
 
         <Reveal duration={0.9} distance={24} className="my-12 sm:my-16">
