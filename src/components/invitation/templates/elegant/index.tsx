@@ -10,6 +10,9 @@ import { useInvitationGate } from "../../hooks/use-invitation-gate";
 import { useMusicToggle } from "../../hooks/use-music-toggle";
 import { MusicToggle } from "../../music-toggle";
 import { Reveal } from "../../reveal";
+import type { SectionProps } from "../../types";
+import type { InvitationViewModel } from "../../view-model";
+
 import {
   BrideGroom,
   Footer,
@@ -22,19 +25,14 @@ import {
   Rsvp,
   StickyCta,
   Video,
-} from "../../sections";
-import type { SectionProps } from "../../types";
-import type { InvitationViewModel } from "../../view-model";
+} from "./sections";
 
 // Countdown butuh interval client-side — dynamic import (ssr:false) supaya
 // tidak menambah bundle server & tidak memblokir render pertama.
-const Countdown = dynamic(
-  () => import("../../sections/Countdown").then((m) => m.Countdown),
-  {
-    ssr: false,
-    loading: () => <div className="h-[132px] animate-pulse px-6 py-16" />,
-  },
-);
+const Countdown = dynamic(() => import("./sections/Countdown").then((m) => m.Countdown), {
+  ssr: false,
+  loading: () => <div className="h-[132px] animate-pulse px-6 py-16" />,
+});
 
 /**
  * Palet "old money" khusus Elegant — ivory/cream, charcoal, gold redup.

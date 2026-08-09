@@ -98,6 +98,26 @@ yang sama persis dan tidak tahu dirinya dipanggil dari template mana:
 (`quote` null, `gallery` `[]`, dst) me-render `null` sendiri — template tidak
 perlu tahu/cek itu.
 
+**PENGECUALIAN — Elegant punya section sendiri.** Sejak permintaan untuk
+memisahkan Elegant supaya independen, `templates/elegant/sections/` adalah
+**duplikat penuh** dari `components/invitation/sections/` (bukan re-export),
+dengan import path disesuaikan (`../../types` → `../../../../types`, dst).
+`templates/elegant/index.tsx` import dari `./sections`, BUKAN `../../sections`.
+
+Konsekuensinya, disiplin ini WAJIB dijaga ke depan:
+- **`templates/elegant/sections/Hero/index.tsx` sudah DIVERGEN** dari versi
+  shared — gaya "Magazine Style" (foto dibingkai arch, nama mempelai
+  overlap foto, divider emas). Section lain di folder ini masih identik
+  isinya dengan versi shared (baru beda lokasi/path), tapi bisa didandani
+  sendiri kapan saja tanpa memengaruhi Minimal/Modern.
+- **Perbaikan bug di section bersama (`components/invitation/sections/`)
+  TIDAK otomatis ikut ke `templates/elegant/sections/`** — kalau nemu bug
+  di, katakanlah, `Gift` atau `Rsvp`, cek apakah perlu diperbaiki di DUA
+  tempat (shared + Elegant lokal), terutama kalau versi Elegant belum
+  didandani ulang dan masih identik.
+- Minimal & Modern tidak terpengaruh sama sekali — keduanya tetap import
+  dari `../../sections` (shared), tidak dilihat oleh perubahan ini.
+
 `guestName` (dari `?to=` di URL `/i/[slug]`) itu **konteks per-kunjungan**,
 bukan bagian data invitation — makanya prop terpisah, bukan field di
 `InvitationViewModel` (yang sama untuk semua pengunjung). `Rsvp` pakai ini
