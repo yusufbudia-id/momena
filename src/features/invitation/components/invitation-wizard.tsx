@@ -33,6 +33,8 @@ const STEP_FIELDS: Record<number, (keyof InvitationWizardFormValues)[]> = {
     "slug",
     "groomName",
     "brideName",
+    "groomParents",
+    "brideParents",
     "eventDate",
     "eventLocation",
     "eventAddress",
@@ -93,6 +95,8 @@ export function InvitationWizard({
       title: "",
       groomName: "",
       brideName: "",
+      groomParents: "",
+      brideParents: "",
       eventDate: "",
       eventLocation: "",
       eventAddress: "",
@@ -213,6 +217,26 @@ export function InvitationWizard({
               <p className="text-ink-soft/70 mt-1 text-xs">
                 Opsional — kosongkan kalau acaranya bukan pernikahan.
               </p>
+            </div>
+
+            <div>
+              <Label htmlFor="groomParents">Orang Tua Mempelai Pria</Label>
+              <Input
+                id="groomParents"
+                placeholder="Putra dari Bapak Suryanto & Ibu Wati"
+                {...register("groomParents")}
+              />
+              <FieldError message={errors.groomParents?.message} />
+            </div>
+
+            <div>
+              <Label htmlFor="brideParents">Orang Tua Mempelai Wanita</Label>
+              <Input
+                id="brideParents"
+                placeholder="Putri dari Bapak Hartono & Ibu Rahayu"
+                {...register("brideParents")}
+              />
+              <FieldError message={errors.brideParents?.message} />
             </div>
 
             <div>

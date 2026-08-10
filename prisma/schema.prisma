@@ -88,6 +88,8 @@ model Invitation {
   title            String // judul acara, mis. "Pernikahan Andi & Sari"
   groomName        String? // nama mempelai pria — dipakai section BrideGroom
   brideName        String? // nama mempelai wanita — dipakai section BrideGroom
+  groomParents     String? // mis. "Putra dari Bapak Suryanto & Ibu Wati"
+  brideParents     String? // mis. "Putri dari Bapak Hartono & Ibu Rahayu"
   eventDate        DateTime?
   eventLocation    String?
   eventAddress     String?

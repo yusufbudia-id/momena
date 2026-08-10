@@ -105,9 +105,12 @@ dengan import path disesuaikan (`../../types` → `../../../../types`, dst).
 `templates/elegant/index.tsx` import dari `./sections`, BUKAN `../../sections`.
 
 Konsekuensinya, disiplin ini WAJIB dijaga ke depan:
-- **`templates/elegant/sections/Hero/index.tsx` sudah DIVERGEN** dari versi
-  shared — gaya "Magazine Style" (foto dibingkai arch, nama mempelai
-  overlap foto, divider emas). Section lain di folder ini masih identik
+- **`templates/elegant/sections/Hero/index.tsx` DIVERGEN** — gaya "Magazine
+  Style" (foto dibingkai arch, nama mempelai overlap foto, divider emas).
+- **`templates/elegant/sections/BrideGroom/index.tsx` DIVERGEN** — gaya
+  "Editorial Magazine" (layout asimetris/staggered, ampersand raksasa jadi
+  watermark, foto portrait dari `gallery[0]`/`[1]` dengan fallback monogram,
+  nama orang tua tracking lebar). Section lain di folder ini masih identik
   isinya dengan versi shared (baru beda lokasi/path), tapi bisa didandani
   sendiri kapan saja tanpa memengaruhi Minimal/Modern.
 - **Perbaikan bug di section bersama (`components/invitation/sections/`)
@@ -289,8 +292,8 @@ Sudah dikonfigurasi di `tsconfig.json`:
 | Tahap | Status |
 |---|---|
 | Struktur project | ✅ |
-| Prisma schema (User, Template, Invitation +groomName/brideName/quote/videoUrl, Gallery, Rsvp, Gift, Settings) | ✅ |
-| Database migration | ⚠️ 3 file SQL ditulis manual: `20260724000000_init/`, `20260725000000_add_couple_quote_video/`, `20260726000000_add_rsvp_message/` (bukan hasil `prisma migrate dev` resmi — lihat catatan di bawah), belum di-apply ke DB manapun |
+| Prisma schema (User, Template, Invitation +groomName/brideName/groomParents/brideParents/quote/videoUrl, Gallery, Rsvp, Gift, Settings) | ✅ |
+| Database migration | ⚠️ 4 file SQL ditulis manual: `20260724000000_init/`, `20260725000000_add_couple_quote_video/`, `20260726000000_add_rsvp_message/`, `20260810000000_add_parents_names/` (bukan hasil `prisma migrate dev` resmi — lihat catatan di bawah), belum di-apply ke DB manapun |
 | Seed (`prisma/seed.ts`): admin + 3 template (Elegant, Minimal, Modern) | ✅ |
 | Repository layer (`features/invitation`, `features/template`) | ✅ |
 | Zod validation (`features/invitation/validation.ts`) | ✅ |
@@ -354,6 +357,12 @@ terhadap schema — kalau ada perbedaan, Prisma akan menandainya.
   dari data, bukan hardcode.
 - Halaman `/settings` — link di sidebar sudah ada, halamannya belum
   (`/templates` sudah ada, katalog gaya Canva dengan Preview & Use Template).
+- Foto per-mempelai — belum ada field khusus di schema (mis.
+  `groomPhotoUrl`/`bridePhotoUrl`). `BrideGroom` versi Elegant
+  (`templates/elegant/sections/BrideGroom/`) sementara pakai
+  `invitation.gallery[0]`/`gallery[1]` sebagai foto profil, fallback ke
+  monogram inisial kalau gallery-nya kosong/kurang dari 2 foto. Kalau nanti
+  butuh foto yang benar-benar terpisah dari galeri, baru tambah field.
 - Thumbnail template asli — `manifest.thumbnail` & `Template.thumbnailUrl`
   masih path placeholder (`/templates/elegant/thumbnail.jpg`), belum ada
   file gambarnya. Kartu di `/templates` & step Template di wizard masih

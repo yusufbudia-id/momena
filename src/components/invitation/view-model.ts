@@ -1,6 +1,8 @@
 export interface CoupleNames {
   first: string;
   second: string;
+  firstParents: string | null;
+  secondParents: string | null;
 }
 
 export interface GalleryPhotoView {

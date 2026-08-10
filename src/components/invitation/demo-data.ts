@@ -9,7 +9,12 @@ export const demoInvitationViewModel: InvitationViewModel = {
   id: "demo",
   slug: "andi-siti",
   title: "Pernikahan Andi & Siti",
-  couple: { first: "Andi", second: "Siti" },
+  couple: {
+    first: "Andi",
+    second: "Siti",
+    firstParents: "Putra dari Bapak Suryanto & Ibu Wati",
+    secondParents: "Putri dari Bapak Hartono & Ibu Rahayu",
+  },
   tagline: "Kami mengundang Anda untuk merayakan hari bahagia kami.",
   quote:
     "Dan di antara tanda-tanda kekuasaan-Nya ialah Dia menciptakan untukmu pasangan hidup dari jenismu sendiri, supaya kamu cenderung dan merasa tenteram kepadanya.",

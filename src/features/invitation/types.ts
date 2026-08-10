@@ -48,6 +48,8 @@ export type CreateInvitationInput = {
   title: string;
   groomName?: string | null;
   brideName?: string | null;
+  groomParents?: string | null;
+  brideParents?: string | null;
   eventDate?: Date | null;
   eventLocation?: string | null;
   eventAddress?: string | null;

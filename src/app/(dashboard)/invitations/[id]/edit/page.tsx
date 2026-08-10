@@ -41,6 +41,8 @@ export default async function EditInvitationPage({ params }: EditInvitationPageP
     title: invitation.title,
     groomName: invitation.groomName ?? "",
     brideName: invitation.brideName ?? "",
+    groomParents: invitation.groomParents ?? "",
+    brideParents: invitation.brideParents ?? "",
     eventDate: invitation.eventDate
       ? invitation.eventDate.toISOString().slice(0, 10)
       : "",

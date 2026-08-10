@@ -17,7 +17,12 @@ export function toInvitationViewModel(
     title: invitation.title,
     couple:
       invitation.groomName && invitation.brideName
-        ? { first: invitation.groomName, second: invitation.brideName }
+        ? {
+            first: invitation.groomName,
+            second: invitation.brideName,
+            firstParents: invitation.groomParents,
+            secondParents: invitation.brideParents,
+          }
         : null,
     tagline: invitation.description
       ? (invitation.description.split("\n")[0] ?? null)

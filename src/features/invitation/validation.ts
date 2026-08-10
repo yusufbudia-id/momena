@@ -18,6 +18,8 @@ const invitationBaseSchema = {
   title: z.string().min(3, "Judul minimal 3 karakter").max(150),
   groomName: z.string().max(100).optional().nullable(),
   brideName: z.string().max(100).optional().nullable(),
+  groomParents: z.string().max(150).optional().nullable(),
+  brideParents: z.string().max(150).optional().nullable(),
   eventDate: z.preprocess(
     (val) => (val === "" || val === null ? undefined : val),
     z.coerce.date().optional().nullable(),
@@ -88,6 +90,8 @@ export const invitationWizardFormSchema = z.object({
   title: invitationBaseSchema.title,
   groomName: invitationBaseSchema.groomName,
   brideName: invitationBaseSchema.brideName,
+  groomParents: invitationBaseSchema.groomParents,
+  brideParents: invitationBaseSchema.brideParents,
   eventDate: z.string().optional().nullable(),
   eventLocation: invitationBaseSchema.eventLocation,
   eventAddress: invitationBaseSchema.eventAddress,
