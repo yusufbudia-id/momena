@@ -1,22 +1,38 @@
+import { MapPin } from "lucide-react";
+
 import type { SectionProps } from "../../../../types";
 
+/**
+ * Location lokal Elegant — tanpa kotak sendiri (section ini dibungkus
+ * `FramedCard` bareng BrideGroom di template), tombol pill outline
+ * konsisten dengan gaya tombol lain di Elegant (CoverGate, UtilityActions).
+ */
 export function Location({ invitation }: SectionProps) {
   const { eventLocation, eventAddress, eventMapsUrl } = invitation;
 
   if (!eventLocation && !eventAddress && !eventMapsUrl) return null;
 
   return (
-    <section className="px-6 py-16 text-center">
-      <h2 className="font-display text-ink text-2xl italic">Lokasi Acara</h2>
-      <div className="border-line bg-surface mx-auto mt-6 max-w-md rounded-xl border p-6">
-        {eventLocation && <p className="text-ink font-medium">{eventLocation}</p>}
-        {eventAddress && <p className="text-ink-soft mt-1 text-sm">{eventAddress}</p>}
+    <section className="text-center">
+      <p className="text-xs tracking-[0.4em] text-[var(--color-ink-soft)] uppercase">
+        Lokasi Acara
+      </p>
+      <div className="mx-auto mt-4 flex max-w-xs flex-col items-center gap-2">
+        <MapPin className="size-5 text-[var(--color-accent)]" strokeWidth={1.5} />
+        {eventLocation && (
+          <p className="font-display text-xl text-[var(--color-ink)] italic">
+            {eventLocation}
+          </p>
+        )}
+        {eventAddress && (
+          <p className="text-sm text-[var(--color-ink-soft)]">{eventAddress}</p>
+        )}
         {eventMapsUrl && (
           <a
             href={eventMapsUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="bg-accent hover:bg-accent-ink mt-4 inline-flex h-11 min-w-11 items-center justify-center rounded-md px-4 text-sm font-medium text-white"
+            className="mt-4 flex h-11 items-center rounded-full border border-[var(--color-accent)] px-6 text-xs tracking-[0.2em] text-[var(--color-accent-ink)] uppercase transition-colors hover:bg-[var(--color-accent-soft)]"
           >
             Buka di Google Maps
           </a>

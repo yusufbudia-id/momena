@@ -110,9 +110,18 @@ Konsekuensinya, disiplin ini WAJIB dijaga ke depan:
 - **`templates/elegant/sections/BrideGroom/index.tsx` DIVERGEN** — gaya
   "Editorial Magazine" (layout asimetris/staggered, ampersand raksasa jadi
   watermark, foto portrait dari `gallery[0]`/`[1]` dengan fallback monogram,
-  nama orang tua tracking lebar). Section lain di folder ini masih identik
-  isinya dengan versi shared (baru beda lokasi/path), tapi bisa didandani
-  sendiri kapan saja tanpa memengaruhi Minimal/Modern.
+  nama orang tua tracking lebar).
+- **`Countdown`, `Location`, `Footer` (lokal Elegant) DIVERGEN** — semuanya
+  dibuat TANPA kotak/background sendiri (`Countdown`/`Location` dipakai di
+  dalam `FramedCard` di template, jadi bingkainya dari situ; double-box
+  kalau section-nya juga punya kotak sendiri). `Countdown` pakai angka
+  serif italic dipisah garis tipis, `Location` pakai tombol pill outline,
+  `Footer` pakai ornamen diamond + nama mempelai sebagai tanda tangan
+  penutup.
+- Sisa section di folder ini (`Gallery`, `Gift`, `Rsvp`, `Quote`, `Video`,
+  `LoveStory`, `StickyCta`) masih identik isinya dengan versi shared (baru
+  beda lokasi/path) — bisa didandani sendiri kapan saja tanpa memengaruhi
+  Minimal/Modern.
 - **Perbaikan bug di section bersama (`components/invitation/sections/`)
   TIDAK otomatis ikut ke `templates/elegant/sections/`** — kalau nemu bug
   di, katakanlah, `Gift` atau `Rsvp`, cek apakah perlu diperbaiki di DUA

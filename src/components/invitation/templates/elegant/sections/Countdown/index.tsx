@@ -16,6 +16,11 @@ function getTimeLeft(target: Date) {
   };
 }
 
+/**
+ * Countdown lokal Elegant — angka besar serif italic dipisah garis tipis
+ * (bukan kotak rounded standar), karena section ini sudah dibungkus
+ * `FramedCard` di template (jadi tidak perlu bingkai/background sendiri).
+ */
 export function Countdown({ invitation }: SectionProps) {
   const eventDate = invitation.eventDate;
   const [timeLeft, setTimeLeft] = useState<ReturnType<typeof getTimeLeft>>(null);
@@ -31,17 +36,25 @@ export function Countdown({ invitation }: SectionProps) {
   if (!eventDate) return null;
 
   return (
-    <section className="px-6 py-16 text-center">
-      <h2 className="font-display text-ink text-2xl italic">Menuju Hari Bahagia</h2>
+    <section className="text-center">
+      <p className="text-xs tracking-[0.4em] text-[var(--color-ink-soft)] uppercase">
+        Menghitung Hari
+      </p>
+      <h3 className="font-display mt-2 text-2xl text-[var(--color-ink)] italic">
+        Menuju Hari Bahagia
+      </h3>
+
       {timeLeft ? (
-        <div className="mx-auto mt-6 flex max-w-md justify-center gap-3 sm:gap-6">
+        <div className="mx-auto mt-8 flex max-w-sm items-stretch justify-center divide-x divide-[var(--color-accent)]/30">
           <TimeBlock label="Hari" value={timeLeft.days} />
           <TimeBlock label="Jam" value={timeLeft.hours} />
           <TimeBlock label="Menit" value={timeLeft.minutes} />
           <TimeBlock label="Detik" value={timeLeft.seconds} />
         </div>
       ) : (
-        <p className="text-ink-soft mt-4 text-sm">Acara sudah berlangsung.</p>
+        <p className="mt-4 text-sm text-[var(--color-ink-soft)]">
+          Acara sudah berlangsung.
+        </p>
       )}
     </section>
   );
@@ -49,11 +62,13 @@ export function Countdown({ invitation }: SectionProps) {
 
 function TimeBlock({ label, value }: { label: string; value: number }) {
   return (
-    <div className="border-line bg-surface flex flex-col items-center rounded-lg border px-3 py-2 sm:px-5 sm:py-3">
-      <span className="font-display text-ink text-2xl italic tabular-nums sm:text-3xl">
+    <div className="flex flex-1 flex-col items-center gap-1.5 px-3 sm:px-6">
+      <span className="font-display text-4xl text-[var(--color-accent-ink)] italic tabular-nums sm:text-5xl">
         {String(value).padStart(2, "0")}
       </span>
-      <span className="text-ink-soft text-[10px] tracking-wide uppercase">{label}</span>
+      <span className="text-[10px] tracking-[0.25em] text-[var(--color-ink-soft)] uppercase">
+        {label}
+      </span>
     </div>
   );
 }
