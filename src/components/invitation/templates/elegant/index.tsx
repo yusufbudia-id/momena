@@ -43,14 +43,15 @@ const Countdown = dynamic(() => import("./sections/Countdown").then((m) => m.Cou
  * override di sini otomatis "menembus" tanpa section-nya perlu diubah.
  */
 const luxuryTheme = {
-  "--color-paper": "#fbf9f5",
-  "--color-surface": "#fffefb",
-  "--color-ink": "#2c2c2c",
-  "--color-ink-soft": "#6f6a62",
-  "--color-line": "#e8e1d0",
-  "--color-accent": "#c5a059",
-  "--color-accent-soft": "#f3ead4",
-  "--color-accent-ink": "#9c7c3e",
+  "--color-paper": "#070706",
+  "--color-surface": "#0d0c09",
+  "--color-ink": "#f4ecd9",
+  "--color-ink-soft": "#b9ad94",
+  "--color-line": "#2d281d",
+  "--color-accent": "#c9a25c",
+  "--color-accent-soft": "#211b10",
+  "--color-accent-ink": "#e1c27d",
+  "--color-gold-light": "#f0d894",
 } as React.CSSProperties;
 
 /* ────────────────────────────────────────────────────────────────
@@ -136,35 +137,13 @@ function FramedCard({
 }) {
   return (
     <div
-      className={`relative border border-[var(--color-line)] bg-[var(--color-surface)]/70 px-6 py-10 sm:px-12 sm:py-14 ${className}`}
+      className={`relative border border-[var(--color-accent)]/20 bg-[var(--color-surface)]/70 px-6 py-10 shadow-[inset_0_0_60px_rgba(201,162,92,0.025),0_20px_80px_rgba(0,0,0,0.18)] backdrop-blur-sm sm:px-12 sm:py-14 ${className}`}
     >
       <CornerMark className="absolute -top-px -left-px" />
       <CornerMark className="absolute -top-px -right-px rotate-90" />
       <CornerMark className="absolute -bottom-px -left-px -rotate-90" />
       <CornerMark className="absolute -right-px -bottom-px rotate-180" />
       {children}
-    </div>
-  );
-}
-
-/** Pembuka ala kop surat undangan resmi — monogram inisial mempelai +
- * eyebrow "The Wedding Of". Muncul sebelum Hero, murni dekoratif. */
-function MonogramHeader({ invitation }: SectionProps) {
-  const initials = invitation.couple
-    ? `${invitation.couple.first.charAt(0)}${invitation.couple.second.charAt(0)}`.toUpperCase()
-    : null;
-
-  return (
-    <div className="flex flex-col items-center gap-5 px-6 pt-16 text-center">
-      <p className="text-xs tracking-[0.45em] text-[var(--color-ink-soft)] uppercase">
-        The Wedding Of
-      </p>
-      <div className="relative flex size-20 items-center justify-center rounded-full border border-[var(--color-accent)]">
-        <div className="absolute inset-1.5 rounded-full border border-[var(--color-accent)]/40" />
-        <span className="font-display text-2xl text-[var(--color-accent-ink)] italic">
-          {initials ?? "❦"}
-        </span>
-      </div>
     </div>
   );
 }
@@ -176,17 +155,25 @@ function AtmosphereBackground() {
     <>
       <div
         aria-hidden
-        className="pointer-events-none fixed inset-0 -z-20"
+        className="pointer-events-none fixed inset-0 -z-30 bg-[#060605]"
+      />
+      <div
+        aria-hidden
+        className="pointer-events-none fixed inset-0 -z-20 opacity-50"
         style={{
           backgroundImage:
-            "radial-gradient(var(--color-accent) 0.6px, transparent 0.6px)",
-          backgroundSize: "26px 26px",
-          opacity: 0.07,
+            "radial-gradient(ellipse 70% 38% at 50% 0%, rgba(201,162,92,.16), transparent 65%), radial-gradient(ellipse 55% 30% at 50% 100%, rgba(201,162,92,.08), transparent 68%)",
         }}
       />
       <div
         aria-hidden
-        className="pointer-events-none fixed inset-0 -z-10 bg-[radial-gradient(ellipse_at_top,_var(--color-accent-soft)_0%,_transparent_60%)] opacity-70"
+        className="pointer-events-none fixed inset-0 -z-10 opacity-[0.11]"
+        style={{
+          backgroundImage:
+            "linear-gradient(rgba(201,162,92,.12) 1px, transparent 1px), linear-gradient(90deg, rgba(201,162,92,.12) 1px, transparent 1px)",
+          backgroundSize: "64px 64px",
+          maskImage: "radial-gradient(circle at 50% 20%, black, transparent 72%)",
+        }}
       />
     </>
   );
@@ -250,7 +237,7 @@ function buildIcsHref(invitation: InvitationViewModel): string | null {
 }
 
 const utilityButtonClassName =
-  "border-accent text-accent-ink flex h-10 items-center gap-2 rounded-full border px-5 text-xs tracking-wide transition-colors hover:bg-[var(--color-accent-soft)]";
+  "flex h-11 items-center gap-2 border border-[var(--color-accent)]/50 px-5 text-[10px] tracking-[0.18em] text-[var(--color-accent-ink)] uppercase transition-all hover:bg-[var(--color-accent)] hover:text-[#080706]";
 
 /** FITUR: "Tambah ke Kalender" + "Bagikan" — dari wishlist Guest Experience
  * yang sempat dibahas tapi belum pernah dibangun. Add-to-calendar murni
@@ -376,43 +363,51 @@ function CoverGate({
       initial="visible"
       animate="visible"
       exit="hidden"
-      className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-6 overflow-hidden bg-[var(--color-paper)] px-6 text-center"
+      className="fixed inset-0 z-50 flex items-center justify-center overflow-hidden bg-[#050504] px-6 text-center"
     >
       {invitation.coverImageUrl && (
         <div
           aria-hidden
-          className="absolute inset-0 bg-cover bg-center opacity-20"
+          className="absolute inset-0 scale-105 bg-cover bg-center opacity-[0.14] blur-[1px]"
           style={{ backgroundImage: `url(${invitation.coverImageUrl})` }}
         />
       )}
-
+      <div aria-hidden className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(201,162,92,.15),_transparent_58%)]" />
       <motion.div
-        variants={gateContentVariants}
-        className="relative flex flex-col items-center gap-6"
-      >
-        <p className="text-xs tracking-[0.45em] text-[var(--color-ink-soft)] uppercase">
-          The Wedding Of
-        </p>
-        <h1 className="font-display max-w-xs text-4xl text-[var(--color-ink)] italic">
+        aria-hidden
+        exit={{ x: "-101%" }}
+        transition={{ duration: 1.25, ease: [0.76, 0, 0.24, 1], delay: 0.18 }}
+        className="absolute inset-y-0 left-0 w-1/2 border-r border-[var(--color-accent)]/20 bg-[linear-gradient(90deg,#080806,#151006,#080806)] shadow-[20px_0_80px_rgba(0,0,0,.5)]"
+      />
+      <motion.div
+        aria-hidden
+        exit={{ x: "101%" }}
+        transition={{ duration: 1.25, ease: [0.76, 0, 0.24, 1], delay: 0.18 }}
+        className="absolute inset-y-0 right-0 w-1/2 border-l border-[var(--color-accent)]/20 bg-[linear-gradient(270deg,#080806,#151006,#080806)] shadow-[-20px_0_80px_rgba(0,0,0,.5)]"
+      />
+
+      <motion.div variants={gateContentVariants} className="relative z-10 flex max-w-sm flex-col items-center">
+        <p className="font-serif text-sm italic text-[var(--color-ink-soft)]">Bismillahirrahmanirrahim</p>
+        <div className="my-5 text-xl text-[var(--color-accent)]">✦</div>
+        <p className="text-[9px] tracking-[0.6em] text-[var(--color-accent)]/75 uppercase">The Wedding Of</p>
+        <h1 className="font-display mt-4 text-5xl leading-tight text-[var(--color-gold-light)] italic drop-shadow-[0_4px_15px_rgba(201,162,92,.18)]">
           {coupleName}
         </h1>
 
-        {guestName && (
-          <div className="mt-2">
-            <p className="text-[11px] tracking-[0.3em] text-[var(--color-ink-soft)] uppercase">
-              Kepada Yth.
-            </p>
-            <p className="font-display mt-1 text-lg text-[var(--color-accent-ink)] italic">
-              {guestName}
-            </p>
-          </div>
-        )}
+        <div className="my-7 h-px w-24 bg-gradient-to-r from-transparent via-[var(--color-accent)]/60 to-transparent" />
+
+        <div className="min-h-14">
+          <p className="text-[10px] tracking-[0.25em] text-[var(--color-ink-soft)] uppercase">Kepada Yth.</p>
+          <p className="font-display mt-2 text-2xl text-[var(--color-accent-ink)] italic">
+            {guestName || "Tamu Undangan"}
+          </p>
+        </div>
 
         <button
           onClick={onOpen}
-          className="mt-4 flex h-12 items-center justify-center rounded-full border border-[var(--color-accent)] px-9 text-xs tracking-[0.25em] text-[var(--color-accent-ink)] uppercase transition-colors hover:bg-[var(--color-accent-soft)]"
+          className="group mt-8 flex h-12 items-center justify-center border border-[var(--color-accent)]/70 px-9 text-[10px] tracking-[0.34em] text-[var(--color-accent-ink)] uppercase shadow-[0_0_24px_rgba(201,162,92,.08)] transition-all hover:bg-[var(--color-accent)] hover:text-[#080706] hover:shadow-[0_0_34px_rgba(201,162,92,.24)]"
         >
-          Buka Undangan
+          Buka Undangan <span className="ml-3 transition-transform group-hover:translate-x-1">✦</span>
         </button>
       </motion.div>
     </motion.div>
@@ -445,7 +440,7 @@ export function ElegantTemplate({ invitation, guestName }: SectionProps) {
   return (
     <div
       style={luxuryTheme}
-      className="bg-[var(--color-paper)] [&_h1]:tracking-wide [&_h2]:font-medium [&_h2]:tracking-wide"
+      className="min-h-screen bg-[var(--color-paper)] text-[var(--color-ink)] selection:bg-[var(--color-accent)]/25 [&_h1]:tracking-wide [&_h2]:font-medium [&_h2]:tracking-wide"
     >
       <AtmosphereBackground />
       <ScrollProgressBar />
@@ -456,8 +451,7 @@ export function ElegantTemplate({ invitation, guestName }: SectionProps) {
         )}
       </AnimatePresence>
 
-      <div className="mx-auto max-w-2xl pb-28">
-        <MonogramHeader invitation={invitation} />
+      <div className="mx-auto max-w-2xl overflow-hidden pb-28">
         <Hero invitation={invitation} />
 
         <Ornament variant="laurel" />

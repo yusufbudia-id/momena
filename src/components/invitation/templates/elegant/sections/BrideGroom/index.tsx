@@ -18,7 +18,7 @@ function PersonPhoto({
 }) {
   return (
     <div
-      className={`relative aspect-[4/5] w-48 overflow-hidden border border-[var(--color-accent)]/40 sm:w-56 ${
+      className={`relative aspect-[4/5] w-48 overflow-hidden border border-[var(--color-accent)]/35 shadow-[0_18px_50px_rgba(0,0,0,.35)] sm:w-56 ${
         align === "end" ? "self-end" : "self-start"
       }`}
     >
@@ -62,7 +62,7 @@ export function BrideGroom({ invitation }: SectionProps) {
   const secondPhoto = invitation.gallery[1]?.imageUrl ?? null;
 
   return (
-    <section className="relative overflow-hidden px-6 py-20 sm:py-28">
+    <section className="relative overflow-hidden px-2 py-12 sm:px-6 sm:py-20">
       {/* Ampersand raksasa — watermark latar yang menjembatani kedua profil */}
       <span
         aria-hidden
@@ -75,7 +75,7 @@ export function BrideGroom({ invitation }: SectionProps) {
         {/* Mempelai pria — rata kiri, foto sejajar atas */}
         <div className="flex flex-col items-start">
           <PersonPhoto src={firstPhoto} initial={first.charAt(0)} align="start" />
-          <div className="-mt-8 ml-4 bg-[var(--color-paper)]/95 px-2 sm:ml-8">
+          <div className="-mt-8 ml-4 bg-[var(--color-surface)]/95 px-2 sm:ml-8">
             <h3 className="font-display text-4xl text-[var(--color-ink)] italic sm:text-5xl">
               {first}
             </h3>
@@ -100,7 +100,7 @@ export function BrideGroom({ invitation }: SectionProps) {
         {/* Mempelai wanita — rata kanan, digeser turun (staggered) */}
         <div className="flex flex-col items-end sm:mt-14">
           <PersonPhoto src={secondPhoto} initial={second.charAt(0)} align="end" />
-          <div className="-mt-8 mr-4 bg-[var(--color-paper)]/95 px-2 text-right sm:mr-8">
+          <div className="-mt-8 mr-4 bg-[var(--color-surface)]/95 px-2 text-right sm:mr-8">
             <h3 className="font-display text-4xl text-[var(--color-accent-ink)] italic sm:text-5xl">
               {second}
             </h3>

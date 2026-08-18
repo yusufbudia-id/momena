@@ -2,17 +2,18 @@ import Image from "next/image";
 
 import type { SectionProps } from "../../../../types";
 
-/**
- * Hero versi "Magazine Style" — section ini LOKAL untuk Elegant saja
- * (hasil duplikasi dari `components/invitation/sections/Hero`, bukan yang
- * dipakai Minimal/Modern). Foto cover dibingkai kubah/arch, nama mempelai
- * besar ditarik naik menumpuk di atas foto, divider emas tipis sebelum
- * info tanggal acara.
- */
+function Corner({ className }: { className: string }) {
+  return (
+    <span
+      aria-hidden
+      className={`absolute size-8 border-[var(--color-accent)]/70 ${className}`}
+    />
+  );
+}
+
 export function Hero({ invitation }: SectionProps) {
-  const coupleName = invitation.couple
-    ? `${invitation.couple.first} & ${invitation.couple.second}`
-    : invitation.title;
+  const first = invitation.couple?.first ?? invitation.title;
+  const second = invitation.couple?.second ?? "";
 
   const formattedDate = invitation.eventDate
     ? new Intl.DateTimeFormat("id-ID", {
@@ -24,35 +25,82 @@ export function Hero({ invitation }: SectionProps) {
     : null;
 
   return (
-    <section className="flex flex-col items-center px-6 pt-10 pb-16 text-center">
-      <p className="text-ink-soft text-xs tracking-[0.3em] uppercase">Undangan Digital</p>
+    <section className="relative flex min-h-[86svh] items-center justify-center overflow-hidden px-5 py-16 text-center sm:px-8 sm:py-24">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute left-1/2 top-1/2 aspect-square w-[min(92vw,620px)] -translate-x-1/2 -translate-y-1/2 rounded-full border border-[var(--color-accent)]/10"
+      />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute left-1/2 top-1/2 aspect-square w-[min(68vw,430px)] -translate-x-1/2 -translate-y-1/2 rounded-full border border-dashed border-[var(--color-accent)]/10"
+      />
 
-      {invitation.coverImageUrl && (
-        <div className="border-accent relative mt-6 aspect-[3/4] w-full max-w-xs overflow-hidden rounded-t-full border-[6px]">
-          <Image
-            src={invitation.coverImageUrl}
-            alt=""
-            fill
-            priority
-            sizes="(min-width: 640px) 384px, 100vw"
-            className="object-cover"
-          />
+      <div className="relative w-full max-w-xl border border-[var(--color-accent)]/25 bg-[var(--color-surface)]/55 px-6 py-12 shadow-[0_0_0_6px_rgba(201,162,92,0.025),0_0_0_7px_rgba(201,162,92,0.10),0_30px_100px_rgba(0,0,0,0.45),inset_0_0_70px_rgba(0,0,0,0.25)] backdrop-blur-[2px] sm:px-12 sm:py-16">
+        <Corner className="left-[-1px] top-[-1px] border-l-2 border-t-2" />
+        <Corner className="right-[-1px] top-[-1px] border-r-2 border-t-2" />
+        <Corner className="bottom-[-1px] left-[-1px] border-b-2 border-l-2" />
+        <Corner className="bottom-[-1px] right-[-1px] border-b-2 border-r-2" />
+
+        <div className="mx-auto mb-7 flex items-center justify-center gap-3">
+          <span className="h-px w-12 bg-gradient-to-r from-transparent to-[var(--color-accent)]/70" />
+          <span className="text-[9px] tracking-[0.55em] text-[var(--color-accent)]">✦ ✦ ✦</span>
+          <span className="h-px w-12 bg-gradient-to-l from-transparent to-[var(--color-accent)]/70" />
         </div>
-      )}
 
-      <h1 className="font-display text-ink bg-paper relative z-10 -mt-10 max-w-xs px-4 text-4xl italic sm:text-5xl">
-        {coupleName}
-      </h1>
+        <p className="text-[10px] tracking-[0.6em] text-[var(--color-accent)]/80 uppercase">
+          The Wedding Of
+        </p>
 
-      {(formattedDate || invitation.eventLocation) && (
-        <div className="mt-5 flex flex-col items-center gap-3">
-          <span aria-hidden className="bg-accent h-8 w-px" />
-          {formattedDate && <p className="text-ink-soft text-sm">{formattedDate}</p>}
-          {invitation.eventLocation && (
-            <p className="text-ink-soft text-sm">{invitation.eventLocation}</p>
+        {invitation.coverImageUrl && (
+          <div className="relative mx-auto mt-7 aspect-[4/5] w-full max-w-[250px] overflow-hidden border border-[var(--color-accent)]/30 shadow-2xl sm:max-w-[280px]">
+            <Image
+              src={invitation.coverImageUrl}
+              alt=""
+              fill
+              priority
+              sizes="280px"
+              className="object-cover opacity-90 grayscale-[15%]"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-transparent to-black/10" />
+            <div className="absolute inset-3 border border-[var(--color-accent)]/25" />
+          </div>
+        )}
+
+        <div className={invitation.coverImageUrl ? "relative z-10 -mt-12" : "mt-8"}>
+          <h1 className="font-display px-2 text-[clamp(3.2rem,12vw,6.5rem)] leading-[0.88] text-[var(--color-gold-light)] italic drop-shadow-[0_5px_16px_rgba(201,162,92,0.2)]">
+            {first}
+          </h1>
+          {second && (
+            <>
+              <span className="font-display my-1 block text-3xl text-[var(--color-accent)]/55 italic">&amp;</span>
+              <h1 className="font-display px-2 text-[clamp(3.2rem,12vw,6.5rem)] leading-[0.88] text-[var(--color-gold-light)] italic drop-shadow-[0_5px_16px_rgba(201,162,92,0.2)]">
+                {second}
+              </h1>
+            </>
           )}
         </div>
-      )}
+
+        <div className="mx-auto my-7 flex max-w-[220px] items-center gap-3">
+          <span className="h-px flex-1 bg-gradient-to-r from-transparent to-[var(--color-accent)]/60" />
+          <span className="size-1.5 rotate-45 bg-[var(--color-accent)]" />
+          <span className="h-px flex-1 bg-gradient-to-l from-transparent to-[var(--color-accent)]/60" />
+        </div>
+
+        {formattedDate && (
+          <p className="text-xs tracking-[0.18em] text-[var(--color-gold-light)] uppercase sm:text-sm">
+            {formattedDate}
+          </p>
+        )}
+        {invitation.eventLocation && (
+          <p className="mt-2 font-serif text-sm italic text-[var(--color-ink-soft)]">
+            {invitation.eventLocation}
+          </p>
+        )}
+
+        <p className="mt-7 text-[9px] tracking-[0.42em] text-[var(--color-accent)]/50 uppercase">
+          With love &amp; blessing
+        </p>
+      </div>
     </section>
   );
 }
