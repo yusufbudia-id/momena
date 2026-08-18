@@ -1,7 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Banknote, Check, ImagePlus, Plus, Trash2, Wallet } from "lucide-react";
+import { Banknote, Check, Heart, ImagePlus, Plus, Trash2, Wallet } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
@@ -25,7 +25,7 @@ import {
 
 import { PublishResultDialog } from "./publish-result-dialog";
 
-const STEPS = ["Event", "Template", "Gallery", "Gift", "Publish"] as const;
+const STEPS = ["Event", "Template", "Gallery", "Story", "Gift", "Publish"] as const;
 
 const STEP_FIELDS: Record<number, (keyof InvitationWizardFormValues)[]> = {
   0: [
@@ -35,6 +35,8 @@ const STEP_FIELDS: Record<number, (keyof InvitationWizardFormValues)[]> = {
     "brideName",
     "groomParents",
     "brideParents",
+    "groomInstagram",
+    "brideInstagram",
     "eventDate",
     "eventLocation",
     "eventAddress",
@@ -46,8 +48,9 @@ const STEP_FIELDS: Record<number, (keyof InvitationWizardFormValues)[]> = {
   ],
   1: ["templateId"],
   2: ["gallery"],
-  3: ["gifts"],
-  4: [],
+  3: ["stories"],
+  4: ["gifts"],
+  5: [],
 };
 
 interface TemplateOption {
@@ -97,6 +100,8 @@ export function InvitationWizard({
       brideName: "",
       groomParents: "",
       brideParents: "",
+      groomInstagram: "",
+      brideInstagram: "",
       eventDate: "",
       eventLocation: "",
       eventAddress: "",
@@ -106,12 +111,14 @@ export function InvitationWizard({
       quote: "",
       videoUrl: "",
       gallery: [],
+      stories: [],
       gifts: [],
       ...defaultValues,
     },
   });
 
   const galleryArray = useFieldArray({ control, name: "gallery" });
+  const storyArray = useFieldArray({ control, name: "stories" });
   const giftArray = useFieldArray({ control, name: "gifts" });
 
   async function goNext() {
@@ -237,6 +244,32 @@ export function InvitationWizard({
                 {...register("brideParents")}
               />
               <FieldError message={errors.brideParents?.message} />
+            </div>
+
+            <div>
+              <Label htmlFor="groomInstagram">Instagram Mempelai Pria</Label>
+              <div className="flex items-center gap-2">
+                <span className="text-ink-soft text-sm">@</span>
+                <Input
+                  id="groomInstagram"
+                  placeholder="andi.wijaya"
+                  {...register("groomInstagram")}
+                />
+              </div>
+              <FieldError message={errors.groomInstagram?.message} />
+            </div>
+
+            <div>
+              <Label htmlFor="brideInstagram">Instagram Mempelai Wanita</Label>
+              <div className="flex items-center gap-2">
+                <span className="text-ink-soft text-sm">@</span>
+                <Input
+                  id="brideInstagram"
+                  placeholder="siti.rahma"
+                  {...register("brideInstagram")}
+                />
+              </div>
+              <FieldError message={errors.brideInstagram?.message} />
             </div>
 
             <div>
@@ -418,6 +451,69 @@ export function InvitationWizard({
           <div>
             <div className="mb-4 flex items-center justify-between">
               <p className="text-ink-soft text-sm">
+                Tambahkan momen-momen kisah cinta kalian (opsional).
+              </p>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() =>
+                  storyArray.append({ title: "", date: "", description: "" })
+                }
+              >
+                <Plus className="size-3.5" /> Tambah Momen
+              </Button>
+            </div>
+
+            {storyArray.fields.length === 0 && (
+              <div className="border-line text-ink-soft flex flex-col items-center gap-2 rounded-lg border border-dashed py-10 text-center text-sm">
+                <Heart className="size-6" />
+                Belum ada momen ditambahkan.
+              </div>
+            )}
+
+            <div className="flex flex-col gap-3">
+              {storyArray.fields.map((field, index) => (
+                <div key={field.id} className="border-line rounded-lg border p-3">
+                  <div className="flex items-start gap-2">
+                    <div className="flex-1 space-y-2">
+                      <Input
+                        placeholder="Judul momen, mis. Pertama Bertemu"
+                        {...register(`stories.${index}.title`)}
+                      />
+                      <FieldError message={errors.stories?.[index]?.title?.message} />
+                      <Input
+                        placeholder="Kapan (opsional), mis. Januari 2020"
+                        {...register(`stories.${index}.date`)}
+                      />
+                      <Textarea
+                        placeholder="Ceritakan momennya…"
+                        rows={2}
+                        {...register(`stories.${index}.description`)}
+                      />
+                      <FieldError
+                        message={errors.stories?.[index]?.description?.message}
+                      />
+                    </div>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => storyArray.remove(index)}
+                    >
+                      <Trash2 className="size-4 text-red-600" />
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {step === 4 && (
+          <div>
+            <div className="mb-4 flex items-center justify-between">
+              <p className="text-ink-soft text-sm">
                 Tambahkan rekening/e-wallet untuk amplop digital.
               </p>
               <Button
@@ -534,7 +630,7 @@ export function InvitationWizard({
           </div>
         )}
 
-        {step === 4 && (
+        {step === 5 && (
           <div>
             <p className="text-ink-soft mb-4 text-sm">
               Cek sekali lagi sebelum disimpan atau dipublish.
@@ -556,6 +652,10 @@ export function InvitationWizard({
               <SummaryItem
                 label="Jumlah Foto"
                 value={String(galleryArray.fields.length)}
+              />
+              <SummaryItem
+                label="Momen Kisah Cinta"
+                value={String(storyArray.fields.length)}
               />
               <SummaryItem label="Metode Gift" value={String(giftArray.fields.length)} />
             </dl>

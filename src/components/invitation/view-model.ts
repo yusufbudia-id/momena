@@ -3,6 +3,8 @@ export interface CoupleNames {
   second: string;
   firstParents: string | null;
   secondParents: string | null;
+  firstInstagram: string | null;
+  secondInstagram: string | null;
 }
 
 export interface GalleryPhotoView {

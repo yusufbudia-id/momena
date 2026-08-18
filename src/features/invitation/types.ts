@@ -5,9 +5,10 @@ import type {
   Invitation,
   InvitationStatus,
   Prisma,
+  Story,
 } from "@prisma/client";
 
-export type { Invitation, InvitationStatus, Gallery, Gift, GiftMethod };
+export type { Invitation, InvitationStatus, Gallery, Gift, GiftMethod, Story };
 
 /** Invitation + relasi yang umum dipakai saat ditampilkan di dashboard/publik. */
 export type InvitationWithRelations = Prisma.InvitationGetPayload<{
@@ -17,6 +18,7 @@ export type InvitationWithRelations = Prisma.InvitationGetPayload<{
     rsvps: true;
     gifts: true;
     settings: true;
+    stories: true;
   };
 }>;
 
@@ -28,6 +30,12 @@ export type InvitationListItem = Prisma.InvitationGetPayload<{
 export type GalleryItemInput = {
   imageUrl: string;
   caption?: string | null;
+};
+
+export type StoryItemInput = {
+  title: string;
+  date?: string | null;
+  description: string;
 };
 
 export type GiftItemInput = {
@@ -50,6 +58,8 @@ export type CreateInvitationInput = {
   brideName?: string | null;
   groomParents?: string | null;
   brideParents?: string | null;
+  groomInstagram?: string | null;
+  brideInstagram?: string | null;
   eventDate?: Date | null;
   eventLocation?: string | null;
   eventAddress?: string | null;
@@ -60,6 +70,7 @@ export type CreateInvitationInput = {
   videoUrl?: string | null;
   gallery?: GalleryItemInput[];
   gifts?: GiftItemInput[];
+  stories?: StoryItemInput[];
 };
 
 /** Payload untuk update invitation (semua field opsional kecuali id). */

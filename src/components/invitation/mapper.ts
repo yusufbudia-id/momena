@@ -22,6 +22,8 @@ export function toInvitationViewModel(
             second: invitation.brideName,
             firstParents: invitation.groomParents,
             secondParents: invitation.brideParents,
+            firstInstagram: invitation.groomInstagram,
+            secondInstagram: invitation.brideInstagram,
           }
         : null,
     tagline: invitation.description
@@ -51,9 +53,14 @@ export function toInvitationViewModel(
         holderName: gift.method === "BANK_TRANSFER" ? gift.accountHolder : null,
         note: gift.note,
       })),
-    // TODO: belum ada tabel Story di database — selalu kosong untuk sekarang.
-    // Begitu ada, tinggal query di sini, section LoveStory/Timeline tidak berubah.
-    story: [],
+    story: [...invitation.stories]
+      .sort((a, b) => a.order - b.order)
+      .map((item) => ({
+        id: item.id,
+        title: item.title,
+        date: item.date,
+        description: item.description,
+      })),
     guestBook: [...invitation.rsvps]
       .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
       .map((rsvp) => ({

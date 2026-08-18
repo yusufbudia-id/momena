@@ -14,6 +14,8 @@ export const demoInvitationViewModel: InvitationViewModel = {
     second: "Siti",
     firstParents: "Putra dari Bapak Suryanto & Ibu Wati",
     secondParents: "Putri dari Bapak Hartono & Ibu Rahayu",
+    firstInstagram: "andi.wijaya",
+    secondInstagram: "siti.rahma",
   },
   tagline: "Kami mengundang Anda untuk merayakan hari bahagia kami.",
   quote:
@@ -52,7 +54,29 @@ export const demoInvitationViewModel: InvitationViewModel = {
       note: null,
     },
   ],
-  story: [],
+  story: [
+    {
+      id: "demo-story-1",
+      title: "Pertama Bertemu",
+      date: "Januari 2020",
+      description:
+        "Bertemu pertama kali di sebuah acara kampus dan langsung akrab mengobrol.",
+    },
+    {
+      id: "demo-story-2",
+      title: "Jadian",
+      date: "Juni 2021",
+      description:
+        "Setelah dekat cukup lama, kami memutuskan untuk menjalani hubungan serius.",
+    },
+    {
+      id: "demo-story-3",
+      title: "Lamaran",
+      date: "Maret 2026",
+      description:
+        "Andi melamar Siti di depan keluarga besar, disambut haru dan bahagia.",
+    },
+  ],
   guestBook: [],
   templateSlug: "elegant",
   musicUrl: null,

@@ -9,6 +9,7 @@ import type {
   InvitationStats,
   InvitationWithRelations,
   PaginatedResult,
+  StoryItemInput,
   UpdateInvitationInput,
 } from "./types";
 
@@ -23,7 +24,14 @@ export async function getInvitationById(
 ): Promise<InvitationWithRelations | null> {
   return db.invitation.findUnique({
     where: { id },
-    include: { template: true, gallery: true, rsvps: true, gifts: true, settings: true },
+    include: {
+      template: true,
+      gallery: true,
+      rsvps: true,
+      gifts: true,
+      settings: true,
+      stories: true,
+    },
   });
 }
 
@@ -32,7 +40,14 @@ export async function getInvitationBySlug(
 ): Promise<InvitationWithRelations | null> {
   return db.invitation.findUnique({
     where: { slug },
-    include: { template: true, gallery: true, rsvps: true, gifts: true, settings: true },
+    include: {
+      template: true,
+      gallery: true,
+      rsvps: true,
+      gifts: true,
+      settings: true,
+      stories: true,
+    },
   });
 }
 
@@ -105,11 +120,15 @@ function toGiftCreateData(gifts: GiftItemInput[]) {
   return gifts.map((item, index) => ({ ...item, order: index }));
 }
 
-/** Membuat invitation beserta gallery & gift-nya dalam satu operasi. */
+function toStoryCreateData(stories: StoryItemInput[]) {
+  return stories.map((item, index) => ({ ...item, order: index }));
+}
+
+/** Membuat invitation beserta gallery, gift, & story-nya dalam satu operasi. */
 export async function createInvitation(
   input: CreateInvitationInput,
 ): Promise<Invitation> {
-  const { gallery = [], gifts = [], ...invitationData } = input;
+  const { gallery = [], gifts = [], stories = [], ...invitationData } = input;
 
   return db.invitation.create({
     data: {
@@ -117,20 +136,21 @@ export async function createInvitation(
       settings: { create: {} }, // Settings dibuat otomatis dengan default
       gallery: { create: toGalleryCreateData(gallery) },
       gifts: { create: toGiftCreateData(gifts) },
+      stories: { create: toStoryCreateData(stories) },
     },
   });
 }
 
 /**
- * Update invitation. Kalau `gallery`/`gifts` dikirim, seluruh baris lama
- * diganti dengan yang baru (replace-all) — cukup untuk semantik "simpan
- * form wizard", tidak perlu diff per-item.
+ * Update invitation. Kalau `gallery`/`gifts`/`stories` dikirim, seluruh
+ * baris lama diganti dengan yang baru (replace-all) — cukup untuk semantik
+ * "simpan form wizard", tidak perlu diff per-item.
  */
 export async function updateInvitation(
   id: string,
   input: UpdateInvitationInput,
 ): Promise<Invitation> {
-  const { gallery, gifts, ...invitationData } = input;
+  const { gallery, gifts, stories, ...invitationData } = input;
 
   return db.$transaction(async (tx) => {
     if (gallery) {
@@ -150,6 +170,18 @@ export async function updateInvitation(
       if (gifts.length > 0) {
         await tx.gift.createMany({
           data: toGiftCreateData(gifts).map((item) => ({
+            ...item,
+            invitationId: id,
+          })),
+        });
+      }
+    }
+
+    if (stories) {
+      await tx.story.deleteMany({ where: { invitationId: id } });
+      if (stories.length > 0) {
+        await tx.story.createMany({
+          data: toStoryCreateData(stories).map((item) => ({
             ...item,
             invitationId: id,
           })),

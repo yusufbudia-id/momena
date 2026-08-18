@@ -90,6 +90,8 @@ model Invitation {
   brideName        String? // nama mempelai wanita — dipakai section BrideGroom
   groomParents     String? // mis. "Putra dari Bapak Suryanto & Ibu Wati"
   brideParents     String? // mis. "Putri dari Bapak Hartono & Ibu Rahayu"
+  groomInstagram   String? // handle tanpa @, mis. "andi.wijaya"
+  brideInstagram   String?
   eventDate        DateTime?
   eventLocation    String?
   eventAddress     String?
@@ -106,6 +108,7 @@ model Invitation {
   gallery  Gallery[]
   rsvps    Rsvp[]
   gifts    Gift[]
+  stories  Story[]
   settings Settings?
 
   @@index([userId])
@@ -130,6 +133,28 @@ model Gallery {
 
   @@index([invitationId])
   @@map("galleries")
+}
+
+// ─────────────────────────────────────────────────────────────
+// Story
+// Kisah cinta / linimasa hubungan — ditampilkan section LoveStory/Timeline.
+// ─────────────────────────────────────────────────────────────
+
+model Story {
+  id           String     @id @default(cuid())
+  invitationId String
+  invitation   Invitation @relation(fields: [invitationId], references: [id], onDelete: Cascade)
+
+  title       String // mis. "Pertama Bertemu"
+  date        String? // teks bebas, mis. "Januari 2020" — bukan DateTime,
+  // supaya admin bisa isi presisi sesuka mereka tanpa dipaksa tanggal penuh
+  description String
+  order       Int     @default(0)
+
+  createdAt DateTime @default(now())
+
+  @@index([invitationId])
+  @@map("stories")
 }
 
 // ─────────────────────────────────────────────────────────────

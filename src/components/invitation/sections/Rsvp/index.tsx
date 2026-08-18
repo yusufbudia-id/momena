@@ -77,6 +77,14 @@ export function Rsvp({ invitation, guestName }: SectionProps) {
 
   const name = invitation.couple?.first ?? invitation.title.split(" ")[0];
 
+  const tally = invitation.guestBook.reduce(
+    (acc, entry) => {
+      acc[entry.status] += 1;
+      return acc;
+    },
+    { ATTENDING: 0, NOT_ATTENDING: 0, MAYBE: 0 } as Record<AttendanceStatus, number>,
+  );
+
   return (
     <section id="rsvp" className="px-6 py-16">
       <div className="mx-auto max-w-md text-center">
@@ -153,7 +161,30 @@ export function Rsvp({ invitation, guestName }: SectionProps) {
       </form>
 
       {invitation.guestBook.length > 0 && (
-        <div className="mx-auto mt-10 flex max-w-md flex-col gap-3">
+        <div className="mx-auto mt-10 flex max-w-md flex-col gap-4">
+          <div className="divide-line border-line grid grid-cols-3 divide-x rounded-xl border text-center">
+            <div className="py-3">
+              <p className="text-ink text-xl font-semibold tabular-nums">
+                {tally.ATTENDING}
+              </p>
+              <p className="text-ink-soft text-[11px] tracking-wide uppercase">Hadir</p>
+            </div>
+            <div className="py-3">
+              <p className="text-ink text-xl font-semibold tabular-nums">
+                {tally.NOT_ATTENDING}
+              </p>
+              <p className="text-ink-soft text-[11px] tracking-wide uppercase">
+                Tidak Hadir
+              </p>
+            </div>
+            <div className="py-3">
+              <p className="text-ink text-xl font-semibold tabular-nums">{tally.MAYBE}</p>
+              <p className="text-ink-soft text-[11px] tracking-wide uppercase">
+                Masih Ragu
+              </p>
+            </div>
+          </div>
+
           <h3 className="text-ink-soft text-sm font-medium">
             {invitation.guestBook.length} ucapan & konfirmasi
           </h3>

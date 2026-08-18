@@ -1,3 +1,4 @@
+import { Instagram } from "lucide-react";
 import Image from "next/image";
 
 import type { SectionProps } from "../../../../types";
@@ -55,7 +56,8 @@ function PersonPhoto({
 export function BrideGroom({ invitation }: SectionProps) {
   if (!invitation.couple) return null;
 
-  const { first, second, firstParents, secondParents } = invitation.couple;
+  const { first, second, firstParents, secondParents, firstInstagram, secondInstagram } =
+    invitation.couple;
   const firstPhoto = invitation.gallery[0]?.imageUrl ?? null;
   const secondPhoto = invitation.gallery[1]?.imageUrl ?? null;
 
@@ -82,6 +84,16 @@ export function BrideGroom({ invitation }: SectionProps) {
                 {firstParents}
               </p>
             )}
+            {firstInstagram && (
+              <a
+                href={`https://instagram.com/${firstInstagram}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-2 inline-flex items-center gap-1.5 text-xs text-[var(--color-accent-ink)] hover:underline"
+              >
+                <Instagram className="size-3.5" />@{firstInstagram}
+              </a>
+            )}
           </div>
         </div>
 
@@ -96,6 +108,17 @@ export function BrideGroom({ invitation }: SectionProps) {
               <p className="mt-3 text-[10px] tracking-[0.35em] text-[var(--color-ink-soft)] uppercase">
                 {secondParents}
               </p>
+            )}
+            {secondInstagram && (
+              <a
+                href={`https://instagram.com/${secondInstagram}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-2 inline-flex items-center justify-end gap-1.5 text-xs text-[var(--color-accent-ink)] hover:underline"
+              >
+                @{secondInstagram}
+                <Instagram className="size-3.5" />
+              </a>
             )}
           </div>
         </div>

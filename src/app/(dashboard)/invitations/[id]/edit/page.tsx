@@ -5,7 +5,7 @@ import { PageHeader } from "@/components/shared/page-header";
 import { updateInvitation } from "@/features/invitation/actions";
 import { InvitationWizard } from "@/features/invitation/components/invitation-wizard";
 import { getInvitationById } from "@/features/invitation/repository";
-import type { Gallery, Gift } from "@/features/invitation/types";
+import type { Gallery, Gift, Story } from "@/features/invitation/types";
 import type { InvitationWizardFormValues } from "@/features/invitation/validation";
 import { getCurrentUserId } from "@/lib/temp-auth";
 
@@ -43,6 +43,8 @@ export default async function EditInvitationPage({ params }: EditInvitationPageP
     brideName: invitation.brideName ?? "",
     groomParents: invitation.groomParents ?? "",
     brideParents: invitation.brideParents ?? "",
+    groomInstagram: invitation.groomInstagram ?? "",
+    brideInstagram: invitation.brideInstagram ?? "",
     eventDate: invitation.eventDate
       ? invitation.eventDate.toISOString().slice(0, 10)
       : "",
@@ -56,6 +58,13 @@ export default async function EditInvitationPage({ params }: EditInvitationPageP
     gallery: invitation.gallery
       .sort((a: Gallery, b: Gallery) => a.order - b.order)
       .map((item: Gallery) => ({ imageUrl: item.imageUrl, caption: item.caption ?? "" })),
+    stories: invitation.stories
+      .sort((a: Story, b: Story) => a.order - b.order)
+      .map((item: Story) => ({
+        title: item.title,
+        date: item.date ?? "",
+        description: item.description,
+      })),
     gifts: invitation.gifts
       .sort((a: Gift, b: Gift) => a.order - b.order)
       .map((item: Gift) =>

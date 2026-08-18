@@ -20,6 +20,20 @@ const invitationBaseSchema = {
   brideName: z.string().max(100).optional().nullable(),
   groomParents: z.string().max(150).optional().nullable(),
   brideParents: z.string().max(150).optional().nullable(),
+  groomInstagram: z
+    .string()
+    .max(50)
+    .regex(/^[a-zA-Z0-9._]*$/, "Tanpa @ atau spasi, cuma huruf/angka/titik/underscore")
+    .optional()
+    .nullable()
+    .or(z.literal("")),
+  brideInstagram: z
+    .string()
+    .max(50)
+    .regex(/^[a-zA-Z0-9._]*$/, "Tanpa @ atau spasi, cuma huruf/angka/titik/underscore")
+    .optional()
+    .nullable()
+    .or(z.literal("")),
   eventDate: z.preprocess(
     (val) => (val === "" || val === null ? undefined : val),
     z.coerce.date().optional().nullable(),
@@ -53,6 +67,12 @@ export const galleryItemSchema = z.object({
   caption: z.string().max(150).optional().nullable(),
 });
 
+export const storyItemSchema = z.object({
+  title: z.string().min(1, "Judul momen wajib diisi").max(100),
+  date: z.string().max(50).optional().nullable(),
+  description: z.string().min(1, "Cerita wajib diisi").max(500),
+});
+
 export const giftItemSchema = z.discriminatedUnion("method", [
   z.object({
     method: z.literal("BANK_TRANSFER"),
@@ -72,11 +92,12 @@ export const giftItemSchema = z.discriminatedUnion("method", [
 export const createInvitationSchema = z.object(invitationBaseSchema);
 export const updateInvitationSchema = z.object(invitationBaseSchema).partial();
 
-/** Schema penuh yang dipakai wizard Create/Edit (Event + Gallery + Gift). */
+/** Schema penuh yang dipakai wizard Create/Edit (Event + Gallery + Gift + Story). */
 export const invitationWizardSchema = z.object({
   ...invitationBaseSchema,
   gallery: z.array(galleryItemSchema).max(20).default([]),
   gifts: z.array(giftItemSchema).max(10).default([]),
+  stories: z.array(storyItemSchema).max(20).default([]),
 });
 
 /**
@@ -92,6 +113,8 @@ export const invitationWizardFormSchema = z.object({
   brideName: invitationBaseSchema.brideName,
   groomParents: invitationBaseSchema.groomParents,
   brideParents: invitationBaseSchema.brideParents,
+  groomInstagram: invitationBaseSchema.groomInstagram,
+  brideInstagram: invitationBaseSchema.brideInstagram,
   eventDate: z.string().optional().nullable(),
   eventLocation: invitationBaseSchema.eventLocation,
   eventAddress: invitationBaseSchema.eventAddress,
@@ -102,6 +125,7 @@ export const invitationWizardFormSchema = z.object({
   videoUrl: invitationBaseSchema.videoUrl,
   gallery: z.array(galleryItemSchema).max(20).default([]),
   gifts: z.array(giftItemSchema).max(10).default([]),
+  stories: z.array(storyItemSchema).max(20).default([]),
 });
 
 export type CreateInvitationSchema = z.infer<typeof createInvitationSchema>;
@@ -109,4 +133,5 @@ export type UpdateInvitationSchema = z.infer<typeof updateInvitationSchema>;
 export type InvitationWizardSchema = z.infer<typeof invitationWizardSchema>;
 export type InvitationWizardFormValues = z.infer<typeof invitationWizardFormSchema>;
 export type GalleryItemSchema = z.infer<typeof galleryItemSchema>;
+export type StoryItemSchema = z.infer<typeof storyItemSchema>;
 export type GiftItemSchema = z.infer<typeof giftItemSchema>;

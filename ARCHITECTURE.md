@@ -301,8 +301,8 @@ Sudah dikonfigurasi di `tsconfig.json`:
 | Tahap | Status |
 |---|---|
 | Struktur project | ✅ |
-| Prisma schema (User, Template, Invitation +groomName/brideName/groomParents/brideParents/quote/videoUrl, Gallery, Rsvp, Gift, Settings) | ✅ |
-| Database migration | ⚠️ 4 file SQL ditulis manual: `20260724000000_init/`, `20260725000000_add_couple_quote_video/`, `20260726000000_add_rsvp_message/`, `20260810000000_add_parents_names/` (bukan hasil `prisma migrate dev` resmi — lihat catatan di bawah), belum di-apply ke DB manapun |
+| Prisma schema (User, Template, Invitation +groomName/brideName/groomParents/brideParents/groomInstagram/brideInstagram/quote/videoUrl, Gallery, Story, Rsvp, Gift, Settings) | ✅ |
+| Database migration | ⚠️ 6 file SQL ditulis manual: `20260724000000_init/`, `20260725000000_add_couple_quote_video/`, `20260726000000_add_rsvp_message/`, `20260810000000_add_parents_names/`, `20260811000000_add_instagram_handles/`, `20260812000000_add_story/` (bukan hasil `prisma migrate dev` resmi — lihat catatan di bawah), belum di-apply ke DB manapun |
 | Seed (`prisma/seed.ts`): admin + 3 template (Elegant, Minimal, Modern) | ✅ |
 | Repository layer (`features/invitation`, `features/template`) | ✅ |
 | Zod validation (`features/invitation/validation.ts`) | ✅ |
@@ -347,12 +347,8 @@ terhadap schema — kalau ada perbedaan, Prisma akan menandainya.
   dibuat (di luar Definition of Done Sprint 6): balasan admin, like/emoji,
   pagination guest book, moderasi, export Excel.
   Endpoint edit `Settings` juga belum ada UI-nya (dibuat otomatis dengan
-  default saat invitation dibuat). Gallery & Gift sudah tertangani lewat
-  `invitation.repository`/wizard (create/update replace-all).
-- Tabel **Story** — section `LoveStory` & `Timeline` sudah jadi (mengambil
-  `invitation.story` dari ViewModel) tapi `mapper.ts` selalu mengembalikan
-  `[]` karena belum ada tabelnya di schema. Begitu tabelnya ada, cukup ubah
-  `mapper.ts` — section tidak perlu disentuh.
+  default saat invitation dibuat). Gallery, Gift & Story sudah tertangani
+  lewat `invitation.repository`/wizard (create/update replace-all).
 - Konsep **Theme** (varian warna/font per template, terpisah dari layout) —
   `TemplateManifest` sudah punya slot untuk berkembang ke arah ini, field
   skema/warna belum ditambahkan secara formal. Tapi sudah ada preseden
