@@ -1,31 +1,45 @@
 import type { SectionProps } from "../../../../types";
 
-/**
- * Footer lokal Elegant — penutup bergaya kartu undangan resmi: ornamen
- * diamond kecil, nama mempelai sebagai tanda tangan penutup.
- */
 export function Footer({ invitation }: SectionProps) {
-  const coupleName = invitation.couple
-    ? `${invitation.couple.first} & ${invitation.couple.second}`
-    : invitation.title;
+  const first = invitation.couple?.first ?? invitation.title;
+  const second = invitation.couple?.second ?? "";
 
   return (
-    <footer className="border-t border-[var(--color-line)] px-6 py-16 text-center">
-      <div aria-hidden className="mx-auto mb-6 flex items-center justify-center gap-3">
-        <span className="h-px w-10 bg-[var(--color-accent)]/40" />
+    <footer className="px-6 py-18 text-center sm:py-24">
+      <div aria-hidden className="mx-auto flex max-w-xs items-center justify-center gap-3">
+        <span className="h-px flex-1 bg-gradient-to-r from-transparent to-[var(--color-accent)]/45" />
         <span className="size-1.5 rotate-45 bg-[var(--color-accent)]" />
-        <span className="h-px w-10 bg-[var(--color-accent)]/40" />
+        <span className="size-1 rotate-45 bg-[var(--color-accent)]/50" />
+        <span className="size-1.5 rotate-45 bg-[var(--color-accent)]" />
+        <span className="h-px flex-1 bg-gradient-to-l from-transparent to-[var(--color-accent)]/45" />
       </div>
 
-      <p className="font-display text-2xl text-[var(--color-ink)] italic">Terima Kasih</p>
-      <p className="mt-2 text-sm text-[var(--color-ink-soft)]">
-        Atas doa dan restu Anda untuk kebahagiaan kami,
+      <p className="mt-8 font-serif text-lg italic text-[var(--color-ink-soft)]">
+        Wassalamu&apos;alaikum Warahmatullahi Wabarakatuh
       </p>
-      <p className="font-display mt-1 text-lg text-[var(--color-accent-ink)] italic">
-        {coupleName}
+      <p className="mt-5 text-sm leading-7 text-[var(--color-ink-soft)] sm:text-[15px]">
+        Merupakan suatu kehormatan dan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i
+        berkenan hadir serta memberikan doa restu.
       </p>
 
-      <p className="mt-10 text-[10px] tracking-[0.3em] text-[var(--color-ink-soft)]/60 uppercase">
+      <div className="mt-8">
+        <p className="text-[10px] tracking-[0.45em] text-[var(--color-accent)]/75 uppercase">
+          With Love
+        </p>
+        <h3 className="font-display mt-4 text-[clamp(2.8rem,10vw,4.5rem)] leading-none text-[var(--color-gold-light)] italic">
+          {first}
+        </h3>
+        {second && (
+          <>
+            <p className="font-display my-1 text-2xl text-[var(--color-accent)]/55 italic">&amp;</p>
+            <h3 className="font-display text-[clamp(2.8rem,10vw,4.5rem)] leading-none text-[var(--color-gold-light)] italic">
+              {second}
+            </h3>
+          </>
+        )}
+      </div>
+
+      <p className="mt-12 text-[10px] tracking-[0.32em] text-[var(--color-ink-soft)]/55 uppercase">
         Dibuat dengan Momena
       </p>
     </footer>

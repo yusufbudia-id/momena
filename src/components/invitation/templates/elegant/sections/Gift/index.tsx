@@ -1,6 +1,6 @@
 "use client";
 
-import { Check, Copy } from "lucide-react";
+import { Check, Copy, Gift as GiftIcon } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -19,26 +19,54 @@ export function Gift({ invitation }: SectionProps) {
   }
 
   return (
-    <section className="px-6 py-16 text-center">
-      <h2 className="font-display text-ink text-2xl italic">Kirim Hadiah</h2>
-      <p className="text-ink-soft mt-2 text-sm">
-        Doa restu Anda adalah hadiah terbaik. Jika ingin memberi tanda kasih, kami
-        sediakan amplop digital berikut.
-      </p>
+    <section className="px-0 py-2 text-center">
+      <div className="mx-auto max-w-xl">
+        <p className="text-[10px] tracking-[0.5em] text-[var(--color-accent)]/70 uppercase">
+          Gift
+        </p>
+        <h2 className="font-display mt-3 text-3xl italic text-[var(--color-ink)] sm:text-4xl">
+          Tanda Kasih
+        </h2>
+        <p className="mx-auto mt-3 max-w-lg text-sm leading-7 text-[var(--color-ink-soft)] sm:text-[15px]">
+          Kehadiran dan doa restu Anda sudah lebih dari cukup. Namun jika ingin berbagi
+          tanda kasih, Anda dapat menggunakan detail berikut.
+        </p>
+      </div>
 
-      <div className="mx-auto mt-6 flex max-w-md flex-col gap-3">
+      <div className="mx-auto mt-8 flex max-w-xl flex-col gap-4 text-left">
         {invitation.gifts.map((gift) => (
           <div
             key={gift.id}
-            className="border-line bg-surface rounded-xl border p-4 text-left"
+            className="relative overflow-hidden border border-[var(--color-accent)]/18 bg-[linear-gradient(180deg,rgba(201,162,92,.06),rgba(0,0,0,0))] px-5 py-5 shadow-[inset_0_0_40px_rgba(201,162,92,.02),0_14px_36px_rgba(0,0,0,.16)]"
           >
-            <p className="text-ink-soft text-xs tracking-wide uppercase">{gift.label}</p>
-            <div className="mt-1 flex items-center justify-between gap-2">
-              <span className="text-ink font-medium">{gift.number}</span>
+            <div className="absolute inset-x-6 top-0 h-px bg-gradient-to-r from-transparent via-[var(--color-accent)]/40 to-transparent" />
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <p className="inline-flex items-center gap-2 text-[10px] tracking-[0.3em] text-[var(--color-accent)] uppercase">
+                  <GiftIcon className="size-3.5" strokeWidth={1.7} />
+                  {gift.label}
+                </p>
+                {gift.number && (
+                  <p className="mt-3 text-lg tracking-[0.12em] text-[var(--color-gold-light)] sm:text-xl">
+                    {gift.number}
+                  </p>
+                )}
+                {gift.holderName && (
+                  <p className="mt-2 text-sm text-[var(--color-ink-soft)]">
+                    a.n. {gift.holderName}
+                  </p>
+                )}
+                {gift.note && (
+                  <p className="mt-2 text-sm leading-6 text-[var(--color-ink-soft)]">
+                    {gift.note}
+                  </p>
+                )}
+              </div>
+
               {gift.number && (
                 <button
                   onClick={() => handleCopy(gift.id, gift.number!)}
-                  className="border-line text-ink-soft hover:bg-paper flex h-11 items-center gap-1.5 rounded-md border px-3 text-xs"
+                  className="flex h-11 shrink-0 items-center gap-2 border border-[var(--color-accent)]/40 px-4 text-[10px] tracking-[0.22em] text-[var(--color-accent-ink)] uppercase transition-all hover:bg-[var(--color-accent)] hover:text-[#080706]"
                 >
                   {copiedId === gift.id ? (
                     <>
@@ -52,10 +80,6 @@ export function Gift({ invitation }: SectionProps) {
                 </button>
               )}
             </div>
-            {gift.holderName && (
-              <p className="text-ink-soft mt-1 text-sm">a.n. {gift.holderName}</p>
-            )}
-            {gift.note && <p className="text-ink-soft mt-1 text-sm">{gift.note}</p>}
           </div>
         ))}
       </div>

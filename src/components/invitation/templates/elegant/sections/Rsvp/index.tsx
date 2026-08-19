@@ -18,10 +18,10 @@ import { rsvpFormSchema, type RsvpFormValues } from "@/features/rsvp/validation"
 import type { SectionProps } from "../../../../types";
 import type { AttendanceStatus } from "../../../../view-model";
 
-const attendanceOptions: { value: AttendanceStatus; label: string }[] = [
-  { value: "ATTENDING", label: "Hadir" },
-  { value: "NOT_ATTENDING", label: "Tidak Hadir" },
-  { value: "MAYBE", label: "Masih Ragu" },
+const attendanceOptions: { value: AttendanceStatus; label: string; description: string }[] = [
+  { value: "ATTENDING", label: "Hadir", description: "Saya akan datang dan merayakan bersama." },
+  { value: "NOT_ATTENDING", label: "Tidak Hadir", description: "Saya berhalangan hadir namun tetap mengirim doa terbaik." },
+  { value: "MAYBE", label: "Masih Ragu", description: "Saya masih menyesuaikan jadwal dan akan memberi kepastian." },
 ];
 
 const statusLabel: Record<AttendanceStatus, string> = {
@@ -44,6 +44,7 @@ export function Rsvp({ invitation, guestName }: SectionProps) {
     register,
     handleSubmit,
     reset,
+    watch,
     formState: { errors },
   } = useForm<RsvpFormValues>({
     resolver: zodResolver(rsvpFormSchema),
@@ -55,6 +56,8 @@ export function Rsvp({ invitation, guestName }: SectionProps) {
       message: "",
     },
   });
+
+  const selectedStatus = watch("status");
 
   function onSubmit(data: RsvpFormValues) {
     if (invitation.isPreview) {
@@ -76,103 +79,164 @@ export function Rsvp({ invitation, guestName }: SectionProps) {
   }
 
   const name = invitation.couple?.first ?? invitation.title.split(" ")[0];
+  const guestBookEntries = invitation.guestBook.slice().reverse();
 
   return (
-    <section id="rsvp" className="px-6 py-16">
-      <div className="mx-auto max-w-md text-center">
-        <h2 className="font-display text-ink text-2xl italic">Konfirmasi Kehadiran</h2>
-        <p className="text-ink-soft mt-2 text-sm">
-          Mohon konfirmasi kehadiran Anda untuk membantu {name} mempersiapkan acara dengan
-          baik.
+    <section id="rsvp" className="px-0 py-2">
+      <div className="mx-auto max-w-xl text-center">
+        <p className="text-[10px] tracking-[0.5em] text-[var(--color-accent)]/70 uppercase">
+          RSVP
+        </p>
+        <h2 className="font-display mt-3 text-3xl italic text-[var(--color-ink)] sm:text-4xl">
+          Konfirmasi Kehadiran
+        </h2>
+        <p className="mx-auto mt-3 max-w-lg text-sm leading-7 text-[var(--color-ink-soft)] sm:text-[15px]">
+          Mohon bantu {name} mempersiapkan acara dengan mengisi konfirmasi kehadiran
+          serta ucapan terbaik Anda.
         </p>
       </div>
 
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="mx-auto mt-8 flex max-w-md flex-col gap-4 text-left"
+        className="mx-auto mt-8 flex max-w-xl flex-col gap-5 text-left"
       >
-        <div>
-          <Label htmlFor="guestName">Nama</Label>
-          <Input id="guestName" placeholder="Nama lengkap" {...register("guestName")} />
-          <FieldError message={errors.guestName?.message} />
+        <div className="grid gap-5 sm:grid-cols-2">
+          <div>
+            <Label htmlFor="guestName" className="text-[var(--color-ink-soft)]">
+              Nama
+            </Label>
+            <Input
+              id="guestName"
+              placeholder="Nama lengkap"
+              className="mt-2 h-12 rounded-none border-[var(--color-accent)]/18 bg-[var(--color-surface)]/70"
+              {...register("guestName")}
+            />
+            <FieldError message={errors.guestName?.message} />
+          </div>
+
+          <div>
+            <Label htmlFor="phone" className="text-[var(--color-ink-soft)]">
+              Nomor WhatsApp (opsional)
+            </Label>
+            <Input
+              id="phone"
+              placeholder="08…"
+              className="mt-2 h-12 rounded-none border-[var(--color-accent)]/18 bg-[var(--color-surface)]/70"
+              {...register("phone")}
+            />
+            <FieldError message={errors.phone?.message} />
+          </div>
         </div>
 
         <div>
-          <Label htmlFor="phone">Nomor WhatsApp (opsional)</Label>
-          <Input id="phone" placeholder="08…" {...register("phone")} />
-          <FieldError message={errors.phone?.message} />
-        </div>
-
-        <div>
-          <Label htmlFor="attendeeCount">Jumlah Tamu</Label>
+          <Label htmlFor="attendeeCount" className="text-[var(--color-ink-soft)]">
+            Jumlah Tamu
+          </Label>
           <Input
             id="attendeeCount"
             type="number"
             min={1}
             max={20}
+            className="mt-2 h-12 rounded-none border-[var(--color-accent)]/18 bg-[var(--color-surface)]/70"
             {...register("attendeeCount")}
           />
           <FieldError message={errors.attendeeCount?.message} />
         </div>
 
         <div>
-          <Label>Kehadiran</Label>
-          <div className="flex flex-col gap-1">
-            {attendanceOptions.map((option) => (
-              <label
-                key={option.value}
-                className="border-line hover:bg-paper flex min-h-11 cursor-pointer items-center gap-3 rounded-md border px-3 text-sm"
-              >
-                <input
-                  type="radio"
-                  value={option.value}
-                  className="accent-accent size-4"
-                  {...register("status")}
-                />
-                {option.label}
-              </label>
-            ))}
+          <Label className="text-[var(--color-ink-soft)]">Kehadiran</Label>
+          <div className="mt-2 flex flex-col gap-3">
+            {attendanceOptions.map((option) => {
+              const active = selectedStatus === option.value;
+              return (
+                <label
+                  key={option.value}
+                  className={`cursor-pointer border px-4 py-4 transition-all ${
+                    active
+                      ? "border-[var(--color-accent)]/55 bg-[linear-gradient(180deg,rgba(201,162,92,.09),rgba(0,0,0,0))] shadow-[0_10px_28px_rgba(0,0,0,.12)]"
+                      : "border-[var(--color-accent)]/16 bg-[var(--color-surface)]/55 hover:border-[var(--color-accent)]/30"
+                  }`}
+                >
+                  <div className="flex items-start gap-3">
+                    <input
+                      type="radio"
+                      value={option.value}
+                      className="accent-[var(--color-accent)] mt-1 size-4"
+                      {...register("status")}
+                    />
+                    <div>
+                      <p className="text-sm text-[var(--color-ink)]">{option.label}</p>
+                      <p className="mt-1 text-sm leading-6 text-[var(--color-ink-soft)]">
+                        {option.description}
+                      </p>
+                    </div>
+                  </div>
+                </label>
+              );
+            })}
           </div>
           <FieldError message={errors.status?.message} />
         </div>
 
         <div>
-          <Label htmlFor="message">Ucapan</Label>
+          <Label htmlFor="message" className="text-[var(--color-ink-soft)]">
+            Ucapan
+          </Label>
           <Textarea
             id="message"
-            rows={3}
+            rows={4}
             placeholder="Tulis ucapan dan doa untuk mempelai…"
+            className="mt-2 rounded-none border-[var(--color-accent)]/18 bg-[var(--color-surface)]/70 py-3"
             {...register("message")}
           />
           <FieldError message={errors.message?.message} />
         </div>
 
-        <Button type="submit" variant="accent" disabled={isPending} className="h-11">
-          {isPending ? "Mengirim…" : "Kirim"}
+        <Button
+          type="submit"
+          disabled={isPending}
+          className="h-12 rounded-none border border-[var(--color-accent)]/55 bg-transparent px-6 text-[11px] tracking-[0.28em] text-[var(--color-accent-ink)] uppercase hover:bg-[var(--color-accent)] hover:text-[#080706]"
+        >
+          {isPending ? "Mengirim…" : "Kirim Konfirmasi"}
         </Button>
       </form>
 
-      {invitation.guestBook.length > 0 && (
-        <div className="mx-auto mt-10 flex max-w-md flex-col gap-3">
-          <h3 className="text-ink-soft text-sm font-medium">
-            {invitation.guestBook.length} ucapan & konfirmasi
-          </h3>
-          {invitation.guestBook.map((entry) => (
-            <div
-              key={entry.id}
-              className="border-line bg-surface rounded-xl border p-4 text-left"
-            >
-              <div className="flex items-center justify-between gap-2">
-                <span className="text-ink font-medium">{entry.guestName}</span>
-                <Badge variant={statusTone[entry.status]}>
-                  {statusLabel[entry.status]}
-                </Badge>
+      {guestBookEntries.length > 0 && (
+        <div className="mx-auto mt-12 max-w-xl">
+          <div className="mb-5 flex items-center justify-between gap-3">
+            <h3 className="text-sm tracking-[0.25em] text-[var(--color-ink-soft)] uppercase">
+              Ucapan & Konfirmasi
+            </h3>
+            <span className="text-xs text-[var(--color-ink-soft)]">
+              {guestBookEntries.length} entri
+            </span>
+          </div>
+
+          <div className="flex flex-col gap-4">
+            {guestBookEntries.map((entry) => (
+              <div
+                key={entry.id}
+                className="border border-[var(--color-accent)]/16 bg-[var(--color-surface)]/62 px-5 py-4 text-left shadow-[inset_0_0_32px_rgba(201,162,92,.015)]"
+              >
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <div>
+                    <p className="text-base text-[var(--color-ink)]">{entry.guestName}</p>
+                    <p className="mt-1 text-xs tracking-[0.18em] text-[var(--color-ink-soft)] uppercase">
+                      {entry.attendeeCount} tamu
+                    </p>
+                  </div>
+                  <Badge variant={statusTone[entry.status]}>
+                    {statusLabel[entry.status]}
+                  </Badge>
+                </div>
+                {entry.message && (
+                  <p className="mt-3 text-sm leading-7 text-[var(--color-ink-soft)]">
+                    {entry.message}
+                  </p>
+                )}
               </div>
-              {entry.message && (
-                <p className="text-ink-soft mt-1.5 text-sm">{entry.message}</p>
-              )}
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       )}
     </section>
