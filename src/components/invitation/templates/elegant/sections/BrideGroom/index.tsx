@@ -3,10 +3,6 @@ import Image from "next/image";
 
 import type { SectionProps } from "../../../../types";
 
-/**
- * Foto profil satu mempelai — portrait (bukan lingkaran), border halus.
- * Fallback ke monogram inisial kalau belum ada foto (bukan gambar rusak).
- */
 function PersonPhoto({
   src,
   initial,
@@ -18,7 +14,7 @@ function PersonPhoto({
 }) {
   return (
     <div
-      className={`relative aspect-[4/5] w-48 overflow-hidden border border-[var(--color-accent)]/35 shadow-[0_18px_50px_rgba(0,0,0,.35)] sm:w-56 ${
+      className={`group relative aspect-[4/5] w-[min(68vw,13rem)] overflow-hidden border border-[var(--color-accent)]/34 shadow-[0_20px_58px_rgba(0,0,0,.38)] sm:w-56 ${
         align === "end" ? "self-end" : "self-start"
       }`}
     >
@@ -27,8 +23,8 @@ function PersonPhoto({
           src={src}
           alt=""
           fill
-          sizes="(min-width: 640px) 224px, 192px"
-          className="object-cover"
+          sizes="(min-width: 640px) 224px, 68vw"
+          className="object-cover transition-transform duration-700 group-hover:scale-[1.035]"
         />
       ) : (
         <div className="flex h-full w-full items-center justify-center bg-[var(--color-surface)]">
@@ -37,22 +33,24 @@ function PersonPhoto({
           </span>
         </div>
       )}
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/42 via-transparent to-black/8" />
+      <div className="pointer-events-none absolute inset-3 border border-[var(--color-accent)]/16" />
     </div>
   );
 }
 
-/**
- * BrideGroom versi "Editorial Magazine" — section ini LOKAL untuk Elegant
- * saja (duplikat dari `components/invitation/sections/BrideGroom`, tidak
- * memengaruhi Minimal/Modern). Layout asimetris/staggered, ampersand
- * raksasa jadi watermark latar, foto portrait (bukan lingkaran), nama
- * mempelai overlap ke foto untuk kesan kedalaman, nama orang tua kecil
- * dengan tracking sangat renggang.
- *
- * Foto per-mempelai memakai `invitation.gallery[0]`/`[1]` (belum ada field
- * foto khusus per-orang di schema) — fallback ke monogram inisial elegan
- * kalau fotonya belum diisi, bukan gambar rusak.
- */
+function RoleLabel({ children, align }: { children: string; align: "left" | "right" }) {
+  return (
+    <p
+      className={`mb-3 text-[9px] tracking-[0.48em] text-[var(--color-accent)]/75 uppercase ${
+        align === "right" ? "text-right" : "text-left"
+      }`}
+    >
+      {children}
+    </p>
+  );
+}
+
 export function BrideGroom({ invitation }: SectionProps) {
   if (!invitation.couple) return null;
 
@@ -62,25 +60,31 @@ export function BrideGroom({ invitation }: SectionProps) {
   const secondPhoto = invitation.gallery[1]?.imageUrl ?? null;
 
   return (
-    <section className="relative overflow-hidden px-2 py-12 sm:px-6 sm:py-20">
-      {/* Ampersand raksasa — watermark latar yang menjembatani kedua profil */}
+    <section className="relative overflow-hidden px-1 py-10 sm:px-6 sm:py-20">
+      <div className="mb-9 text-center sm:mb-12">
+        <p className="text-[9px] tracking-[0.52em] text-[var(--color-accent)]/70 uppercase">The Couple</p>
+        <h2 className="font-display mt-3 text-3xl italic text-[var(--color-ink)] sm:text-4xl">
+          Dua Hati, Satu Perjalanan
+        </h2>
+      </div>
+
       <span
         aria-hidden
-        className="font-display pointer-events-none absolute inset-0 flex items-center justify-center text-[clamp(9rem,40vw,22rem)] text-[var(--color-accent)]/10 italic select-none"
+        className="font-display pointer-events-none absolute inset-0 flex items-center justify-center pt-20 text-[clamp(9rem,40vw,22rem)] text-[var(--color-accent)]/[0.075] italic select-none"
       >
         &amp;
       </span>
 
       <div className="relative mx-auto flex max-w-sm flex-col gap-20 sm:max-w-lg sm:gap-24">
-        {/* Mempelai pria — rata kiri, foto sejajar atas */}
         <div className="flex flex-col items-start">
           <PersonPhoto src={firstPhoto} initial={first.charAt(0)} align="start" />
-          <div className="-mt-8 ml-4 bg-[var(--color-surface)]/95 px-2 sm:ml-8">
-            <h3 className="font-display text-4xl text-[var(--color-ink)] italic sm:text-5xl">
+          <div className="relative -mt-8 ml-3 max-w-[88%] border-l border-[var(--color-accent)]/22 bg-[var(--color-surface)]/95 px-4 py-3 sm:ml-8">
+            <RoleLabel align="left">The Groom</RoleLabel>
+            <h3 className="font-display text-[clamp(2.4rem,11vw,3.4rem)] leading-none text-[var(--color-ink)] italic">
               {first}
             </h3>
             {firstParents && (
-              <p className="mt-3 text-[10px] tracking-[0.35em] text-[var(--color-ink-soft)] uppercase">
+              <p className="mt-3 text-[10px] leading-5 tracking-[0.22em] text-[var(--color-ink-soft)] uppercase sm:tracking-[0.3em]">
                 {firstParents}
               </p>
             )}
@@ -89,7 +93,7 @@ export function BrideGroom({ invitation }: SectionProps) {
                 href={`https://instagram.com/${firstInstagram}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="mt-2 inline-flex items-center gap-1.5 text-xs text-[var(--color-accent-ink)] hover:underline"
+                className="mt-3 inline-flex items-center gap-1.5 text-xs text-[var(--color-accent-ink)] transition-opacity hover:opacity-75"
               >
                 <Instagram className="size-3.5" />@{firstInstagram}
               </a>
@@ -97,15 +101,15 @@ export function BrideGroom({ invitation }: SectionProps) {
           </div>
         </div>
 
-        {/* Mempelai wanita — rata kanan, digeser turun (staggered) */}
-        <div className="flex flex-col items-end sm:mt-14">
+        <div className="flex flex-col items-end sm:mt-10">
           <PersonPhoto src={secondPhoto} initial={second.charAt(0)} align="end" />
-          <div className="-mt-8 mr-4 bg-[var(--color-surface)]/95 px-2 text-right sm:mr-8">
-            <h3 className="font-display text-4xl text-[var(--color-accent-ink)] italic sm:text-5xl">
+          <div className="relative -mt-8 mr-3 max-w-[88%] border-r border-[var(--color-accent)]/22 bg-[var(--color-surface)]/95 px-4 py-3 text-right sm:mr-8">
+            <RoleLabel align="right">The Bride</RoleLabel>
+            <h3 className="font-display text-[clamp(2.4rem,11vw,3.4rem)] leading-none text-[var(--color-accent-ink)] italic">
               {second}
             </h3>
             {secondParents && (
-              <p className="mt-3 text-[10px] tracking-[0.35em] text-[var(--color-ink-soft)] uppercase">
+              <p className="mt-3 text-[10px] leading-5 tracking-[0.22em] text-[var(--color-ink-soft)] uppercase sm:tracking-[0.3em]">
                 {secondParents}
               </p>
             )}
@@ -114,7 +118,7 @@ export function BrideGroom({ invitation }: SectionProps) {
                 href={`https://instagram.com/${secondInstagram}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="mt-2 inline-flex items-center justify-end gap-1.5 text-xs text-[var(--color-accent-ink)] hover:underline"
+                className="mt-3 inline-flex items-center justify-end gap-1.5 text-xs text-[var(--color-accent-ink)] transition-opacity hover:opacity-75"
               >
                 @{secondInstagram}
                 <Instagram className="size-3.5" />

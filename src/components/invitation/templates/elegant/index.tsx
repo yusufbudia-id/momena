@@ -1,9 +1,9 @@
 "use client";
 
-import { CalendarPlus, Share2 } from "lucide-react";
+import { CalendarPlus, ChevronLeft, ChevronRight, Share2, X } from "lucide-react";
 import { AnimatePresence, motion, useScroll } from "motion/react";
 import dynamic from "next/dynamic";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 import { useInvitationGate } from "../../hooks/use-invitation-gate";
@@ -86,6 +86,41 @@ function LuxuryRuntimeStyles() {
         18% { opacity: .55; }
         52% { opacity: .18; }
         100% { transform: translateX(110%); opacity: 0; }
+      }
+
+      .momena-luxe .luxe-section {
+        position: relative;
+        isolation: isolate;
+      }
+
+      .momena-luxe .luxe-section::before {
+        content: "";
+        position: absolute;
+        inset-inline: 12%;
+        top: -1px;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, rgba(201,162,92,.13), transparent);
+        pointer-events: none;
+      }
+
+      @media (max-width: 639px) {
+        .momena-luxe {
+          -webkit-tap-highlight-color: transparent;
+        }
+        .momena-luxe .luxe-mobile-edge {
+          margin-inline: -0.35rem;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .momena-luxe *,
+        .momena-luxe *::before,
+        .momena-luxe *::after {
+          scroll-behavior: auto !important;
+          animation-duration: .001ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: .001ms !important;
+        }
       }
 
       @media (prefers-reduced-motion: no-preference) {
@@ -343,45 +378,157 @@ function UtilityActions({ invitation }: SectionProps) {
  * perbesar). Tidak mengubah `Gallery.tsx` sama sekali — pakai event
  * delegation (dengar klik di elemen `<img>` mana pun di dalam wrapper). */
 function FramedGallery({ invitation }: SectionProps) {
-  const [lightboxSrc, setLightboxSrc] = useState<string | null>(null);
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+  const photos = invitation.gallery;
 
-  if (invitation.gallery.length === 0) return null;
+  useEffect(() => {
+    if (lightboxIndex === null) return;
+
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") setLightboxIndex(null);
+      if (event.key === "ArrowRight") {
+        setLightboxIndex((current) =>
+          current === null ? null : (current + 1) % photos.length,
+        );
+      }
+      if (event.key === "ArrowLeft") {
+        setLightboxIndex((current) =>
+          current === null ? null : (current - 1 + photos.length) % photos.length,
+        );
+      }
+    }
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [lightboxIndex, photos.length]);
+
+  if (photos.length === 0) return null;
 
   function handleClick(event: React.MouseEvent<HTMLDivElement>) {
     const target = event.target as HTMLElement;
-    if (target.tagName === "IMG") {
-      setLightboxSrc((target as HTMLImageElement).src);
-    }
+    const figure = target.closest("[data-gallery-index]") as HTMLElement | null;
+    if (!figure) return;
+
+    const index = Number(figure.dataset.galleryIndex);
+    if (Number.isFinite(index)) setLightboxIndex(index);
   }
+
+  function showPrevious() {
+    setLightboxIndex((current) =>
+      current === null ? null : (current - 1 + photos.length) % photos.length,
+    );
+  }
+
+  function showNext() {
+    setLightboxIndex((current) =>
+      current === null ? null : (current + 1) % photos.length,
+    );
+  }
+
+  const activePhoto = lightboxIndex === null ? null : photos[lightboxIndex];
 
   return (
     <>
       <div
         onClick={handleClick}
-        className="luxe-sweep relative cursor-zoom-in overflow-hidden border border-[var(--color-accent)]/18 bg-[var(--color-surface)]/58 p-2 shadow-[0_24px_90px_rgba(0,0,0,.22)] sm:p-4"
+        className="luxe-sweep luxe-mobile-edge relative cursor-zoom-in overflow-hidden border border-[var(--color-accent)]/18 bg-[var(--color-surface)]/58 p-1.5 shadow-[0_24px_90px_rgba(0,0,0,.22)] sm:p-4"
       >
         <Gallery invitation={invitation} />
       </div>
 
       <AnimatePresence>
-        {lightboxSrc && (
+        {activePhoto && lightboxIndex !== null && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            onClick={() => setLightboxSrc(null)}
-            className="fixed inset-0 z-[60] flex cursor-zoom-out items-center justify-center bg-black/90 p-6"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Galeri foto"
+            className="fixed inset-0 z-[70] flex items-center justify-center bg-[#030302]/96 px-4 py-16 backdrop-blur-sm sm:p-10"
           >
-            {/* eslint-disable-next-line @next/next/no-img-element -- lightbox pakai src dari elemen next/image yang diklik, bukan next/image itu sendiri */}
-            <img
-              src={lightboxSrc}
-              alt=""
-              className="max-h-full max-w-full rounded-sm object-contain"
-            />
+            <button
+              type="button"
+              aria-label="Tutup galeri"
+              onClick={() => setLightboxIndex(null)}
+              className="absolute right-4 top-4 z-10 flex size-11 items-center justify-center border border-[var(--color-accent)]/35 bg-black/40 text-[var(--color-accent-ink)] transition hover:bg-[var(--color-accent)] hover:text-black sm:right-7 sm:top-7"
+            >
+              <X className="size-5" />
+            </button>
+
+            {photos.length > 1 && (
+              <>
+                <button
+                  type="button"
+                  aria-label="Foto sebelumnya"
+                  onClick={showPrevious}
+                  className="absolute left-3 top-1/2 z-10 flex size-11 -translate-y-1/2 items-center justify-center border border-[var(--color-accent)]/28 bg-black/45 text-[var(--color-accent-ink)] transition hover:border-[var(--color-accent)]/60 sm:left-7"
+                >
+                  <ChevronLeft className="size-5" />
+                </button>
+                <button
+                  type="button"
+                  aria-label="Foto berikutnya"
+                  onClick={showNext}
+                  className="absolute right-3 top-1/2 z-10 flex size-11 -translate-y-1/2 items-center justify-center border border-[var(--color-accent)]/28 bg-black/45 text-[var(--color-accent-ink)] transition hover:border-[var(--color-accent)]/60 sm:right-7"
+                >
+                  <ChevronRight className="size-5" />
+                </button>
+              </>
+            )}
+
+            <motion.div
+              key={activePhoto.id}
+              initial={{ opacity: 0, scale: 0.985, y: 8 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              transition={{ duration: 0.28 }}
+              className="relative flex max-h-full w-full max-w-5xl flex-col items-center"
+            >
+              <div className="relative flex max-h-[72vh] w-full items-center justify-center">
+                {/* eslint-disable-next-line @next/next/no-img-element -- lightbox membutuhkan ukuran intrinsik sumber yang dipilih */}
+                <img
+                  src={activePhoto.imageUrl}
+                  alt={activePhoto.caption ?? invitation.title}
+                  className="max-h-[72vh] max-w-full border border-[var(--color-accent)]/18 object-contain shadow-[0_30px_120px_rgba(0,0,0,.6)]"
+                />
+              </div>
+
+              <div className="mt-5 max-w-2xl text-center">
+                <p className="text-[9px] tracking-[0.42em] text-[var(--color-accent)]/75 uppercase">
+                  {String(lightboxIndex + 1).padStart(2, "0")} / {String(photos.length).padStart(2, "0")}
+                </p>
+                {activePhoto.caption && (
+                  <p className="mt-2 text-sm leading-6 text-[var(--color-ink-soft)] sm:text-[15px]">
+                    {activePhoto.caption}
+                  </p>
+                )}
+                <p className="mt-3 hidden text-[10px] tracking-[0.18em] text-[var(--color-ink-soft)]/45 uppercase sm:block">
+                  Gunakan ← → untuk berpindah · Esc untuk menutup
+                </p>
+              </div>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
     </>
+  );
+}
+
+function FlowMarker({ label }: { label: string }) {
+  return (
+    <div aria-hidden className="my-10 flex items-center gap-4 px-5 sm:my-14">
+      <span className="h-px flex-1 bg-gradient-to-r from-transparent to-[var(--color-accent)]/16" />
+      <span className="text-[8px] tracking-[0.46em] text-[var(--color-accent)]/45 uppercase">
+        {label}
+      </span>
+      <span className="h-px flex-1 bg-gradient-to-l from-transparent to-[var(--color-accent)]/16" />
+    </div>
   );
 }
 
@@ -420,6 +567,9 @@ function CoverGate({
   const coupleName = invitation.couple
     ? `${invitation.couple.first} & ${invitation.couple.second}`
     : invitation.title;
+  const initials = invitation.couple
+    ? `${invitation.couple.first.charAt(0)}${invitation.couple.second.charAt(0)}`.toUpperCase()
+    : invitation.title.charAt(0).toUpperCase();
 
   return (
     <motion.div
@@ -454,7 +604,10 @@ function CoverGate({
 
       <motion.div variants={gateContentVariants} className="relative z-10 flex max-w-sm flex-col items-center">
         <p className="font-serif text-sm italic text-[var(--color-ink-soft)]">Bismillahirrahmanirrahim</p>
-        <div className="my-5 text-xl text-[var(--color-accent)]">✦</div>
+        <div className="relative my-5 flex size-16 items-center justify-center rounded-full border border-[var(--color-accent)]/45 shadow-[0_0_36px_rgba(201,162,92,.08)]">
+          <span className="absolute inset-1.5 rounded-full border border-[var(--color-accent)]/18" />
+          <span className="font-display text-xl tracking-[0.08em] text-[var(--color-gold-light)] italic">{initials}</span>
+        </div>
         <p className="text-[9px] tracking-[0.6em] text-[var(--color-accent)]/75 uppercase">The Wedding Of</p>
         <h1 className="font-display mt-4 text-[clamp(3.1rem,13vw,4.8rem)] leading-[0.95] text-[var(--color-gold-light)] italic drop-shadow-[0_4px_15px_rgba(201,162,92,.18)]">
           {coupleName}
@@ -523,7 +676,7 @@ export function ElegantTemplate({ invitation, guestName }: SectionProps) {
 
         <Ornament variant="laurel" />
 
-        <Reveal duration={0.9} distance={24}>
+        <Reveal duration={0.9} distance={24} className="luxe-section">
           <FramedCard>
             <BrideGroom invitation={invitation} />
             <Ornament variant="line" />
@@ -531,23 +684,27 @@ export function ElegantTemplate({ invitation, guestName }: SectionProps) {
           </FramedCard>
         </Reveal>
 
-        <Reveal duration={0.9} distance={24} className="my-12 sm:my-16">
+        <FlowMarker label="Invitation" />
+
+        <Reveal duration={0.9} distance={24} className="luxe-section my-12 sm:my-16">
           <WelcomeNote invitation={invitation} />
         </Reveal>
 
         <UtilityActions invitation={invitation} />
 
-        <Reveal duration={0.9} distance={24} className="my-12 sm:my-16">
+        <Reveal duration={0.9} distance={24} className="luxe-section my-12 sm:my-16">
           <FramedCard>
             <Countdown invitation={invitation} />
           </FramedCard>
         </Reveal>
 
-        <Reveal duration={0.9} distance={24} className="my-12 sm:my-16">
+        <FlowMarker label="Memories" />
+
+        <Reveal duration={0.9} distance={24} className="luxe-section my-12 sm:my-16">
           <FramedGallery invitation={invitation} />
         </Reveal>
 
-        <Reveal duration={0.9} distance={24} className="my-12 sm:my-16">
+        <Reveal duration={0.9} distance={24} className="luxe-section my-12 sm:my-16">
           <LoveStory invitation={invitation} />
         </Reveal>
 
@@ -563,19 +720,21 @@ export function ElegantTemplate({ invitation, guestName }: SectionProps) {
           <Quote invitation={invitation} />
         </Reveal>
 
-        <Reveal duration={0.9} distance={24} className="my-12 sm:my-16">
+        <Reveal duration={0.9} distance={24} className="luxe-section my-12 sm:my-16">
           <Video invitation={invitation} />
         </Reveal>
 
+        <FlowMarker label="Blessing" />
+
         <Ornament variant="laurel" />
 
-        <Reveal duration={0.9} distance={24}>
+        <Reveal duration={0.9} distance={24} className="luxe-section">
           <FramedCard>
             <Gift invitation={invitation} />
           </FramedCard>
         </Reveal>
 
-        <Reveal duration={0.9} distance={24} className="my-12 sm:my-16">
+        <Reveal duration={0.9} distance={24} className="luxe-section my-12 sm:my-16">
           <FramedCard>
             <Rsvp invitation={invitation} guestName={guestName} />
           </FramedCard>
