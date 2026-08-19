@@ -5,7 +5,7 @@ export function Footer({ invitation }: SectionProps) {
   const second = invitation.couple?.second ?? "";
 
   return (
-    <footer className="px-6 py-18 text-center sm:py-24">
+    <footer className="px-6 py-[4.5rem] text-center sm:py-24">
       <div aria-hidden className="mx-auto flex max-w-xs items-center justify-center gap-3">
         <span className="h-px flex-1 bg-gradient-to-r from-transparent to-[var(--color-accent)]/45" />
         <span className="size-1.5 rotate-45 bg-[var(--color-accent)]" />

@@ -35,7 +35,7 @@ const Countdown = dynamic(() => import("./sections/Countdown").then((m) => m.Cou
 });
 
 /**
- * Palet "old money" khusus Elegant — ivory/cream, charcoal, gold redup.
+ * Palet dark ceremonial luxury khusus Elegant — charcoal, black, gold redup.
  * Dipasang sebagai CSS custom property di wrapper, BUKAN diubah di token
  * global (`globals.css`) — supaya Minimal/Modern tetap pakai palet standar.
  * Semua section (Hero, BrideGroom, dst) sudah dibangun pakai class seperti
@@ -58,6 +58,53 @@ const luxuryTheme = {
  * Elemen dekoratif & fitur khusus template ini (bukan Section — tidak
  * dipakai template lain, jadi aman ditaruh lokal di file ini).
  * ──────────────────────────────────────────────────────────────── */
+
+
+function LuxuryRuntimeStyles() {
+  return (
+    <style>{`
+      .momena-luxe {
+        text-rendering: geometricPrecision;
+      }
+
+      .momena-luxe::selection {
+        background: rgba(201, 162, 92, .28);
+      }
+
+      @keyframes luxeFloat {
+        0%, 100% { transform: translate3d(0, 0, 0) scale(1); opacity: .28; }
+        50% { transform: translate3d(0, -18px, 0) scale(1.06); opacity: .55; }
+      }
+
+      @keyframes luxeGlow {
+        0%, 100% { opacity: .22; filter: blur(0px); }
+        50% { opacity: .45; filter: blur(1px); }
+      }
+
+      @keyframes luxeSweep {
+        0% { transform: translateX(-110%); opacity: 0; }
+        18% { opacity: .55; }
+        52% { opacity: .18; }
+        100% { transform: translateX(110%); opacity: 0; }
+      }
+
+      @media (prefers-reduced-motion: no-preference) {
+        .momena-luxe .luxe-float-a { animation: luxeFloat 10s ease-in-out infinite; }
+        .momena-luxe .luxe-float-b { animation: luxeFloat 13s ease-in-out infinite reverse; }
+        .momena-luxe .luxe-glow { animation: luxeGlow 5.5s ease-in-out infinite; }
+        .momena-luxe .luxe-sweep::after {
+          content: "";
+          position: absolute;
+          inset: 0;
+          background: linear-gradient(100deg, transparent 0%, rgba(240,216,148,.13) 46%, transparent 62%);
+          transform: translateX(-110%);
+          animation: luxeSweep 7s ease-in-out infinite;
+          pointer-events: none;
+        }
+      }
+    `}</style>
+  );
+}
 
 /** Sprig daun kecil — dipakai berpasangan (cermin) di ornamen "laurel". */
 function LeafSprig({ flip }: { flip?: boolean }) {
@@ -137,7 +184,7 @@ function FramedCard({
 }) {
   return (
     <div
-      className={`relative border border-[var(--color-accent)]/20 bg-[var(--color-surface)]/70 px-6 py-10 shadow-[inset_0_0_60px_rgba(201,162,92,0.025),0_20px_80px_rgba(0,0,0,0.18)] backdrop-blur-sm sm:px-12 sm:py-14 ${className}`}
+      className={`luxe-sweep relative overflow-hidden border border-[var(--color-accent)]/22 bg-[linear-gradient(180deg,rgba(201,162,92,.045),rgba(13,12,9,.74)_34%,rgba(13,12,9,.68))] px-5 py-9 shadow-[inset_0_0_70px_rgba(201,162,92,0.035),0_24px_90px_rgba(0,0,0,0.26)] backdrop-blur-sm sm:px-12 sm:py-14 ${className}`}
     >
       <CornerMark className="absolute -top-px -left-px" />
       <CornerMark className="absolute -top-px -right-px rotate-90" />
@@ -175,6 +222,18 @@ function AtmosphereBackground() {
           maskImage: "radial-gradient(circle at 50% 20%, black, transparent 72%)",
         }}
       />
+      <div
+        aria-hidden
+        className="luxe-float-a pointer-events-none fixed -left-24 top-32 -z-10 size-56 rounded-full border border-[var(--color-accent)]/10 bg-[radial-gradient(circle,rgba(201,162,92,.10),transparent_62%)]"
+      />
+      <div
+        aria-hidden
+        className="luxe-float-b pointer-events-none fixed -right-20 bottom-40 -z-10 size-64 rounded-full border border-[var(--color-accent)]/10 bg-[radial-gradient(circle,rgba(240,216,148,.08),transparent_64%)]"
+      />
+      <div
+        aria-hidden
+        className="pointer-events-none fixed inset-x-0 top-0 -z-10 h-40 bg-gradient-to-b from-black/45 to-transparent"
+      />
     </>
   );
 }
@@ -199,10 +258,15 @@ function WelcomeNote({ invitation }: SectionProps) {
   if (!invitation.description) return null;
 
   return (
-    <div className="mx-auto max-w-md px-6 text-center">
-      <p className="first-letter:font-display text-[var(--color-ink-soft)] first-letter:float-left first-letter:mr-1.5 first-letter:text-5xl first-letter:leading-[0.8] first-letter:text-[var(--color-accent-ink)] first-letter:italic">
-        {invitation.description}
+    <div className="mx-auto max-w-lg px-6 text-center">
+      <p className="text-[10px] tracking-[0.5em] text-[var(--color-accent)]/70 uppercase">
+        Invitation
       </p>
+      <div className="mt-5 border-y border-[var(--color-accent)]/16 py-7">
+        <p className="first-letter:font-display text-sm leading-8 text-[var(--color-ink-soft)] first-letter:float-left first-letter:mr-2 first-letter:text-6xl first-letter:leading-[0.82] first-letter:text-[var(--color-accent-ink)] first-letter:italic sm:text-[15px]">
+          {invitation.description}
+        </p>
+      </div>
     </div>
   );
 }
@@ -237,7 +301,7 @@ function buildIcsHref(invitation: InvitationViewModel): string | null {
 }
 
 const utilityButtonClassName =
-  "flex h-11 items-center gap-2 border border-[var(--color-accent)]/50 px-5 text-[10px] tracking-[0.18em] text-[var(--color-accent-ink)] uppercase transition-all hover:bg-[var(--color-accent)] hover:text-[#080706]";
+  "flex h-11 items-center gap-2 border border-[var(--color-accent)]/45 bg-[var(--color-surface)]/55 px-5 text-[10px] tracking-[0.2em] text-[var(--color-accent-ink)] uppercase shadow-[0_12px_32px_rgba(0,0,0,.12)] transition-all hover:border-[var(--color-accent)] hover:bg-[var(--color-accent)] hover:text-[#080706]";
 
 /** FITUR: "Tambah ke Kalender" + "Bagikan" — dari wishlist Guest Experience
  * yang sempat dibahas tapi belum pernah dibangun. Add-to-calendar murni
@@ -294,7 +358,7 @@ function FramedGallery({ invitation }: SectionProps) {
     <>
       <div
         onClick={handleClick}
-        className="cursor-zoom-in border border-[var(--color-line)] bg-[var(--color-surface)]/50 p-3 sm:p-5"
+        className="luxe-sweep relative cursor-zoom-in overflow-hidden border border-[var(--color-accent)]/18 bg-[var(--color-surface)]/58 p-2 shadow-[0_24px_90px_rgba(0,0,0,.22)] sm:p-4"
       >
         <Gallery invitation={invitation} />
       </div>
@@ -373,6 +437,8 @@ function CoverGate({
         />
       )}
       <div aria-hidden className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(201,162,92,.15),_transparent_58%)]" />
+      <div aria-hidden className="luxe-glow absolute left-1/2 top-1/2 aspect-square w-[min(86vw,420px)] -translate-x-1/2 -translate-y-1/2 rounded-full border border-[var(--color-accent)]/12" />
+      <div aria-hidden className="luxe-glow absolute left-1/2 top-1/2 aspect-square w-[min(62vw,300px)] -translate-x-1/2 -translate-y-1/2 rounded-full border border-dashed border-[var(--color-accent)]/10" />
       <motion.div
         aria-hidden
         exit={{ x: "-101%" }}
@@ -390,7 +456,7 @@ function CoverGate({
         <p className="font-serif text-sm italic text-[var(--color-ink-soft)]">Bismillahirrahmanirrahim</p>
         <div className="my-5 text-xl text-[var(--color-accent)]">✦</div>
         <p className="text-[9px] tracking-[0.6em] text-[var(--color-accent)]/75 uppercase">The Wedding Of</p>
-        <h1 className="font-display mt-4 text-5xl leading-tight text-[var(--color-gold-light)] italic drop-shadow-[0_4px_15px_rgba(201,162,92,.18)]">
+        <h1 className="font-display mt-4 text-[clamp(3.1rem,13vw,4.8rem)] leading-[0.95] text-[var(--color-gold-light)] italic drop-shadow-[0_4px_15px_rgba(201,162,92,.18)]">
           {coupleName}
         </h1>
 
@@ -419,7 +485,7 @@ function CoverGate({
  * Welcome Note → Utility Actions → Countdown → Gallery(+lightbox) → Story
  * → Quote → Video → Gift → RSVP → Footer.
  *
- * Gaya "old money": ivory/charcoal/gold, whitespace lega, kartu berbingkai
+ * Gaya dark ceremonial luxury: charcoal/black/gold, whitespace lega, kartu berbingkai
  * untuk section informasi resmi, ornamen bervariasi (bukan 1 motif
  * diulang), transisi fade+slide yang lambat & lembut (0.8–1s). Section
  * yang tidak punya data (mis. belum ada Quote/Video/Story) otomatis
@@ -440,8 +506,9 @@ export function ElegantTemplate({ invitation, guestName }: SectionProps) {
   return (
     <div
       style={luxuryTheme}
-      className="min-h-screen bg-[var(--color-paper)] text-[var(--color-ink)] selection:bg-[var(--color-accent)]/25 [&_h1]:tracking-wide [&_h2]:font-medium [&_h2]:tracking-wide"
+      className="momena-luxe min-h-screen bg-[var(--color-paper)] text-[var(--color-ink)] selection:bg-[var(--color-accent)]/25 [&_h1]:tracking-wide [&_h2]:font-medium [&_h2]:tracking-wide"
     >
+      <LuxuryRuntimeStyles />
       <AtmosphereBackground />
       <ScrollProgressBar />
 
@@ -451,7 +518,7 @@ export function ElegantTemplate({ invitation, guestName }: SectionProps) {
         )}
       </AnimatePresence>
 
-      <div className="mx-auto max-w-2xl overflow-hidden pb-28">
+      <div className="mx-auto max-w-[720px] overflow-hidden px-3 pb-28 sm:px-6">
         <Hero invitation={invitation} />
 
         <Ornament variant="laurel" />

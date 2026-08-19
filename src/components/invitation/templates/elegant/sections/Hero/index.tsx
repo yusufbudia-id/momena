@@ -25,17 +25,17 @@ export function Hero({ invitation }: SectionProps) {
     : null;
 
   return (
-    <section className="relative flex min-h-[86svh] items-center justify-center overflow-hidden px-5 py-16 text-center sm:px-8 sm:py-24">
+    <section className="relative flex min-h-[88svh] items-center justify-center overflow-hidden px-2 py-14 text-center sm:px-8 sm:py-24">
       <div
         aria-hidden
-        className="pointer-events-none absolute left-1/2 top-1/2 aspect-square w-[min(92vw,620px)] -translate-x-1/2 -translate-y-1/2 rounded-full border border-[var(--color-accent)]/10"
+        className="luxe-glow pointer-events-none absolute left-1/2 top-1/2 aspect-square w-[min(92vw,650px)] -translate-x-1/2 -translate-y-1/2 rounded-full border border-[var(--color-accent)]/10"
       />
       <div
         aria-hidden
-        className="pointer-events-none absolute left-1/2 top-1/2 aspect-square w-[min(68vw,430px)] -translate-x-1/2 -translate-y-1/2 rounded-full border border-dashed border-[var(--color-accent)]/10"
+        className="luxe-glow pointer-events-none absolute left-1/2 top-1/2 aspect-square w-[min(68vw,450px)] -translate-x-1/2 -translate-y-1/2 rounded-full border border-dashed border-[var(--color-accent)]/12"
       />
 
-      <div className="relative w-full max-w-xl border border-[var(--color-accent)]/25 bg-[var(--color-surface)]/55 px-6 py-12 shadow-[0_0_0_6px_rgba(201,162,92,0.025),0_0_0_7px_rgba(201,162,92,0.10),0_30px_100px_rgba(0,0,0,0.45),inset_0_0_70px_rgba(0,0,0,0.25)] backdrop-blur-[2px] sm:px-12 sm:py-16">
+      <div className="luxe-sweep relative w-full max-w-xl overflow-hidden border border-[var(--color-accent)]/26 bg-[linear-gradient(180deg,rgba(201,162,92,.055),rgba(13,12,9,.60)_34%,rgba(13,12,9,.48))] px-5 py-12 shadow-[0_0_0_6px_rgba(201,162,92,0.025),0_0_0_7px_rgba(201,162,92,0.10),0_32px_120px_rgba(0,0,0,0.52),inset_0_0_85px_rgba(0,0,0,0.25)] backdrop-blur-[2px] sm:px-12 sm:py-16">
         <Corner className="left-[-1px] top-[-1px] border-l-2 border-t-2" />
         <Corner className="right-[-1px] top-[-1px] border-r-2 border-t-2" />
         <Corner className="bottom-[-1px] left-[-1px] border-b-2 border-l-2" />
@@ -58,8 +58,8 @@ export function Hero({ invitation }: SectionProps) {
               alt=""
               fill
               priority
-              sizes="280px"
-              className="object-cover opacity-90 grayscale-[15%]"
+              sizes="(min-width: 640px) 280px, 250px"
+              className="object-cover opacity-90 grayscale-[12%] contrast-[1.04]"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-transparent to-black/10" />
             <div className="absolute inset-3 border border-[var(--color-accent)]/25" />
@@ -98,7 +98,7 @@ export function Hero({ invitation }: SectionProps) {
         )}
 
         <p className="mt-7 text-[9px] tracking-[0.42em] text-[var(--color-accent)]/50 uppercase">
-          With love &amp; blessing
+          {invitation.tagline || "With love & blessing"}
         </p>
       </div>
     </section>
