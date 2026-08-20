@@ -28,8 +28,9 @@ export function Gallery({ invitation }: SectionProps) {
             <figure
               key={photo.id}
               data-gallery-index={index}
+              style={{ boxShadow: "var(--luxe-gallery-shadow)" }}
               className={[
-                "group relative overflow-hidden border border-[var(--color-accent)]/15 bg-[var(--color-surface)]/60 shadow-[0_16px_40px_rgba(0,0,0,.18)]",
+                "group relative overflow-hidden border border-[var(--color-accent)]/15 bg-[var(--color-surface)]/60 ",
                 featured
                   ? "col-span-2 aspect-[16/10] md:col-span-2"
                   : portrait
@@ -46,9 +47,9 @@ export function Gallery({ invitation }: SectionProps) {
                     ? "(min-width: 768px) 66vw, 100vw"
                     : "(min-width: 768px) 33vw, 50vw"
                 }
-                className="object-cover transition duration-700 group-hover:scale-[1.045] group-hover:contrast-[1.04]"
+                className="luxe-photo object-cover transition duration-700 group-hover:scale-[1.045] group-hover:contrast-[1.04]"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/5 to-transparent opacity-75 transition-opacity group-hover:opacity-90" />
+              <div className="luxe-gallery-overlay absolute inset-0 opacity-75 transition-opacity group-hover:opacity-90" />
               <div className="pointer-events-none absolute inset-2.5 border border-[var(--color-accent)]/0 transition-colors duration-500 group-hover:border-[var(--color-accent)]/22 sm:inset-3" />
               <div className="absolute inset-x-0 bottom-0 p-3 text-left sm:p-5">
                 <span className="inline-flex items-center gap-2 text-[8px] tracking-[0.36em] text-[var(--color-gold-light)] uppercase sm:text-[9px]">
@@ -56,7 +57,7 @@ export function Gallery({ invitation }: SectionProps) {
                   Memory {String(index + 1).padStart(2, "0")}
                 </span>
                 {photo.caption && (
-                  <figcaption className="mt-2 line-clamp-2 text-xs leading-5 text-white/90 sm:text-sm sm:leading-6">
+                  <figcaption className="mt-2 line-clamp-2 text-xs leading-5 text-[var(--luxe-caption)] sm:text-sm sm:leading-6">
                     {photo.caption}
                   </figcaption>
                 )}

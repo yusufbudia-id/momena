@@ -61,6 +61,18 @@ const elegantThemes: Record<ElegantVariant, React.CSSProperties> = {
     "--luxe-curtain-a": "#080806",
     "--luxe-curtain-b": "#151006",
     "--luxe-sticky": "rgba(10,9,7,.92)",
+    "--luxe-hero-fill": "linear-gradient(180deg,rgba(201,162,92,.065),rgba(13,12,9,.61)_32%,rgba(13,12,9,.48))",
+    "--luxe-hero-shadow": "0 0 0 5px rgba(201,162,92,.025),0 0 0 6px rgba(201,162,92,.09),0 34px 130px rgba(0,0,0,.56),inset 0 0 90px rgba(0,0,0,.28)",
+    "--luxe-frame-fill": "linear-gradient(180deg,rgba(201,162,92,.045),rgba(13,12,9,.74)_34%,rgba(13,12,9,.68))",
+    "--luxe-card-shadow": "inset 0 0 70px rgba(201,162,92,.035),0 24px 90px rgba(0,0,0,.26)",
+    "--luxe-photo-shadow": "0 24px 70px rgba(0,0,0,.38)",
+    "--luxe-gallery-shadow": "0 24px 90px rgba(0,0,0,.22)",
+    "--luxe-control-bg": "rgba(0,0,0,.42)",
+    "--luxe-lightbox": "rgba(3,3,2,.96)",
+    "--luxe-photo-overlay": "linear-gradient(to top,rgba(0,0,0,.72),transparent 58%,rgba(0,0,0,.12))",
+    "--luxe-gallery-overlay": "linear-gradient(to top,rgba(0,0,0,.84),rgba(0,0,0,.05),transparent)",
+    "--luxe-caption": "rgba(255,255,255,.92)",
+    "--luxe-paper-grain": "0",
   } as React.CSSProperties,
   ivory: {
     "--color-paper": "#f6f0e4",
@@ -78,6 +90,18 @@ const elegantThemes: Record<ElegantVariant, React.CSSProperties> = {
     "--luxe-curtain-a": "#f3eadb",
     "--luxe-curtain-b": "#dfcfb2",
     "--luxe-sticky": "rgba(248,241,228,.94)",
+    "--luxe-hero-fill": "linear-gradient(180deg,rgba(255,251,243,.94),rgba(248,239,223,.90))",
+    "--luxe-hero-shadow": "0 0 0 5px rgba(167,123,50,.035),0 0 0 6px rgba(167,123,50,.10),0 30px 90px rgba(91,66,34,.16),inset 0 0 80px rgba(167,123,50,.035)",
+    "--luxe-frame-fill": "linear-gradient(180deg,rgba(255,250,240,.92),rgba(250,243,230,.88))",
+    "--luxe-card-shadow": "inset 0 0 70px rgba(167,123,50,.035),0 22px 70px rgba(95,70,35,.12)",
+    "--luxe-photo-shadow": "0 22px 62px rgba(91,66,34,.18)",
+    "--luxe-gallery-shadow": "0 22px 70px rgba(91,66,34,.14)",
+    "--luxe-control-bg": "rgba(255,250,240,.78)",
+    "--luxe-lightbox": "rgba(36,29,20,.94)",
+    "--luxe-photo-overlay": "linear-gradient(to top,rgba(48,40,31,.42),transparent 62%,rgba(255,250,240,.08))",
+    "--luxe-gallery-overlay": "linear-gradient(to top,rgba(45,35,24,.64),rgba(45,35,24,.03),transparent)",
+    "--luxe-caption": "rgba(255,251,243,.96)",
+    "--luxe-paper-grain": "1",
   } as React.CSSProperties,
 };
 
@@ -137,6 +161,99 @@ function LuxuryRuntimeStyles() {
         .momena-luxe .luxe-mobile-edge {
           margin-inline: -0.35rem;
         }
+      }
+
+      .momena-luxe[data-elegant-variant="noir"] .luxe-variant-ornament::before,
+      .momena-luxe[data-elegant-variant="noir"] .luxe-variant-ornament::after {
+        content: "✦";
+        position: absolute;
+        color: var(--color-accent);
+        opacity: .22;
+        font-size: .7rem;
+        letter-spacing: .3em;
+        pointer-events: none;
+      }
+
+      .momena-luxe[data-elegant-variant="noir"] .luxe-variant-ornament::before {
+        top: 1rem;
+        left: 1rem;
+      }
+
+      .momena-luxe[data-elegant-variant="noir"] .luxe-variant-ornament::after {
+        right: 1rem;
+        bottom: 1rem;
+        transform: rotate(180deg);
+      }
+
+      .momena-luxe[data-elegant-variant="ivory"] .luxe-variant-ornament::before,
+      .momena-luxe[data-elegant-variant="ivory"] .luxe-variant-ornament::after {
+        content: "";
+        position: absolute;
+        width: 5rem;
+        height: 5rem;
+        opacity: .34;
+        pointer-events: none;
+        background:
+          radial-gradient(ellipse at 18% 82%, transparent 0 44%, rgba(167,123,50,.45) 45% 46%, transparent 47%),
+          radial-gradient(ellipse at 44% 62%, transparent 0 42%, rgba(167,123,50,.35) 43% 44%, transparent 45%),
+          linear-gradient(135deg, transparent 48.8%, rgba(167,123,50,.35) 49% 50%, transparent 50.2%);
+      }
+
+      .momena-luxe[data-elegant-variant="ivory"] .luxe-variant-ornament::before {
+        top: .8rem;
+        left: .8rem;
+      }
+
+      .momena-luxe[data-elegant-variant="ivory"] .luxe-variant-ornament::after {
+        right: .8rem;
+        bottom: .8rem;
+        transform: rotate(180deg);
+      }
+
+      .momena-luxe[data-elegant-variant="ivory"] .luxe-photo {
+        filter: sepia(.08) saturate(.88) contrast(.98);
+      }
+
+      .momena-luxe[data-elegant-variant="noir"] .luxe-photo {
+        filter: grayscale(.1) contrast(1.035);
+      }
+
+      .momena-luxe .luxe-photo-overlay {
+        background: var(--luxe-photo-overlay);
+      }
+
+      .momena-luxe .luxe-gallery-overlay {
+        background: var(--luxe-gallery-overlay);
+      }
+
+      .momena-luxe [aria-label="Tutup galeri"],
+      .momena-luxe [aria-label="Foto sebelumnya"],
+      .momena-luxe [aria-label="Foto berikutnya"] {
+        background: var(--luxe-control-bg);
+      }
+
+      .momena-luxe .luxe-card-fill {
+        background: var(--luxe-frame-fill);
+        box-shadow: var(--luxe-card-shadow);
+      }
+
+      .momena-luxe[data-elegant-variant="ivory"] .luxe-paper {
+        background-image:
+          radial-gradient(circle at 22% 20%, rgba(167,123,50,.055) 0 1px, transparent 1.2px),
+          radial-gradient(circle at 72% 66%, rgba(167,123,50,.04) 0 1px, transparent 1.2px);
+        background-size: 22px 22px, 31px 31px;
+      }
+
+      .momena-luxe[data-elegant-variant="ivory"] .luxe-curtain-panel {
+        box-shadow: none !important;
+      }
+
+      .momena-luxe[data-elegant-variant="ivory"] .luxe-curtain-panel::after {
+        content: "";
+        position: absolute;
+        inset: 1.1rem;
+        border: 1px solid rgba(167,123,50,.16);
+        pointer-events: none;
       }
 
       @media (prefers-reduced-motion: reduce) {
@@ -246,7 +363,7 @@ function FramedCard({
 }) {
   return (
     <div
-      className={`luxe-sweep relative overflow-hidden border border-[var(--color-accent)]/22 bg-[linear-gradient(180deg,rgba(201,162,92,.045),rgba(13,12,9,.74)_34%,rgba(13,12,9,.68))] px-5 py-9 shadow-[inset_0_0_70px_rgba(201,162,92,0.035),0_24px_90px_rgba(0,0,0,0.26)] backdrop-blur-sm sm:px-12 sm:py-14 ${className}`}
+      className={`luxe-sweep luxe-card-fill luxe-variant-ornament relative overflow-hidden border border-[var(--color-accent)]/22 px-5 py-9 backdrop-blur-sm sm:px-12 sm:py-14 ${className}`}
     >
       <CornerMark className="absolute -top-px -left-px" />
       <CornerMark className="absolute -top-px -right-px rotate-90" />
@@ -464,7 +581,8 @@ function FramedGallery({ invitation }: SectionProps) {
     <>
       <div
         onClick={handleClick}
-        className="luxe-sweep luxe-mobile-edge relative cursor-zoom-in overflow-hidden border border-[var(--color-accent)]/18 bg-[var(--color-surface)]/58 p-1.5 shadow-[0_24px_90px_rgba(0,0,0,.22)] sm:p-4"
+        className="luxe-sweep luxe-mobile-edge luxe-paper relative cursor-zoom-in overflow-hidden border border-[var(--color-accent)]/18 bg-[var(--color-surface)]/58 p-1.5 sm:p-4"
+        style={{ boxShadow: "var(--luxe-gallery-shadow)" }}
       >
         <Gallery invitation={invitation} />
       </div>
@@ -478,13 +596,14 @@ function FramedGallery({ invitation }: SectionProps) {
             role="dialog"
             aria-modal="true"
             aria-label="Galeri foto"
-            className="fixed inset-0 z-[70] flex items-center justify-center bg-[#030302]/96 px-4 py-16 backdrop-blur-sm sm:p-10"
+            className="fixed inset-0 z-[70] flex items-center justify-center px-4 py-16 backdrop-blur-sm sm:p-10"
+            style={{ background: "var(--luxe-lightbox)" }}
           >
             <button
               type="button"
               aria-label="Tutup galeri"
               onClick={() => setLightboxIndex(null)}
-              className="absolute right-4 top-4 z-10 flex size-11 items-center justify-center border border-[var(--color-accent)]/35 bg-black/40 text-[var(--color-accent-ink)] transition hover:bg-[var(--color-accent)] hover:text-black sm:right-7 sm:top-7"
+              className="absolute right-4 top-4 z-10 flex size-11 items-center justify-center border border-[var(--color-accent)]/35 text-[var(--color-accent-ink)] transition hover:bg-[var(--color-accent)] hover:text-black sm:right-7 sm:top-7"
             >
               <X className="size-5" />
             </button>
@@ -559,6 +678,36 @@ function FlowMarker({ label }: { label: string }) {
   );
 }
 
+function ChapterNav({ invitation }: SectionProps) {
+  const items = [
+    { href: "#couple", label: "Couple", show: Boolean(invitation.couple) },
+    { href: "#details", label: "Details", show: Boolean(invitation.eventDate) },
+    { href: "#gallery", label: "Gallery", show: invitation.gallery.length > 0 },
+    { href: "#story", label: "Story", show: invitation.story.length > 0 },
+    { href: "#rsvp", label: "RSVP", show: true },
+  ].filter((item) => item.show);
+
+  return (
+    <nav
+      aria-label="Navigasi undangan"
+      className="fixed right-4 top-1/2 z-30 hidden -translate-y-1/2 flex-col items-end gap-3 xl:flex"
+    >
+      {items.map((item, index) => (
+        <a
+          key={item.href}
+          href={item.href}
+          className="group flex items-center gap-2 text-[8px] tracking-[0.28em] text-[var(--color-ink-soft)]/45 uppercase transition hover:text-[var(--color-accent-ink)]"
+        >
+          <span className="opacity-0 transition group-hover:opacity-100">{item.label}</span>
+          <span className="flex size-6 items-center justify-center rounded-full border border-[var(--color-accent)]/18 bg-[var(--color-surface)]/55 backdrop-blur-sm transition group-hover:border-[var(--color-accent)]/45">
+            <span className="text-[7px] text-[var(--color-accent)]/65">{String(index + 1).padStart(2, "0")}</span>
+          </span>
+        </a>
+      ))}
+    </nav>
+  );
+}
+
 const gatePanelVariants = {
   visible: { opacity: 1 },
   hidden: { opacity: 0, transition: { duration: 0.8, ease: "easeInOut", delay: 0.25 } },
@@ -620,13 +769,13 @@ function CoverGate({
         aria-hidden
         exit={{ x: "-101%" }}
         transition={{ duration: 1.25, ease: [0.76, 0, 0.24, 1], delay: 0.18 }}
-        className="absolute inset-y-0 left-0 w-1/2 border-r border-[var(--color-accent)]/20 bg-[linear-gradient(90deg,var(--luxe-curtain-a),var(--luxe-curtain-b),var(--luxe-curtain-a))] shadow-[20px_0_80px_rgba(0,0,0,.5)]"
+        className="luxe-curtain-panel absolute inset-y-0 left-0 w-1/2 border-r border-[var(--color-accent)]/20 bg-[linear-gradient(90deg,var(--luxe-curtain-a),var(--luxe-curtain-b),var(--luxe-curtain-a))] shadow-[20px_0_80px_rgba(0,0,0,.5)]"
       />
       <motion.div
         aria-hidden
         exit={{ x: "101%" }}
         transition={{ duration: 1.25, ease: [0.76, 0, 0.24, 1], delay: 0.18 }}
-        className="absolute inset-y-0 right-0 w-1/2 border-l border-[var(--color-accent)]/20 bg-[linear-gradient(270deg,var(--luxe-curtain-a),var(--luxe-curtain-b),var(--luxe-curtain-a))] shadow-[-20px_0_80px_rgba(0,0,0,.5)]"
+        className="luxe-curtain-panel absolute inset-y-0 right-0 w-1/2 border-l border-[var(--color-accent)]/20 bg-[linear-gradient(270deg,var(--luxe-curtain-a),var(--luxe-curtain-b),var(--luxe-curtain-a))] shadow-[-20px_0_80px_rgba(0,0,0,.5)]"
       />
 
       <motion.div variants={gateContentVariants} className="relative z-10 flex max-w-sm flex-col items-center">
@@ -700,11 +849,13 @@ export function ElegantTemplate({ invitation, guestName }: SectionProps) {
   return (
     <div
       style={elegantThemes[variant]}
-      className="momena-luxe min-h-screen bg-[var(--color-paper)] text-[var(--color-ink)] selection:bg-[var(--color-accent)]/25 [&_h1]:tracking-wide [&_h2]:font-medium [&_h2]:tracking-wide"
+      data-elegant-variant={variant}
+      className="momena-luxe luxe-paper min-h-screen bg-[var(--color-paper)] text-[var(--color-ink)] selection:bg-[var(--color-accent)]/25 [&_h1]:tracking-wide [&_h2]:font-medium [&_h2]:tracking-wide"
     >
       <LuxuryRuntimeStyles />
       <AtmosphereBackground />
       <ScrollProgressBar />
+      {isOpen && <ChapterNav invitation={invitation} />}
 
       {invitation.isPreview && (
         <div className="fixed bottom-20 left-1/2 z-[65] flex -translate-x-1/2 overflow-hidden border border-[var(--color-accent)]/30 bg-[var(--color-surface)]/92 p-1 shadow-[0_16px_55px_rgba(0,0,0,.2)] backdrop-blur-md">
@@ -736,13 +887,15 @@ export function ElegantTemplate({ invitation, guestName }: SectionProps) {
 
         <Ornament variant="laurel" />
 
-        <Reveal duration={0.9} distance={24} className="luxe-section">
+        <div id="couple">
+          <Reveal duration={0.9} distance={24} className="luxe-section">
           <FramedCard>
             <BrideGroom invitation={invitation} />
             <Ornament variant="line" />
             <Location invitation={invitation} />
           </FramedCard>
         </Reveal>
+        </div>
 
         <FlowMarker label="Invitation" />
 
@@ -752,21 +905,27 @@ export function ElegantTemplate({ invitation, guestName }: SectionProps) {
 
         <UtilityActions invitation={invitation} />
 
-        <Reveal duration={0.9} distance={24} className="luxe-section my-12 sm:my-16">
+        <div id="details">
+          <Reveal duration={0.9} distance={24} className="luxe-section my-12 sm:my-16">
           <FramedCard>
             <Countdown invitation={invitation} />
           </FramedCard>
         </Reveal>
+        </div>
 
         <FlowMarker label="Memories" />
 
-        <Reveal duration={0.9} distance={24} className="luxe-section my-12 sm:my-16">
-          <FramedGallery invitation={invitation} />
-        </Reveal>
+        <div id="gallery">
+          <Reveal duration={0.9} distance={24} className="luxe-section my-12 sm:my-16">
+            <FramedGallery invitation={invitation} />
+          </Reveal>
+        </div>
 
-        <Reveal duration={0.9} distance={24} className="luxe-section my-12 sm:my-16">
+        <div id="story">
+          <Reveal duration={0.9} distance={24} className="luxe-section my-12 sm:my-16">
           <LoveStory invitation={invitation} />
         </Reveal>
+        </div>
 
         <Ornament variant="diamond" />
 

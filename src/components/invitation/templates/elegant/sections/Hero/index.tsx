@@ -35,7 +35,10 @@ export function Hero({ invitation }: SectionProps) {
         className="luxe-glow pointer-events-none absolute left-1/2 top-1/2 aspect-square w-[min(70vw,470px)] -translate-x-1/2 -translate-y-1/2 rounded-full border border-dashed border-[var(--color-accent)]/12"
       />
 
-      <div className="luxe-sweep relative w-full max-w-xl overflow-hidden border border-[var(--color-accent)]/28 bg-[linear-gradient(180deg,rgba(201,162,92,.065),rgba(13,12,9,.61)_32%,rgba(13,12,9,.48))] px-4 py-10 shadow-[0_0_0_5px_rgba(201,162,92,0.025),0_0_0_6px_rgba(201,162,92,0.09),0_34px_130px_rgba(0,0,0,0.56),inset_0_0_90px_rgba(0,0,0,0.28)] backdrop-blur-[2px] sm:px-12 sm:py-16">
+      <div
+        className="luxe-sweep luxe-variant-ornament relative w-full max-w-xl overflow-hidden border border-[var(--color-accent)]/28 px-4 py-10 backdrop-blur-[2px] sm:px-12 sm:py-16"
+        style={{ background: "var(--luxe-hero-fill)", boxShadow: "var(--luxe-hero-shadow)" }}
+      >
         <Corner className="left-[-1px] top-[-1px] border-l-2 border-t-2" />
         <Corner className="right-[-1px] top-[-1px] border-r-2 border-t-2" />
         <Corner className="bottom-[-1px] left-[-1px] border-b-2 border-l-2" />
@@ -52,18 +55,21 @@ export function Hero({ invitation }: SectionProps) {
         </p>
 
         {invitation.coverImageUrl && (
-          <div className="group relative mx-auto mt-6 aspect-[4/5] w-full max-w-[238px] overflow-hidden border border-[var(--color-accent)]/30 shadow-[0_24px_70px_rgba(0,0,0,.38)] sm:max-w-[282px]">
+          <div
+            className="group relative mx-auto mt-6 aspect-[4/5] w-full max-w-[238px] overflow-hidden border border-[var(--color-accent)]/30 sm:max-w-[282px]"
+            style={{ boxShadow: "var(--luxe-photo-shadow)" }}
+          >
             <Image
               src={invitation.coverImageUrl}
               alt=""
               fill
               priority
               sizes="(min-width: 640px) 282px, 238px"
-              className="object-cover opacity-90 grayscale-[12%] contrast-[1.04] transition-transform duration-700 group-hover:scale-[1.025]"
+              className="luxe-photo object-cover opacity-95 transition-transform duration-700 group-hover:scale-[1.025]"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/68 via-transparent to-black/12" />
+            <div className="luxe-photo-overlay absolute inset-0" />
             <div className="absolute inset-3 border border-[var(--color-accent)]/24" />
-            <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-[#0c0a06]/85 to-transparent" />
+            <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-[var(--color-surface)]/80 to-transparent" />
           </div>
         )}
 

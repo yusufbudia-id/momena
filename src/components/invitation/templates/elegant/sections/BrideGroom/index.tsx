@@ -14,9 +14,10 @@ function PersonPhoto({
 }) {
   return (
     <div
-      className={`group relative aspect-[4/5] w-[min(68vw,13rem)] overflow-hidden border border-[var(--color-accent)]/34 shadow-[0_20px_58px_rgba(0,0,0,.38)] sm:w-56 ${
+      className={`group relative aspect-[4/5] w-[min(68vw,13rem)] overflow-hidden border border-[var(--color-accent)]/34 sm:w-56 ${
         align === "end" ? "self-end" : "self-start"
       }`}
+      style={{ boxShadow: "var(--luxe-photo-shadow)" }}
     >
       {src ? (
         <Image
@@ -24,7 +25,7 @@ function PersonPhoto({
           alt=""
           fill
           sizes="(min-width: 640px) 224px, 68vw"
-          className="object-cover transition-transform duration-700 group-hover:scale-[1.035]"
+          className="luxe-photo object-cover transition-transform duration-700 group-hover:scale-[1.035]"
         />
       ) : (
         <div className="flex h-full w-full items-center justify-center bg-[var(--color-surface)]">
@@ -33,7 +34,7 @@ function PersonPhoto({
           </span>
         </div>
       )}
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/42 via-transparent to-black/8" />
+      <div className="luxe-photo-overlay pointer-events-none absolute inset-0" />
       <div className="pointer-events-none absolute inset-3 border border-[var(--color-accent)]/16" />
     </div>
   );
