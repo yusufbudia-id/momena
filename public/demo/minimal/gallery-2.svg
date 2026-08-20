@@ -1,0 +1,12 @@
+<svg width="1200" height="1200" viewBox="0 0 1200 1200" xmlns="http://www.w3.org/2000/svg">
+<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#DDD7CE"/><stop offset="1" stop-color="#AFA496"/></linearGradient></defs>
+<rect width="1200" height="1200" fill="url(#g)"/>
+<rect x="42" y="42" width="1116" height="1116" fill="none" stroke="#222222" stroke-opacity=".18" stroke-width="2"/>
+<line x1="216.0" y1="192.0" x2="983.9999999999999" y2="192.0" stroke="#222222" stroke-opacity=".25"/>
+<circle cx="516.0" cy="504.0" r="84.00000000000001" fill="#222222" fill-opacity=".78"/>
+<circle cx="708.0" cy="504.0" r="78.0" fill="#222222" fill-opacity=".62"/>
+<path d="M 348.0 864.0 C 408.00000000000006 660.0, 504.0 612.0, 516.0 612.0 C 576.0 624.0, 636.0 708.0, 660.0 864.0 Z" fill="#222222" fill-opacity=".72"/>
+<path d="M 576.0 864.0 C 612.0 672.0000000000001, 683.9999999999999 612.0, 708.0 612.0 C 768.0 624.0, 827.9999999999999 708.0, 864.0 864.0 Z" fill="#F8F6F1" fill-opacity=".72"/>
+<text x="600.0" y="1032.0" text-anchor="middle" font-family="Georgia,serif" font-size="38" fill="#222222" opacity=".8">MINIMAL MEMORY 2</text>
+<text x="600.0" y="1080.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="16" letter-spacing="7" fill="#222222" opacity=".48">EDITORIAL PLACEHOLDER</text>
+</svg>

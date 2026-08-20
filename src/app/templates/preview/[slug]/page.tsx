@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { demoInvitationViewModel } from "@/components/invitation/demo-data";
+import { getDemoInvitationViewModel } from "@/components/invitation/demo-data";
 import { getTemplateManifest } from "@/components/invitation/templates/registry";
 
 interface TemplatePreviewPageProps {
@@ -17,6 +17,7 @@ export default async function TemplatePreviewPage({ params }: TemplatePreviewPag
   }
 
   const Template = manifest.component;
+  const demoInvitation = getDemoInvitationViewModel(manifest.slug);
 
   return (
     <div>
@@ -32,10 +33,7 @@ export default async function TemplatePreviewPage({ params }: TemplatePreviewPag
           Pakai Template Ini
         </Link>
       </div>
-      <Template
-        invitation={{ ...demoInvitationViewModel, templateSlug: manifest.slug }}
-        guestName="Bapak/Ibu Tamu Undangan"
-      />
+      <Template invitation={demoInvitation} guestName="Bapak/Ibu Tamu Undangan" />
     </div>
   );
 }

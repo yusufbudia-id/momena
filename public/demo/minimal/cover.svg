@@ -1,0 +1,12 @@
+<svg width="1200" height="1600" viewBox="0 0 1200 1600" xmlns="http://www.w3.org/2000/svg">
+<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#EDE9E2"/><stop offset="1" stop-color="#B8AFA2"/></linearGradient></defs>
+<rect width="1200" height="1600" fill="url(#g)"/>
+<rect x="42" y="42" width="1116" height="1516" fill="none" stroke="#252525" stroke-opacity=".18" stroke-width="2"/>
+<line x1="216.0" y1="256.0" x2="983.9999999999999" y2="256.0" stroke="#252525" stroke-opacity=".25"/>
+<circle cx="516.0" cy="672.0" r="84.00000000000001" fill="#252525" fill-opacity=".78"/>
+<circle cx="708.0" cy="672.0" r="78.0" fill="#252525" fill-opacity=".62"/>
+<path d="M 348.0 1152.0 C 408.00000000000006 880.0000000000001, 504.0 816.0, 516.0 816.0 C 576.0 832.0, 636.0 944.0, 660.0 1152.0 Z" fill="#252525" fill-opacity=".72"/>
+<path d="M 576.0 1152.0 C 612.0 896.0000000000001, 683.9999999999999 816.0, 708.0 816.0 C 768.0 832.0, 827.9999999999999 944.0, 864.0 1152.0 Z" fill="#F8F6F1" fill-opacity=".72"/>
+<text x="600.0" y="1376.0" text-anchor="middle" font-family="Georgia,serif" font-size="38" fill="#252525" opacity=".8">MINIMAL COVER</text>
+<text x="600.0" y="1440.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="16" letter-spacing="7" fill="#252525" opacity=".48">EDITORIAL PLACEHOLDER</text>
+</svg>

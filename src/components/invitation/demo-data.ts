@@ -1,15 +1,9 @@
 import type { InvitationViewModel } from "./view-model";
 
-/**
- * Data preview dengan gambar pengisi lokal.
- * Tujuannya agar bentuk template benar-benar bisa dicek ketika ada cover,
- * portrait mempelai, dan galeri yang terisi — tanpa bergantung ke layanan
- * placeholder eksternal.
- */
-export const demoInvitationViewModel: InvitationViewModel = {
+const baseDemo: Omit<InvitationViewModel, "coverImageUrl" | "gallery" | "templateSlug"> = {
   id: "demo",
   slug: "ardi-laras",
-  title: "The Wedding of Ardi & Laras",
+  title: "Pernikahan Ardi & Laras",
   couple: {
     first: "Ardi",
     second: "Laras",
@@ -23,54 +17,11 @@ export const demoInvitationViewModel: InvitationViewModel = {
     "Dan di antara tanda-tanda kekuasaan-Nya ialah Dia menciptakan untukmu pasangan hidup dari jenismu sendiri, supaya kamu cenderung dan merasa tenteram kepadanya.",
   description:
     "Dengan memohon rahmat dan ridho Allah SWT, kami bermaksud menyelenggarakan pernikahan putra-putri kami. Merupakan suatu kehormatan dan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir dan memberikan doa restu.",
-  coverImageUrl: "/demo/elegant/cover-couple.svg",
   videoUrl: null,
   eventDate: new Date(Date.now() + 45 * 24 * 60 * 60 * 1000),
   eventLocation: "Gedung Serba Guna Wijayakusuma",
   eventAddress: "Jl. Merdeka No. 45, Yogyakarta",
   eventMapsUrl: "https://maps.google.com",
-  gallery: [
-    {
-      id: "demo-1",
-      imageUrl: "/demo/elegant/groom-portrait.svg",
-      caption: "Portrait placeholder untuk mempelai pria.",
-    },
-    {
-      id: "demo-2",
-      imageUrl: "/demo/elegant/bride-portrait.svg",
-      caption: "Portrait placeholder untuk mempelai wanita.",
-    },
-    {
-      id: "demo-3",
-      imageUrl: "/demo/elegant/gallery-1.svg",
-      caption: "Contoh foto prewedding dengan tone hangat.",
-    },
-    {
-      id: "demo-4",
-      imageUrl: "/demo/elegant/gallery-2.svg",
-      caption: "Contoh foto detail suasana dan momen candid.",
-    },
-    {
-      id: "demo-5",
-      imageUrl: "/demo/elegant/gallery-3.svg",
-      caption: "Contoh frame portrait close-up pasangan.",
-    },
-    {
-      id: "demo-6",
-      imageUrl: "/demo/elegant/gallery-4.svg",
-      caption: "Contoh frame medium shot untuk galeri.",
-    },
-    {
-      id: "demo-7",
-      imageUrl: "/demo/elegant/gallery-5.svg",
-      caption: "Contoh komposisi gelap untuk varian Noir.",
-    },
-    {
-      id: "demo-8",
-      imageUrl: "/demo/elegant/gallery-6.svg",
-      caption: "Contoh komposisi terang untuk varian Ivory.",
-    },
-  ],
   gifts: [
     {
       id: "demo-gift-1",
@@ -92,22 +43,19 @@ export const demoInvitationViewModel: InvitationViewModel = {
       id: "demo-story-1",
       title: "Pertama Bertemu",
       date: "Januari 2020",
-      description:
-        "Bertemu pertama kali di sebuah acara kampus dan langsung akrab mengobrol.",
+      description: "Bertemu pertama kali di sebuah acara kampus dan langsung akrab mengobrol.",
     },
     {
       id: "demo-story-2",
       title: "Menjalin Komitmen",
       date: "Juni 2021",
-      description:
-        "Setelah dekat cukup lama, kami memutuskan untuk menjalani hubungan yang lebih serius.",
+      description: "Setelah dekat cukup lama, kami memutuskan untuk menjalani hubungan yang lebih serius.",
     },
     {
       id: "demo-story-3",
       title: "Lamaran",
       date: "Maret 2026",
-      description:
-        "Ardi melamar Laras di hadapan keluarga besar, disambut haru dan kebahagiaan.",
+      description: "Ardi melamar Laras di hadapan keluarga besar, disambut haru dan kebahagiaan.",
     },
   ],
   guestBook: [
@@ -128,7 +76,57 @@ export const demoInvitationViewModel: InvitationViewModel = {
       createdAt: new Date(),
     },
   ],
-  templateSlug: "elegant",
   musicUrl: null,
   isPreview: true,
 };
+
+function gallery(prefix: string, count = 6) {
+  return Array.from({ length: count }, (_, index) => ({
+    id: `${prefix}-${index + 1}`,
+    imageUrl: `/demo/${prefix}/gallery-${index + 1}.svg`,
+    caption: `Contoh foto pengisi ${index + 1} untuk preview ${prefix}.`,
+  }));
+}
+
+const elegantGallery = [
+  { id: "elegant-1", imageUrl: "/demo/elegant/groom-portrait.svg", caption: "Portrait placeholder mempelai pria." },
+  { id: "elegant-2", imageUrl: "/demo/elegant/bride-portrait.svg", caption: "Portrait placeholder mempelai wanita." },
+  ...Array.from({ length: 6 }, (_, index) => ({
+    id: `elegant-${index + 3}`,
+    imageUrl: `/demo/elegant/gallery-${index + 1}.svg`,
+    caption: `Contoh foto pengisi ${index + 1} untuk preview Elegant.`,
+  })),
+];
+
+export function getDemoInvitationViewModel(templateSlug: string): InvitationViewModel {
+  if (templateSlug === "modern") {
+    return {
+      ...baseDemo,
+      title: "ARDI × LARAS",
+      coverImageUrl: "/demo/modern/cover.svg",
+      gallery: gallery("modern"),
+      templateSlug: "modern",
+    };
+  }
+
+  if (templateSlug === "minimal") {
+    return {
+      ...baseDemo,
+      title: "Ardi & Laras",
+      coverImageUrl: "/demo/minimal/cover.svg",
+      gallery: gallery("minimal"),
+      templateSlug: "minimal",
+    };
+  }
+
+  return {
+    ...baseDemo,
+    title: "The Wedding of Ardi & Laras",
+    coverImageUrl: "/demo/elegant/cover-couple.svg",
+    gallery: elegantGallery,
+    templateSlug: templateSlug || "elegant",
+  };
+}
+
+/** Backward compatibility untuk pemanggilan lama. */
+export const demoInvitationViewModel = getDemoInvitationViewModel("elegant");
