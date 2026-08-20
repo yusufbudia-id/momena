@@ -1,0 +1,26 @@
+<svg width="1200" height="1600" viewBox="0 0 1200 1600" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#2A2118"/>
+      <stop offset="50%" stop-color="#6A5036"/>
+      <stop offset="100%" stop-color="#E8D9C2"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(600 420) rotate(90) scale(520 380)">
+      <stop stop-color="#F6E9C8" stop-opacity="0.55"/>
+      <stop offset="1" stop-color="#F6E9C8" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1200" height="1600" fill="url(#bg)"/>
+  <rect x="28" y="28" width="1144" height="1544" rx="0" stroke="#E9D49B" stroke-opacity="0.42" stroke-width="2"/>
+  <rect x="56" y="56" width="1088" height="1488" rx="0" stroke="#E9D49B" stroke-opacity="0.18" stroke-width="1"/>
+  <ellipse cx="600" cy="470" rx="430" ry="320" fill="url(#glow)"/>
+  <circle cx="490" cy="600" r="82" fill="#211A14" fill-opacity="0.88"/>
+  <path d="M340 870C360 730 435 664 490 664C545 664 620 730 640 870V980H340V870Z" fill="#1A1511" fill-opacity="0.88"/>
+  <circle cx="710" cy="610" r="76" fill="#251D16" fill-opacity="0.88"/>
+  <path d="M566 884C590 748 656 686 710 686C764 686 830 748 854 884V990H566V884Z" fill="#201914" fill-opacity="0.88"/>
+  <path d="M705 684C784 706 836 776 853 906C790 948 694 972 603 965C586 834 624 714 705 684Z" fill="#F1E4CB" fill-opacity="0.94"/>
+  <path d="M490 677C549 695 603 747 626 834C587 858 537 877 482 888C445 871 408 845 376 812C392 744 442 695 490 677Z" fill="#E0CBA0" fill-opacity="0.62"/>
+  <path d="M340 1110C446 1061 524 1042 595 1043C670 1044 760 1062 866 1110" stroke="#EAD6A1" stroke-opacity="0.38" stroke-width="3"/>
+  <text x="600" y="1230" fill="#F6EACC" font-family="Georgia, serif" font-size="42" font-style="italic" text-anchor="middle" opacity="0.95">Demo Cover Photo</text>
+  <text x="600" y="1282" fill="#E9D49B" font-family="Arial, sans-serif" font-size="22" letter-spacing="8" text-anchor="middle" opacity="0.8">COUPLE PORTRAIT PLACEHOLDER</text>
+</svg>

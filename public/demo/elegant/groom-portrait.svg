@@ -1,0 +1,17 @@
+<svg width="900" height="1125" viewBox="0 0 900 1125" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#D9C3A3"/>
+      <stop offset="100%" stop-color="#4C3827"/>
+    </linearGradient>
+  </defs>
+  <rect width="900" height="1125" fill="url(#bg)"/>
+  <rect x="26" y="26" width="848" height="1073" stroke="#FAEBC6" stroke-opacity="0.45" stroke-width="2"/>
+  <circle cx="450" cy="342" r="112" fill="#231A13" fill-opacity="0.88"/>
+  <path d="M236 825C258 612 356 492 450 492C544 492 642 612 664 825V930H236V825Z" fill="#18120D" fill-opacity="0.9"/>
+  <path d="M332 565C364 686 534 686 568 565" stroke="#F6EACD" stroke-opacity="0.4" stroke-width="3"/>
+  <path d="M370 620H530L500 930H400L370 620Z" fill="#EEE2C7" fill-opacity="0.9"/>
+  <path d="M450 620L520 705L450 785L380 705L450 620Z" fill="#3C2B1D" fill-opacity="0.95"/>
+  <text x="450" y="1010" fill="#FFF5DF" font-family="Georgia, serif" font-size="38" font-style="italic" text-anchor="middle">Groom Placeholder</text>
+  <text x="450" y="1054" fill="#FFEEC0" font-family="Arial, sans-serif" font-size="18" letter-spacing="7" text-anchor="middle" opacity="0.85">PORTRAIT DEMO</text>
+</svg>
