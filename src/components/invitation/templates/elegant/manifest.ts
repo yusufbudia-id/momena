@@ -6,11 +6,11 @@ export const elegantManifest: TemplateManifest = {
   name: "Elegant",
   slug: "elegant",
   author: "Momena",
-  version: "1.0.0",
+  version: "2.0.0",
   premium: true,
   thumbnail: "/templates/elegant/thumbnail.jpg",
   description:
-    "Nuansa klasik nan mewah — cocok untuk pernikahan tradisional maupun modern.",
+    "Luxury wedding experience dengan dua arah visual: Noir yang dramatis dan Ivory yang lembut, dilengkapi cinematic opening, editorial gallery, RSVP, gift, story, dan guest experience premium.",
   sections: [
     "Hero",
     "BrideGroom",

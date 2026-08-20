@@ -33,7 +33,7 @@ export function Location({ invitation }: SectionProps) {
             href={eventMapsUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-6 inline-flex h-11 items-center border border-[var(--color-accent)]/55 px-6 text-[10px] tracking-[0.28em] text-[var(--color-accent-ink)] uppercase transition-all hover:bg-[var(--color-accent)] hover:text-[#080706]"
+            className="mt-6 inline-flex h-11 items-center border border-[var(--color-accent)]/55 px-6 text-[10px] tracking-[0.28em] text-[var(--color-accent-ink)] uppercase transition-all hover:bg-[var(--color-accent)] hover:text-[var(--luxe-button-ink)]"
           >
             Buka Google Maps
           </a>

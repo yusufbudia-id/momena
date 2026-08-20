@@ -195,7 +195,7 @@ export function Rsvp({ invitation, guestName }: SectionProps) {
         <Button
           type="submit"
           disabled={isPending}
-          className="h-12 rounded-none border border-[var(--color-accent)]/55 bg-transparent px-6 text-[11px] tracking-[0.28em] text-[var(--color-accent-ink)] uppercase hover:bg-[var(--color-accent)] hover:text-[#080706]"
+          className="h-12 rounded-none border border-[var(--color-accent)]/55 bg-transparent px-6 text-[11px] tracking-[0.28em] text-[var(--color-accent-ink)] uppercase hover:bg-[var(--color-accent)] hover:text-[var(--luxe-button-ink)]"
         >
           {isPending ? "Mengirim…" : "Kirim Konfirmasi"}
         </Button>

@@ -66,7 +66,7 @@ export function Gift({ invitation }: SectionProps) {
               {gift.number && (
                 <button
                   onClick={() => handleCopy(gift.id, gift.number!)}
-                  className="flex h-11 shrink-0 items-center gap-2 border border-[var(--color-accent)]/40 px-4 text-[10px] tracking-[0.22em] text-[var(--color-accent-ink)] uppercase transition-all hover:bg-[var(--color-accent)] hover:text-[#080706]"
+                  className="flex h-11 shrink-0 items-center gap-2 border border-[var(--color-accent)]/40 px-4 text-[10px] tracking-[0.22em] text-[var(--color-accent-ink)] uppercase transition-all hover:bg-[var(--color-accent)] hover:text-[var(--luxe-button-ink)]"
                 >
                   {copiedId === gift.id ? (
                     <>

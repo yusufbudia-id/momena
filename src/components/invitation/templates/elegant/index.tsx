@@ -42,17 +42,44 @@ const Countdown = dynamic(() => import("./sections/Countdown").then((m) => m.Cou
  * `bg-paper`/`text-ink`/`bg-accent` yang resolve ke `var(--color-*)`, jadi
  * override di sini otomatis "menembus" tanpa section-nya perlu diubah.
  */
-const luxuryTheme = {
-  "--color-paper": "#070706",
-  "--color-surface": "#0d0c09",
-  "--color-ink": "#f4ecd9",
-  "--color-ink-soft": "#b9ad94",
-  "--color-line": "#2d281d",
-  "--color-accent": "#c9a25c",
-  "--color-accent-soft": "#211b10",
-  "--color-accent-ink": "#e1c27d",
-  "--color-gold-light": "#f0d894",
-} as React.CSSProperties;
+type ElegantVariant = "noir" | "ivory";
+
+const elegantThemes: Record<ElegantVariant, React.CSSProperties> = {
+  noir: {
+    "--color-paper": "#070706",
+    "--color-surface": "#0d0c09",
+    "--color-ink": "#f4ecd9",
+    "--color-ink-soft": "#b9ad94",
+    "--color-line": "#2d281d",
+    "--color-accent": "#c9a25c",
+    "--color-accent-soft": "#211b10",
+    "--color-accent-ink": "#e1c27d",
+    "--color-gold-light": "#f0d894",
+    "--luxe-base": "#060605",
+    "--luxe-button-ink": "#080706",
+    "--luxe-gate": "#050504",
+    "--luxe-curtain-a": "#080806",
+    "--luxe-curtain-b": "#151006",
+    "--luxe-sticky": "rgba(10,9,7,.92)",
+  } as React.CSSProperties,
+  ivory: {
+    "--color-paper": "#f6f0e4",
+    "--color-surface": "#fffaf0",
+    "--color-ink": "#30281f",
+    "--color-ink-soft": "#766a59",
+    "--color-line": "#d9c8aa",
+    "--color-accent": "#a77b32",
+    "--color-accent-soft": "#ecdfc6",
+    "--color-accent-ink": "#7c5925",
+    "--color-gold-light": "#9b702d",
+    "--luxe-base": "#f3ecdf",
+    "--luxe-button-ink": "#fffaf0",
+    "--luxe-gate": "#eee3d0",
+    "--luxe-curtain-a": "#f3eadb",
+    "--luxe-curtain-b": "#dfcfb2",
+    "--luxe-sticky": "rgba(248,241,228,.94)",
+  } as React.CSSProperties,
+};
 
 /* ────────────────────────────────────────────────────────────────
  * Elemen dekoratif & fitur khusus template ini (bukan Section — tidak
@@ -237,7 +264,7 @@ function AtmosphereBackground() {
     <>
       <div
         aria-hidden
-        className="pointer-events-none fixed inset-0 -z-30 bg-[#060605]"
+        className="pointer-events-none fixed inset-0 -z-30 bg-[var(--luxe-base)]"
       />
       <div
         aria-hidden
@@ -336,7 +363,7 @@ function buildIcsHref(invitation: InvitationViewModel): string | null {
 }
 
 const utilityButtonClassName =
-  "flex h-11 items-center gap-2 border border-[var(--color-accent)]/45 bg-[var(--color-surface)]/55 px-5 text-[10px] tracking-[0.2em] text-[var(--color-accent-ink)] uppercase shadow-[0_12px_32px_rgba(0,0,0,.12)] transition-all hover:border-[var(--color-accent)] hover:bg-[var(--color-accent)] hover:text-[#080706]";
+  "flex h-11 items-center gap-2 border border-[var(--color-accent)]/45 bg-[var(--color-surface)]/55 px-5 text-[10px] tracking-[0.2em] text-[var(--color-accent-ink)] uppercase shadow-[0_12px_32px_rgba(0,0,0,.12)] transition-all hover:border-[var(--color-accent)] hover:bg-[var(--color-accent)] hover:text-[var(--luxe-button-ink)]";
 
 /** FITUR: "Tambah ke Kalender" + "Bagikan" — dari wishlist Guest Experience
  * yang sempat dibahas tapi belum pernah dibangun. Add-to-calendar murni
@@ -577,7 +604,7 @@ function CoverGate({
       initial="visible"
       animate="visible"
       exit="hidden"
-      className="fixed inset-0 z-50 flex items-center justify-center overflow-hidden bg-[#050504] px-6 text-center"
+      className="fixed inset-0 z-50 flex items-center justify-center overflow-hidden bg-[var(--luxe-gate)] px-6 text-center"
     >
       {invitation.coverImageUrl && (
         <div
@@ -593,13 +620,13 @@ function CoverGate({
         aria-hidden
         exit={{ x: "-101%" }}
         transition={{ duration: 1.25, ease: [0.76, 0, 0.24, 1], delay: 0.18 }}
-        className="absolute inset-y-0 left-0 w-1/2 border-r border-[var(--color-accent)]/20 bg-[linear-gradient(90deg,#080806,#151006,#080806)] shadow-[20px_0_80px_rgba(0,0,0,.5)]"
+        className="absolute inset-y-0 left-0 w-1/2 border-r border-[var(--color-accent)]/20 bg-[linear-gradient(90deg,var(--luxe-curtain-a),var(--luxe-curtain-b),var(--luxe-curtain-a))] shadow-[20px_0_80px_rgba(0,0,0,.5)]"
       />
       <motion.div
         aria-hidden
         exit={{ x: "101%" }}
         transition={{ duration: 1.25, ease: [0.76, 0, 0.24, 1], delay: 0.18 }}
-        className="absolute inset-y-0 right-0 w-1/2 border-l border-[var(--color-accent)]/20 bg-[linear-gradient(270deg,#080806,#151006,#080806)] shadow-[-20px_0_80px_rgba(0,0,0,.5)]"
+        className="absolute inset-y-0 right-0 w-1/2 border-l border-[var(--color-accent)]/20 bg-[linear-gradient(270deg,var(--luxe-curtain-a),var(--luxe-curtain-b),var(--luxe-curtain-a))] shadow-[-20px_0_80px_rgba(0,0,0,.5)]"
       />
 
       <motion.div variants={gateContentVariants} className="relative z-10 flex max-w-sm flex-col items-center">
@@ -624,7 +651,7 @@ function CoverGate({
 
         <button
           onClick={onOpen}
-          className="group mt-8 flex h-12 items-center justify-center border border-[var(--color-accent)]/70 px-9 text-[10px] tracking-[0.34em] text-[var(--color-accent-ink)] uppercase shadow-[0_0_24px_rgba(201,162,92,.08)] transition-all hover:bg-[var(--color-accent)] hover:text-[#080706] hover:shadow-[0_0_34px_rgba(201,162,92,.24)]"
+          className="group mt-8 flex h-12 items-center justify-center border border-[var(--color-accent)]/70 px-9 text-[10px] tracking-[0.34em] text-[var(--color-accent-ink)] uppercase shadow-[0_0_24px_rgba(201,162,92,.08)] transition-all hover:bg-[var(--color-accent)] hover:text-[var(--luxe-button-ink)] hover:shadow-[0_0_34px_rgba(201,162,92,.24)]"
         >
           Buka Undangan <span className="ml-3 transition-transform group-hover:translate-x-1">✦</span>
         </button>
@@ -648,6 +675,20 @@ function CoverGate({
 export function ElegantTemplate({ invitation, guestName }: SectionProps) {
   const { isOpen, open } = useInvitationGate();
   const music = useMusicToggle();
+  const [variant, setVariant] = useState<ElegantVariant>("noir");
+
+  useEffect(() => {
+    const requested = new URLSearchParams(window.location.search).get("variant");
+    if (requested === "ivory" || requested === "noir") setVariant(requested);
+  }, []);
+
+  function switchVariant(next: ElegantVariant) {
+    setVariant(next);
+    const url = new URL(window.location.href);
+    if (next === "noir") url.searchParams.delete("variant");
+    else url.searchParams.set("variant", next);
+    window.history.replaceState({}, "", url);
+  }
 
   function handleOpen() {
     open();
@@ -658,12 +699,31 @@ export function ElegantTemplate({ invitation, guestName }: SectionProps) {
 
   return (
     <div
-      style={luxuryTheme}
+      style={elegantThemes[variant]}
       className="momena-luxe min-h-screen bg-[var(--color-paper)] text-[var(--color-ink)] selection:bg-[var(--color-accent)]/25 [&_h1]:tracking-wide [&_h2]:font-medium [&_h2]:tracking-wide"
     >
       <LuxuryRuntimeStyles />
       <AtmosphereBackground />
       <ScrollProgressBar />
+
+      {invitation.isPreview && (
+        <div className="fixed bottom-20 left-1/2 z-[65] flex -translate-x-1/2 overflow-hidden border border-[var(--color-accent)]/30 bg-[var(--color-surface)]/92 p-1 shadow-[0_16px_55px_rgba(0,0,0,.2)] backdrop-blur-md">
+          {(["noir", "ivory"] as ElegantVariant[]).map((item) => (
+            <button
+              key={item}
+              type="button"
+              onClick={() => switchVariant(item)}
+              className={`h-9 px-4 text-[9px] tracking-[0.25em] uppercase transition ${
+                variant === item
+                  ? "bg-[var(--color-accent)] text-[var(--luxe-button-ink)]"
+                  : "text-[var(--color-ink-soft)] hover:text-[var(--color-ink)]"
+              }`}
+            >
+              {item}
+            </button>
+          ))}
+        </div>
+      )}
 
       <AnimatePresence>
         {!isOpen && (
