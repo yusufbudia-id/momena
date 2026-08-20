@@ -1,0 +1,2 @@
+import type { SectionProps } from "../../../../types";
+export function StickyCta({ invitation:_invitation }:SectionProps){return <div className="safe-bottom fixed inset-x-0 bottom-0 z-30 px-3 pb-3 sm:hidden"><a href="#rsvp" className="flex h-12 items-center justify-between bg-[#ff5f9f] px-5 text-[10px] font-black tracking-[.2em] uppercase text-[#11131a] shadow-[0_12px_40px_rgba(0,0,0,.28)]"><span>RSVP now</span><span>→</span></a></div>}
