@@ -3,6 +3,7 @@ import { db } from "@/lib/db";
 
 import type {
   CreateInvitationInput,
+  EventItemInput,
   GalleryItemInput,
   GiftItemInput,
   Invitation,
@@ -32,6 +33,7 @@ export async function getInvitationById(
       gifts: true,
       settings: true,
       stories: true,
+      events: true,
     },
   });
 }
@@ -48,6 +50,7 @@ export async function getInvitationBySlug(
       gifts: true,
       settings: true,
       stories: true,
+      events: true,
     },
   });
 }
@@ -113,6 +116,10 @@ export async function isSlugTaken(slug: string, excludeId?: string): Promise<boo
   return existing !== null && existing.id !== excludeId;
 }
 
+function toEventCreateData(events: EventItemInput[]) {
+  return events.map((item, index) => ({ ...item, type: item.type || "OTHER", order: index }));
+}
+
 function toGalleryCreateData(gallery: GalleryItemInput[]) {
   return gallery.map((item, index) => ({ ...item, order: index }));
 }
@@ -129,12 +136,18 @@ function toStoryCreateData(stories: StoryItemInput[]) {
 export async function createInvitation(
   input: CreateInvitationInput,
 ): Promise<Invitation> {
-  const { gallery = [], gifts = [], stories = [], ...invitationData } = input;
+  const { events = [], gallery = [], gifts = [], stories = [], ...invitationData } = input;
+  const primaryEvent = events[0];
 
   return db.invitation.create({
     data: {
       ...invitationData,
+      eventDate: primaryEvent?.eventDate ?? invitationData.eventDate ?? null,
+      eventLocation: primaryEvent?.location ?? invitationData.eventLocation ?? null,
+      eventAddress: primaryEvent?.address ?? invitationData.eventAddress ?? null,
+      eventMapsUrl: primaryEvent?.mapsUrl ?? invitationData.eventMapsUrl ?? null,
       settings: { create: {} }, // Settings dibuat otomatis dengan default
+      events: { create: toEventCreateData(events) },
       gallery: { create: toGalleryCreateData(gallery) },
       gifts: { create: toGiftCreateData(gifts) },
       stories: { create: toStoryCreateData(stories) },
@@ -161,9 +174,23 @@ export async function updateInvitation(
     },
   });
 
-  const { gallery, gifts, stories, ...invitationData } = input;
+  const { events, gallery, gifts, stories, ...invitationData } = input;
+  if (events) {
+    const primaryEvent = events[0];
+    invitationData.eventDate = primaryEvent?.eventDate ?? null;
+    invitationData.eventLocation = primaryEvent?.location ?? null;
+    invitationData.eventAddress = primaryEvent?.address ?? null;
+    invitationData.eventMapsUrl = primaryEvent?.mapsUrl ?? null;
+  }
 
   const updated = await db.$transaction(async (tx) => {
+    if (events) {
+      await tx.invitationEvent.deleteMany({ where: { invitationId: id } });
+      if (events.length > 0) {
+        await tx.invitationEvent.createMany({ data: toEventCreateData(events).map((item) => ({ ...item, invitationId: id })) });
+      }
+    }
+
     if (gallery) {
       await tx.gallery.deleteMany({ where: { invitationId: id } });
       if (gallery.length > 0) {

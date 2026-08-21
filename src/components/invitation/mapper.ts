@@ -11,6 +11,8 @@ import type { InvitationViewModel } from "./view-model";
 export function toInvitationViewModel(
   invitation: InvitationWithRelations,
 ): InvitationViewModel {
+  const events = [...invitation.events].sort((a,b)=>a.order-b.order).map((event)=>({ id:event.id, type:event.type, title:event.title, eventDate:event.eventDate, startTime:event.startTime, endTime:event.endTime, location:event.location, address:event.address, mapsUrl:event.mapsUrl }));
+  const primaryEvent = events[0];
   return {
     id: invitation.id,
     slug: invitation.slug,
@@ -41,10 +43,11 @@ export function toInvitationViewModel(
     bridePhotoPositionX: invitation.bridePhotoPositionX,
     bridePhotoPositionY: invitation.bridePhotoPositionY,
     videoUrl: invitation.videoUrl,
-    eventDate: invitation.eventDate,
-    eventLocation: invitation.eventLocation,
-    eventAddress: invitation.eventAddress,
-    eventMapsUrl: invitation.eventMapsUrl,
+    eventDate: primaryEvent?.eventDate ?? invitation.eventDate,
+    eventLocation: primaryEvent?.location ?? invitation.eventLocation,
+    eventAddress: primaryEvent?.address ?? invitation.eventAddress,
+    eventMapsUrl: primaryEvent?.mapsUrl ?? invitation.eventMapsUrl,
+    events,
     gallery: [...invitation.gallery]
       .sort((a, b) => a.order - b.order)
       .map((photo) => ({

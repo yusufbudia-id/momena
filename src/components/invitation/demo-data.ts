@@ -28,6 +28,10 @@ const baseDemo: Omit<InvitationViewModel, "coverImageUrl" | "groomPhotoUrl" | "b
   eventLocation: "Gedung Serba Guna Wijayakusuma",
   eventAddress: "Jl. Merdeka No. 45, Yogyakarta",
   eventMapsUrl: "https://maps.google.com",
+  events: [
+    { id: "demo-event-1", type: "AKAD", title: "Akad Nikah", eventDate: new Date(Date.now() + 45 * 24 * 60 * 60 * 1000), startTime: "08:00", endTime: "09:30", location: "Masjid Wijayakusuma", address: "Jl. Merdeka No. 43, Yogyakarta", mapsUrl: "https://maps.google.com" },
+    { id: "demo-event-2", type: "RESEPSI", title: "Resepsi", eventDate: new Date(Date.now() + 45 * 24 * 60 * 60 * 1000), startTime: "11:00", endTime: "14:00", location: "Gedung Serba Guna Wijayakusuma", address: "Jl. Merdeka No. 45, Yogyakarta", mapsUrl: "https://maps.google.com" },
+  ],
   gifts: [
     {
       id: "demo-gift-1",

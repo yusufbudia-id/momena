@@ -1,7 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Banknote, Check, Heart, Plus, Trash2, Wallet } from "lucide-react";
+import { Banknote, CalendarDays, Check, Heart, MapPin, Plus, Trash2, Wallet } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
@@ -39,10 +39,7 @@ const STEP_FIELDS: Record<number, (keyof InvitationWizardFormValues)[]> = {
     "brideParents",
     "groomInstagram",
     "brideInstagram",
-    "eventDate",
-    "eventLocation",
-    "eventAddress",
-    "eventMapsUrl",
+    "events",
     "description",
     "coverImageUrl",
     "coverImagePublicId",
@@ -119,6 +116,10 @@ export function InvitationWizard({
       eventLocation: "",
       eventAddress: "",
       eventMapsUrl: "",
+      events: [
+        { type: "AKAD", title: "Akad Nikah", eventDate: "", startTime: "", endTime: "", location: "", address: "", mapsUrl: "" },
+        { type: "RESEPSI", title: "Resepsi", eventDate: "", startTime: "", endTime: "", location: "", address: "", mapsUrl: "" },
+      ],
       description: "",
       coverImageUrl: "",
       coverImagePublicId: "",
@@ -141,6 +142,7 @@ export function InvitationWizard({
     },
   });
 
+  const eventArray = useFieldArray({ control, name: "events" });
   const galleryArray = useFieldArray({ control, name: "gallery" });
   const storyArray = useFieldArray({ control, name: "stories" });
   const giftArray = useFieldArray({ control, name: "gifts" });
@@ -296,36 +298,32 @@ export function InvitationWizard({
               <FieldError message={errors.brideInstagram?.message} />
             </div>
 
-            <div>
-              <Label htmlFor="eventDate">Tanggal Acara</Label>
-              <Input id="eventDate" type="date" {...register("eventDate")} />
-              <FieldError message={errors.eventDate?.message} />
-            </div>
-
-            <div>
-              <Label htmlFor="eventLocation">Nama Lokasi</Label>
-              <Input
-                id="eventLocation"
-                placeholder="Gedung Serba Guna ABC"
-                {...register("eventLocation")}
-              />
-              <FieldError message={errors.eventLocation?.message} />
-            </div>
-
             <div className="sm:col-span-2">
-              <Label htmlFor="eventAddress">Alamat Lengkap</Label>
-              <Input id="eventAddress" {...register("eventAddress")} />
-              <FieldError message={errors.eventAddress?.message} />
-            </div>
-
-            <div className="sm:col-span-2">
-              <Label htmlFor="eventMapsUrl">Link Google Maps</Label>
-              <Input
-                id="eventMapsUrl"
-                placeholder="https://maps.google.com/…"
-                {...register("eventMapsUrl")}
-              />
-              <FieldError message={errors.eventMapsUrl?.message} />
+              <div className="mb-3 flex items-start justify-between gap-4">
+                <div><p className="text-sm font-medium text-ink">Rangkaian Acara</p><p className="mt-1 text-xs text-ink-soft">Tambah Akad, Resepsi, Pemberkatan, Ngunduh Mantu, atau event lain.</p></div>
+                <Button type="button" variant="outline" size="sm" onClick={() => eventArray.append({ type:"OTHER", title:"Acara Lain", eventDate:"", startTime:"", endTime:"", location:"", address:"", mapsUrl:"" })}><Plus className="mr-1 size-4" />Tambah Event</Button>
+              </div>
+              <div className="space-y-4">
+                {eventArray.fields.map((field,index)=>(
+                  <div key={field.id} className="rounded-xl border border-line bg-surface p-4">
+                    <div className="mb-4 flex items-center justify-between gap-3">
+                      <div><p className="text-sm font-medium text-ink">{watch(`events.${index}.title`) || `Event ${index+1}`}</p><p className="text-[11px] text-ink-soft">Urutan ini dipakai di undangan.</p></div>
+                      <Button type="button" variant="ghost" size="icon" onClick={()=>eventArray.remove(index)}><Trash2 className="size-4" /></Button>
+                    </div>
+                    <div className="grid gap-3 sm:grid-cols-2">
+                      <div><Label>Nama Event</Label><Input placeholder="Akad Nikah" {...register(`events.${index}.title`)} /><FieldError message={errors.events?.[index]?.title?.message} /></div>
+                      <div><Label>Jenis</Label><select {...register(`events.${index}.type`)} className="border-input bg-background h-10 w-full rounded-md border px-3 text-sm"><option value="AKAD">Akad</option><option value="RESEPSI">Resepsi</option><option value="PEMBERKATAN">Pemberkatan</option><option value="NGUNDUH_MANTU">Ngunduh Mantu</option><option value="AFTER_PARTY">After Party</option><option value="OTHER">Lainnya</option></select></div>
+                      <div><Label className="flex items-center gap-1.5"><CalendarDays className="size-3.5" />Tanggal</Label><Input type="date" {...register(`events.${index}.eventDate`)} /></div>
+                      <div className="grid grid-cols-2 gap-2"><div><Label>Mulai</Label><Input type="time" {...register(`events.${index}.startTime`)} /></div><div><Label>Selesai</Label><Input type="time" {...register(`events.${index}.endTime`)} /></div></div>
+                      <div className="sm:col-span-2"><Label className="flex items-center gap-1.5"><MapPin className="size-3.5" />Nama Lokasi</Label><Input placeholder="Gedung Serba Guna ABC" {...register(`events.${index}.location`)} /></div>
+                      <div className="sm:col-span-2"><Label>Alamat Lengkap</Label><Input {...register(`events.${index}.address`)} /></div>
+                      <div className="sm:col-span-2"><Label>Link Google Maps</Label><Input placeholder="https://maps.google.com/…" {...register(`events.${index}.mapsUrl`)} /><FieldError message={errors.events?.[index]?.mapsUrl?.message} /></div>
+                    </div>
+                    <div className="mt-3 flex justify-end gap-2"><Button type="button" variant="ghost" size="sm" disabled={index===0} onClick={()=>eventArray.move(index,index-1)}>Naik</Button><Button type="button" variant="ghost" size="sm" disabled={index===eventArray.fields.length-1} onClick={()=>eventArray.move(index,index+1)}>Turun</Button></div>
+                  </div>
+                ))}
+                {eventArray.fields.length===0 && <div className="rounded-xl border border-dashed border-line px-4 py-6 text-center text-sm text-ink-soft">Belum ada event.</div>}
+              </div>
             </div>
 
             <div className="sm:col-span-2">
@@ -703,7 +701,8 @@ export function InvitationWizard({
                 label="Template"
                 value={templates.find((t) => t.id === watch("templateId"))?.name ?? "—"}
               />
-              <SummaryItem label="Tanggal" value={watch("eventDate") || "—"} />
+              <SummaryItem label="Rangkaian Event" value={String(eventArray.fields.length)} />
+              <SummaryItem label="Event Utama" value={watch("events.0.title") || "—"} />
               <SummaryItem
                 label="Jumlah Foto"
                 value={String(galleryArray.fields.length)}

@@ -120,10 +120,31 @@ model Invitation {
   rsvps    Rsvp[]
   gifts    Gift[]
   stories  Story[]
+  events   InvitationEvent[]
   settings Settings?
 
   @@index([userId])
   @@map("invitations")
+}
+
+
+model InvitationEvent {
+  id           String     @id @default(cuid())
+  invitationId String
+  invitation   Invitation @relation(fields: [invitationId], references: [id], onDelete: Cascade)
+  type       String   @default("OTHER")
+  title      String
+  eventDate  DateTime?
+  startTime  String?
+  endTime    String?
+  location   String?
+  address    String?
+  mapsUrl    String?
+  order      Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([invitationId])
+  @@map("invitation_events")
 }
 
 // ─────────────────────────────────────────────────────────────

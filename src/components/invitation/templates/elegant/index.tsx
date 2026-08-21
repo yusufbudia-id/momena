@@ -681,7 +681,7 @@ function FlowMarker({ label }: { label: string }) {
 function ChapterNav({ invitation }: SectionProps) {
   const items = [
     { href: "#couple", label: "Couple", show: Boolean(invitation.couple) },
-    { href: "#details", label: "Details", show: Boolean(invitation.eventDate) },
+    { href: "#details", label: "Details", show: invitation.events.length > 0 || Boolean(invitation.eventDate) },
     { href: "#gallery", label: "Gallery", show: invitation.gallery.length > 0 },
     { href: "#story", label: "Story", show: invitation.story.length > 0 },
     { href: "#rsvp", label: "RSVP", show: true },

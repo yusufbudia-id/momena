@@ -13,6 +13,10 @@ export interface GalleryPhotoView {
   caption: string | null;
 }
 
+export interface InvitationEventView {
+  id: string; type: string; title: string; eventDate: Date | null; startTime: string | null; endTime: string | null; location: string | null; address: string | null; mapsUrl: string | null;
+}
+
 export interface GiftMethodView {
   id: string;
   label: string; // nama bank / nama e-wallet
@@ -68,6 +72,7 @@ export interface InvitationViewModel {
   eventLocation: string | null;
   eventAddress: string | null;
   eventMapsUrl: string | null;
+  events: InvitationEventView[];
   gallery: GalleryPhotoView[];
   gifts: GiftMethodView[];
   story: StoryItemView[];

@@ -5,7 +5,7 @@ import { PageHeader } from "@/components/shared/page-header";
 import { updateInvitation } from "@/features/invitation/actions";
 import { InvitationWizard } from "@/features/invitation/components/invitation-wizard";
 import { getInvitationById } from "@/features/invitation/repository";
-import type { Gallery, Gift, Story } from "@/features/invitation/types";
+import type { Gallery, Gift, InvitationEvent, Story } from "@/features/invitation/types";
 import type { InvitationWizardFormValues } from "@/features/invitation/validation";
 import { getCurrentUserId } from "@/lib/temp-auth";
 
@@ -36,6 +36,12 @@ export default async function EditInvitationPage({ params }: EditInvitationPageP
   }));
 
   const sortedGallery = [...invitation.gallery].sort((a: Gallery, b: Gallery) => a.order - b.order);
+  const sortedEvents = [...invitation.events].sort((a: InvitationEvent, b: InvitationEvent) => a.order - b.order);
+  const eventDefaults = sortedEvents.length > 0
+    ? sortedEvents.map((event: InvitationEvent) => ({ type:event.type, title:event.title, eventDate:event.eventDate ? event.eventDate.toISOString().slice(0,10) : "", startTime:event.startTime ?? "", endTime:event.endTime ?? "", location:event.location ?? "", address:event.address ?? "", mapsUrl:event.mapsUrl ?? "" }))
+    : invitation.eventDate || invitation.eventLocation || invitation.eventAddress || invitation.eventMapsUrl
+      ? [{ type:"OTHER", title:"Acara Utama", eventDate:invitation.eventDate ? invitation.eventDate.toISOString().slice(0,10) : "", startTime:"", endTime:"", location:invitation.eventLocation ?? "", address:invitation.eventAddress ?? "", mapsUrl:invitation.eventMapsUrl ?? "" }]
+      : [{ type:"AKAD", title:"Akad Nikah", eventDate:"", startTime:"", endTime:"", location:"", address:"", mapsUrl:"" }, { type:"RESEPSI", title:"Resepsi", eventDate:"", startTime:"", endTime:"", location:"", address:"", mapsUrl:"" }];
 
   const defaultValues: Partial<InvitationWizardFormValues> = {
     templateId: invitation.templateId,
@@ -53,6 +59,7 @@ export default async function EditInvitationPage({ params }: EditInvitationPageP
     eventLocation: invitation.eventLocation ?? "",
     eventAddress: invitation.eventAddress ?? "",
     eventMapsUrl: invitation.eventMapsUrl ?? "",
+    events: eventDefaults,
     description: invitation.description ?? "",
     coverImageUrl: invitation.coverImageUrl ?? "",
     coverImagePublicId: invitation.coverImagePublicId ?? "",
