@@ -24,6 +24,7 @@ export function Hero({ invitation }: SectionProps) {
           priority
           sizes="100vw"
           className="-z-10 object-cover opacity-40"
+            style={{ objectPosition: `${invitation.coverImagePositionX}% ${invitation.coverImagePositionY}%` }}
         />
       )}
       <p className="text-ink-soft text-xs tracking-[0.3em] uppercase">Undangan Digital</p>

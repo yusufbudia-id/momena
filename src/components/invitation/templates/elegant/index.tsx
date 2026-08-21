@@ -759,7 +759,10 @@ function CoverGate({
         <div
           aria-hidden
           className="absolute inset-0 scale-105 bg-cover bg-center opacity-[0.14] blur-[1px]"
-          style={{ backgroundImage: `url(${invitation.coverImageUrl})` }}
+          style={{
+            backgroundImage: `url(${invitation.coverImageUrl})`,
+            backgroundPosition: `${invitation.coverImagePositionX}% ${invitation.coverImagePositionY}%`,
+          }}
         />
       )}
       <div aria-hidden className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(201,162,92,.15),_transparent_58%)]" />

@@ -11,6 +11,8 @@ function PersonChapter({
   label,
   number,
   reverse = false,
+  positionX,
+  positionY,
 }: {
   name: string;
   parents: string | null;
@@ -19,6 +21,8 @@ function PersonChapter({
   label: string;
   number: string;
   reverse?: boolean;
+  positionX: number;
+  positionY: number;
 }) {
   return (
     <article className="relative min-h-[88svh] overflow-hidden border-b border-black/10 bg-[#efeee9] text-[#0b0d12]">
@@ -34,6 +38,7 @@ function PersonChapter({
               fill
               sizes="(min-width:1024px) 45vw, 90vw"
               className="object-cover grayscale-[8%]"
+              style={{ objectPosition: `${positionX}% ${positionY}%` }}
             />
           ) : (
             <div className="flex h-full items-center justify-center text-9xl font-black text-white/10">{name[0]}</div>
@@ -82,6 +87,8 @@ export function BrideGroom({ invitation }: SectionProps) {
         parents={firstParents}
         instagram={firstInstagram}
         image={invitation.groomPhotoUrl ?? invitation.gallery[0]?.imageUrl ?? null}
+        positionX={invitation.groomPhotoUrl ? invitation.groomPhotoPositionX : 50}
+        positionY={invitation.groomPhotoUrl ? invitation.groomPhotoPositionY : 50}
         label="The groom"
         number="01"
       />
@@ -90,6 +97,8 @@ export function BrideGroom({ invitation }: SectionProps) {
         parents={secondParents}
         instagram={secondInstagram}
         image={invitation.bridePhotoUrl ?? invitation.gallery[1]?.imageUrl ?? null}
+        positionX={invitation.bridePhotoUrl ? invitation.bridePhotoPositionX : 50}
+        positionY={invitation.bridePhotoUrl ? invitation.bridePhotoPositionY : 50}
         label="The bride"
         number="02"
         reverse

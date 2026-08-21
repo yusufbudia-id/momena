@@ -68,10 +68,16 @@ export type CreateInvitationInput = {
   description?: string | null;
   coverImageUrl?: string | null;
   coverImagePublicId?: string | null;
+  coverImagePositionX?: number;
+  coverImagePositionY?: number;
   groomPhotoUrl?: string | null;
   groomPhotoPublicId?: string | null;
+  groomPhotoPositionX?: number;
+  groomPhotoPositionY?: number;
   bridePhotoUrl?: string | null;
   bridePhotoPublicId?: string | null;
+  bridePhotoPositionX?: number;
+  bridePhotoPositionY?: number;
   quote?: string | null;
   videoUrl?: string | null;
   gallery?: GalleryItemInput[];

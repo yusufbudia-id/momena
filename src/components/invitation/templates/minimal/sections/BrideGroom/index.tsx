@@ -9,12 +9,16 @@ function Person({
   instagram,
   src,
   index,
+  positionX,
+  positionY,
 }: {
   name: string;
   parents: string | null;
   instagram: string | null;
   src: string | null;
   index: "01" | "02";
+  positionX: number;
+  positionY: number;
 }) {
   return (
     <article>
@@ -26,6 +30,7 @@ function Person({
             fill
             sizes="(min-width: 640px) 300px, 86vw"
             className="object-cover grayscale-[14%] saturate-[.78] transition duration-700 hover:scale-[1.015]"
+            style={{ objectPosition: `${positionX}% ${positionY}%` }}
           />
         ) : (
           <div className="flex h-full items-center justify-center">
@@ -85,6 +90,8 @@ export function BrideGroom({ invitation }: SectionProps) {
             parents={firstParents}
             instagram={firstInstagram}
             src={invitation.groomPhotoUrl ?? invitation.gallery[0]?.imageUrl ?? null}
+            positionX={invitation.groomPhotoUrl ? invitation.groomPhotoPositionX : 50}
+            positionY={invitation.groomPhotoUrl ? invitation.groomPhotoPositionY : 50}
             index="01"
           />
           <div className="sm:pt-20">
@@ -93,6 +100,8 @@ export function BrideGroom({ invitation }: SectionProps) {
               parents={secondParents}
               instagram={secondInstagram}
               src={invitation.bridePhotoUrl ?? invitation.gallery[1]?.imageUrl ?? null}
+              positionX={invitation.bridePhotoUrl ? invitation.bridePhotoPositionX : 50}
+              positionY={invitation.bridePhotoUrl ? invitation.bridePhotoPositionY : 50}
               index="02"
             />
           </div>

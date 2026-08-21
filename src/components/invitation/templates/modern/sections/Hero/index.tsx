@@ -21,6 +21,7 @@ export function Hero({ invitation }: SectionProps) {
             priority
             sizes="(min-width:1024px) 58vw, 74vw"
             className="object-cover"
+            style={{ objectPosition: `${invitation.coverImagePositionX}% ${invitation.coverImagePositionY}%` }}
           />
         )}
         <div className="absolute inset-0 bg-[linear-gradient(90deg,#090b11_0%,rgba(9,11,17,.12)_45%,rgba(9,11,17,.08)_100%)]" />

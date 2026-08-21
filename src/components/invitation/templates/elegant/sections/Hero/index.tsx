@@ -66,6 +66,7 @@ export function Hero({ invitation }: SectionProps) {
               priority
               sizes="(min-width: 640px) 282px, 238px"
               className="luxe-photo object-cover opacity-95 transition-transform duration-700 group-hover:scale-[1.025]"
+            style={{ objectPosition: `${invitation.coverImagePositionX}% ${invitation.coverImagePositionY}%` }}
             />
             <div className="luxe-photo-overlay absolute inset-0" />
             <div className="absolute inset-3 border border-[var(--color-accent)]/24" />

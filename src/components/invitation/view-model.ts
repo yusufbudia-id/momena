@@ -55,8 +55,14 @@ export interface InvitationViewModel {
   quote: string | null;
   description: string | null;
   coverImageUrl: string | null;
+  coverImagePositionX: number;
+  coverImagePositionY: number;
   groomPhotoUrl: string | null;
+  groomPhotoPositionX: number;
+  groomPhotoPositionY: number;
   bridePhotoUrl: string | null;
+  bridePhotoPositionX: number;
+  bridePhotoPositionY: number;
   videoUrl: string | null;
   eventDate: Date | null;
   eventLocation: string | null;

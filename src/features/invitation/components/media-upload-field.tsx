@@ -20,6 +20,9 @@ interface MediaUploadFieldProps {
   helper?: string;
   className?: string;
   aspectClassName?: string;
+  positionX?: number;
+  positionY?: number;
+  onPositionChange?: (x: number, y: number) => void;
 }
 
 export function MediaUploadField({
@@ -30,6 +33,9 @@ export function MediaUploadField({
   helper,
   className,
   aspectClassName = "aspect-[4/5]",
+  positionX = 50,
+  positionY = 50,
+  onPositionChange,
 }: MediaUploadFieldProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const xhrRef = useRef<XMLHttpRequest | null>(null);
@@ -141,7 +147,12 @@ export function MediaUploadField({
       >
         {value ? (
           // eslint-disable-next-line @next/next/no-img-element -- preview file upload dinamis
-          <img src={value} alt="" className="h-full w-full object-cover" />
+          <img
+            src={value}
+            alt=""
+            className="h-full w-full object-cover"
+            style={{ objectPosition: `${positionX}% ${positionY}%` }}
+          />
         ) : (
           <div className="flex h-full min-h-44 flex-col items-center justify-center gap-2 p-6 text-center text-ink-soft">
             <ImagePlus className="size-7" />
@@ -181,6 +192,50 @@ export function MediaUploadField({
           event.target.value = "";
         }}
       />
+      {value && onPositionChange && (
+        <div className="space-y-3 rounded-xl border border-line bg-paper/60 p-3">
+          <div className="flex items-center justify-between gap-3">
+            <div>
+              <p className="text-xs font-medium text-ink">Titik fokus foto</p>
+              <p className="mt-0.5 text-[11px] text-ink-soft/70">Geser sampai bagian penting foto berada di area yang tepat.</p>
+            </div>
+            <Button
+              type="button"
+              size="sm"
+              variant="ghost"
+              onClick={() => onPositionChange(50, 50)}
+              disabled={positionX === 50 && positionY === 50}
+            >
+              Reset
+            </Button>
+          </div>
+
+          <label className="grid grid-cols-[68px_1fr_34px] items-center gap-2 text-[11px] text-ink-soft">
+            Horizontal
+            <input
+              type="range"
+              min={0}
+              max={100}
+              value={positionX}
+              onChange={(event) => onPositionChange(Number(event.target.value), positionY)}
+              className="w-full accent-current"
+            />
+            <span className="text-right tabular-nums">{positionX}</span>
+          </label>
+          <label className="grid grid-cols-[68px_1fr_34px] items-center gap-2 text-[11px] text-ink-soft">
+            Vertikal
+            <input
+              type="range"
+              min={0}
+              max={100}
+              value={positionY}
+              onChange={(event) => onPositionChange(positionX, Number(event.target.value))}
+              className="w-full accent-current"
+            />
+            <span className="text-right tabular-nums">{positionY}</span>
+          </label>
+        </div>
+      )}
       {helper && <p className="text-xs text-ink-soft/70">{helper}</p>}
     </div>
   );

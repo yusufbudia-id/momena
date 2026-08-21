@@ -7,10 +7,14 @@ function PersonPhoto({
   src,
   initial,
   align,
+  positionX,
+  positionY,
 }: {
   src: string | null;
   initial: string;
   align: "start" | "end";
+  positionX: number;
+  positionY: number;
 }) {
   return (
     <div
@@ -26,6 +30,7 @@ function PersonPhoto({
           fill
           sizes="(min-width: 640px) 224px, 68vw"
           className="luxe-photo object-cover transition-transform duration-700 group-hover:scale-[1.035]"
+          style={{ objectPosition: `${positionX}% ${positionY}%` }}
         />
       ) : (
         <div className="flex h-full w-full items-center justify-center bg-[var(--color-surface)]">
@@ -78,7 +83,13 @@ export function BrideGroom({ invitation }: SectionProps) {
 
       <div className="relative mx-auto flex max-w-sm flex-col gap-20 sm:max-w-lg sm:gap-24">
         <div className="flex flex-col items-start">
-          <PersonPhoto src={firstPhoto} initial={first.charAt(0)} align="start" />
+          <PersonPhoto
+            src={firstPhoto}
+            initial={first.charAt(0)}
+            align="start"
+            positionX={invitation.groomPhotoUrl ? invitation.groomPhotoPositionX : 50}
+            positionY={invitation.groomPhotoUrl ? invitation.groomPhotoPositionY : 50}
+          />
           <div className="relative -mt-8 ml-3 max-w-[88%] border-l border-[var(--color-accent)]/22 bg-[var(--color-surface)]/95 px-4 py-3 sm:ml-8">
             <RoleLabel align="left">The Groom</RoleLabel>
             <h3 className="font-display text-[clamp(2.4rem,11vw,3.4rem)] leading-none text-[var(--color-ink)] italic">
@@ -103,7 +114,13 @@ export function BrideGroom({ invitation }: SectionProps) {
         </div>
 
         <div className="flex flex-col items-end sm:mt-10">
-          <PersonPhoto src={secondPhoto} initial={second.charAt(0)} align="end" />
+          <PersonPhoto
+            src={secondPhoto}
+            initial={second.charAt(0)}
+            align="end"
+            positionX={invitation.bridePhotoUrl ? invitation.bridePhotoPositionX : 50}
+            positionY={invitation.bridePhotoUrl ? invitation.bridePhotoPositionY : 50}
+          />
           <div className="relative -mt-8 mr-3 max-w-[88%] border-r border-[var(--color-accent)]/22 bg-[var(--color-surface)]/95 px-4 py-3 text-right sm:mr-8">
             <RoleLabel align="right">The Bride</RoleLabel>
             <h3 className="font-display text-[clamp(2.4rem,11vw,3.4rem)] leading-none text-[var(--color-accent-ink)] italic">

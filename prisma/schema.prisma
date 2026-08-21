@@ -97,12 +97,18 @@ model Invitation {
   eventAddress     String?
   eventMapsUrl     String?
   description      String?
-  coverImageUrl       String?
-  coverImagePublicId  String?
-  groomPhotoUrl       String?
-  groomPhotoPublicId  String?
-  bridePhotoUrl       String?
-  bridePhotoPublicId  String?
+  coverImageUrl        String?
+  coverImagePublicId   String?
+  coverImagePositionX  Int     @default(50)
+  coverImagePositionY  Int     @default(50)
+  groomPhotoUrl        String?
+  groomPhotoPublicId   String?
+  groomPhotoPositionX  Int     @default(50)
+  groomPhotoPositionY  Int     @default(50)
+  bridePhotoUrl        String?
+  bridePhotoPublicId   String?
+  bridePhotoPositionX  Int     @default(50)
+  bridePhotoPositionY  Int     @default(50)
   quote            String? // kutipan/ayat pendek — dipakai section Quote
   videoUrl         String? // URL video (YouTube/Vimeo) — dipakai section Video
 

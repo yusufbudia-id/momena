@@ -46,10 +46,16 @@ const STEP_FIELDS: Record<number, (keyof InvitationWizardFormValues)[]> = {
     "description",
     "coverImageUrl",
     "coverImagePublicId",
+    "coverImagePositionX",
+    "coverImagePositionY",
     "groomPhotoUrl",
     "groomPhotoPublicId",
+    "groomPhotoPositionX",
+    "groomPhotoPositionY",
     "bridePhotoUrl",
     "bridePhotoPublicId",
+    "bridePhotoPositionX",
+    "bridePhotoPositionY",
     "quote",
     "videoUrl",
   ],
@@ -116,10 +122,16 @@ export function InvitationWizard({
       description: "",
       coverImageUrl: "",
       coverImagePublicId: "",
+      coverImagePositionX: 50,
+      coverImagePositionY: 50,
       groomPhotoUrl: "",
       groomPhotoPublicId: "",
+      groomPhotoPositionX: 50,
+      groomPhotoPositionY: 50,
       bridePhotoUrl: "",
       bridePhotoPublicId: "",
+      bridePhotoPositionX: 50,
+      bridePhotoPositionY: 50,
       quote: "",
       videoUrl: "",
       gallery: [],
@@ -328,9 +340,19 @@ export function InvitationWizard({
                   label="Foto Cover"
                   value={watch("coverImageUrl")}
                   publicId={watch("coverImagePublicId")}
+                  positionX={watch("coverImagePositionX")}
+                  positionY={watch("coverImagePositionY")}
+                  onPositionChange={(x, y) => {
+                    setValue("coverImagePositionX", x, { shouldDirty: true });
+                    setValue("coverImagePositionY", y, { shouldDirty: true });
+                  }}
                   onChange={(media) => {
                     setValue("coverImageUrl", media?.url ?? "", { shouldValidate: true });
                     setValue("coverImagePublicId", media?.publicId ?? "");
+                    if (media) {
+                      setValue("coverImagePositionX", 50);
+                      setValue("coverImagePositionY", 50);
+                    }
                   }}
                   helper="Dipakai pada opening dan hero."
                 />
@@ -338,9 +360,19 @@ export function InvitationWizard({
                   label="Foto Mempelai Pria"
                   value={watch("groomPhotoUrl")}
                   publicId={watch("groomPhotoPublicId")}
+                  positionX={watch("groomPhotoPositionX")}
+                  positionY={watch("groomPhotoPositionY")}
+                  onPositionChange={(x, y) => {
+                    setValue("groomPhotoPositionX", x, { shouldDirty: true });
+                    setValue("groomPhotoPositionY", y, { shouldDirty: true });
+                  }}
                   onChange={(media) => {
                     setValue("groomPhotoUrl", media?.url ?? "", { shouldValidate: true });
                     setValue("groomPhotoPublicId", media?.publicId ?? "");
+                    if (media) {
+                      setValue("groomPhotoPositionX", 50);
+                      setValue("groomPhotoPositionY", 50);
+                    }
                   }}
                   helper="Foto portrait khusus Groom."
                 />
@@ -348,19 +380,35 @@ export function InvitationWizard({
                   label="Foto Mempelai Wanita"
                   value={watch("bridePhotoUrl")}
                   publicId={watch("bridePhotoPublicId")}
+                  positionX={watch("bridePhotoPositionX")}
+                  positionY={watch("bridePhotoPositionY")}
+                  onPositionChange={(x, y) => {
+                    setValue("bridePhotoPositionX", x, { shouldDirty: true });
+                    setValue("bridePhotoPositionY", y, { shouldDirty: true });
+                  }}
                   onChange={(media) => {
                     setValue("bridePhotoUrl", media?.url ?? "", { shouldValidate: true });
                     setValue("bridePhotoPublicId", media?.publicId ?? "");
+                    if (media) {
+                      setValue("bridePhotoPositionX", 50);
+                      setValue("bridePhotoPositionY", 50);
+                    }
                   }}
                   helper="Foto portrait khusus Bride."
                 />
               </div>
               <input type="hidden" {...register("coverImageUrl")} />
               <input type="hidden" {...register("coverImagePublicId")} />
+              <input type="hidden" {...register("coverImagePositionX", { valueAsNumber: true })} />
+              <input type="hidden" {...register("coverImagePositionY", { valueAsNumber: true })} />
               <input type="hidden" {...register("groomPhotoUrl")} />
               <input type="hidden" {...register("groomPhotoPublicId")} />
+              <input type="hidden" {...register("groomPhotoPositionX", { valueAsNumber: true })} />
+              <input type="hidden" {...register("groomPhotoPositionY", { valueAsNumber: true })} />
               <input type="hidden" {...register("bridePhotoUrl")} />
               <input type="hidden" {...register("bridePhotoPublicId")} />
+              <input type="hidden" {...register("bridePhotoPositionX", { valueAsNumber: true })} />
+              <input type="hidden" {...register("bridePhotoPositionY", { valueAsNumber: true })} />
               <FieldError message={errors.coverImageUrl?.message} />
               <FieldError message={errors.groomPhotoUrl?.message} />
               <FieldError message={errors.bridePhotoUrl?.message} />

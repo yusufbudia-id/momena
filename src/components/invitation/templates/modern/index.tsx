@@ -62,7 +62,10 @@ function CoverGate({
       {invitation.coverImageUrl && (
         <div
           className="absolute inset-0 scale-[1.03] bg-cover bg-center opacity-60"
-          style={{ backgroundImage: `url(${invitation.coverImageUrl})` }}
+          style={{
+            backgroundImage: `url(${invitation.coverImageUrl})`,
+            backgroundPosition: `${invitation.coverImagePositionX}% ${invitation.coverImagePositionY}%`,
+          }}
         />
       )}
       <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(5,6,10,.12),rgba(5,6,10,.92))]" />

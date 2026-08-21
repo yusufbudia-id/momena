@@ -70,6 +70,7 @@ export function Hero({ invitation }: SectionProps) {
                   priority
                   sizes="(min-width: 640px) 360px, 100vw"
                   className="object-cover grayscale-[12%] saturate-[.82] contrast-[.96]"
+            style={{ objectPosition: `${invitation.coverImagePositionX}% ${invitation.coverImagePositionY}%` }}
                 />
               ) : (
                 <div className="flex h-full items-center justify-center">
