@@ -17,6 +17,12 @@ const baseDemo: Omit<InvitationViewModel, "coverImageUrl" | "groomPhotoUrl" | "b
     "Dan di antara tanda-tanda kekuasaan-Nya ialah Dia menciptakan untukmu pasangan hidup dari jenismu sendiri, supaya kamu cenderung dan merasa tenteram kepadanya.",
   description:
     "Dengan memohon rahmat dan ridho Allah SWT, kami bermaksud menyelenggarakan pernikahan putra-putri kami. Merupakan suatu kehormatan dan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir dan memberikan doa restu.",
+  coverImagePositionX: 50,
+  coverImagePositionY: 50,
+  groomPhotoPositionX: 50,
+  groomPhotoPositionY: 50,
+  bridePhotoPositionX: 50,
+  bridePhotoPositionY: 50,
   videoUrl: null,
   eventDate: new Date(Date.now() + 45 * 24 * 60 * 60 * 1000),
   eventLocation: "Gedung Serba Guna Wijayakusuma",
