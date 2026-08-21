@@ -858,7 +858,7 @@ export function ElegantTemplate({ invitation, guestName }: SectionProps) {
       {isOpen && <ChapterNav invitation={invitation} />}
 
       {invitation.isPreview && (
-        <div className="fixed bottom-20 left-1/2 z-[65] flex -translate-x-1/2 overflow-hidden border border-[var(--color-accent)]/30 bg-[var(--color-surface)]/92 p-1 shadow-[0_16px_55px_rgba(0,0,0,.2)] backdrop-blur-md">
+        <div className="fixed top-[4.75rem] right-3 z-[65] flex overflow-hidden border border-[var(--color-accent)]/30 bg-[var(--color-surface)]/92 p-1 shadow-[0_12px_40px_rgba(0,0,0,.18)] backdrop-blur-md sm:top-20 sm:right-5">
           {(["noir", "ivory"] as ElegantVariant[]).map((item) => (
             <button
               key={item}
