@@ -87,9 +87,9 @@ export function GalleryUploadPanel({
     setProgress({ current: 1, total: selected.length, percent: 0 });
 
     try {
-      for (let index = 0; index < selected.length; index += 1) {
+      for (const [index, file] of selected.entries()) {
         setProgress({ current: index + 1, total: selected.length, percent: 0 });
-        const uploaded = await uploadOne(selected[index], (percent) =>
+        const uploaded = await uploadOne(file, (percent) =>
           setProgress({ current: index + 1, total: selected.length, percent }),
         );
         sessionUploadsRef.current.add(uploaded.publicId);
