@@ -35,6 +35,8 @@ export default async function EditInvitationPage({ params }: EditInvitationPageP
     description: item.description,
   }));
 
+  const sortedGallery = [...invitation.gallery].sort((a: Gallery, b: Gallery) => a.order - b.order);
+
   const defaultValues: Partial<InvitationWizardFormValues> = {
     templateId: invitation.templateId,
     slug: invitation.slug,
@@ -56,19 +58,20 @@ export default async function EditInvitationPage({ params }: EditInvitationPageP
     coverImagePublicId: invitation.coverImagePublicId ?? "",
     coverImagePositionX: invitation.coverImagePositionX,
     coverImagePositionY: invitation.coverImagePositionY,
-    groomPhotoUrl: invitation.groomPhotoUrl ?? "",
+    // Invitation lama masih bisa menampilkan portrait dari gallery[0].
+    // Hydrate URL-nya ke editor agar focal point bisa diatur tanpa upload ulang.
+    // Public ID sengaja tidak diwariskan supaya mengganti portrait tidak menghapus asset gallery lama.
+    groomPhotoUrl: invitation.groomPhotoUrl ?? sortedGallery[0]?.imageUrl ?? "",
     groomPhotoPublicId: invitation.groomPhotoPublicId ?? "",
     groomPhotoPositionX: invitation.groomPhotoPositionX,
     groomPhotoPositionY: invitation.groomPhotoPositionY,
-    bridePhotoUrl: invitation.bridePhotoUrl ?? "",
+    bridePhotoUrl: invitation.bridePhotoUrl ?? sortedGallery[1]?.imageUrl ?? "",
     bridePhotoPublicId: invitation.bridePhotoPublicId ?? "",
     bridePhotoPositionX: invitation.bridePhotoPositionX,
     bridePhotoPositionY: invitation.bridePhotoPositionY,
     quote: invitation.quote ?? "",
     videoUrl: invitation.videoUrl ?? "",
-    gallery: invitation.gallery
-      .sort((a: Gallery, b: Gallery) => a.order - b.order)
-      .map((item: Gallery) => ({
+    gallery: sortedGallery.map((item: Gallery) => ({
         imageUrl: item.imageUrl,
         imagePublicId: item.imagePublicId ?? "",
         caption: item.caption ?? "",

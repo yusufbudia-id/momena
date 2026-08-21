@@ -42,7 +42,16 @@ export function MediaUploadField({
   const [progress, setProgress] = useState<number | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [sessionPublicId, setSessionPublicId] = useState<string | null>(null);
+  const isAdjustingFocusRef = useRef(false);
 
+  function updateFocusFromPointer(element: HTMLElement, clientX: number, clientY: number) {
+    if (!onPositionChange) return;
+    const rect = element.getBoundingClientRect();
+    if (!rect.width || !rect.height) return;
+    const x = Math.max(0, Math.min(100, Math.round(((clientX - rect.left) / rect.width) * 100)));
+    const y = Math.max(0, Math.min(100, Math.round(((clientY - rect.top) / rect.height) * 100)));
+    onPositionChange(x, y);
+  }
 
   async function deleteSessionUpload(id: string | null) {
     if (!id) return;
@@ -146,13 +155,51 @@ export function MediaUploadField({
         )}
       >
         {value ? (
-          // eslint-disable-next-line @next/next/no-img-element -- preview file upload dinamis
-          <img
-            src={value}
-            alt=""
-            className="h-full w-full object-cover"
-            style={{ objectPosition: `${positionX}% ${positionY}%` }}
-          />
+          <>
+            {/* eslint-disable-next-line @next/next/no-img-element -- preview file upload dinamis */}
+            <img
+              src={value}
+              alt=""
+              className="h-full w-full object-cover"
+              style={{ objectPosition: `${positionX}% ${positionY}%` }}
+            />
+            {onPositionChange && (
+              <div
+                className="absolute inset-0 cursor-crosshair touch-none"
+                title="Klik atau geser untuk mengatur titik fokus"
+                onClick={(event) => event.stopPropagation()}
+                onPointerDown={(event) => {
+                  event.preventDefault();
+                  event.stopPropagation();
+                  event.currentTarget.setPointerCapture(event.pointerId);
+                  isAdjustingFocusRef.current = true;
+                  updateFocusFromPointer(event.currentTarget, event.clientX, event.clientY);
+                }}
+                onPointerMove={(event) => {
+                  if (!isAdjustingFocusRef.current) return;
+                  updateFocusFromPointer(event.currentTarget, event.clientX, event.clientY);
+                }}
+                onPointerUp={(event) => {
+                  event.stopPropagation();
+                  if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+                    event.currentTarget.releasePointerCapture(event.pointerId);
+                  }
+                  isAdjustingFocusRef.current = false;
+                }}
+                onPointerCancel={() => { isAdjustingFocusRef.current = false; }}
+              >
+                <span
+                  className="pointer-events-none absolute size-5 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white bg-black/30 shadow-[0_0_0_1px_rgba(0,0,0,.45)]"
+                  style={{ left: `${positionX}%`, top: `${positionY}%` }}
+                >
+                  <span className="absolute left-1/2 top-1/2 size-1.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white" />
+                </span>
+                <span className="pointer-events-none absolute left-2 top-2 rounded-md bg-black/60 px-2 py-1 text-[10px] font-medium text-white opacity-90">
+                  Geser titik fokus
+                </span>
+              </div>
+            )}
+          </>
         ) : (
           <div className="flex h-full min-h-44 flex-col items-center justify-center gap-2 p-6 text-center text-ink-soft">
             <ImagePlus className="size-7" />
@@ -174,12 +221,19 @@ export function MediaUploadField({
           </div>
         )}
 
-        {!isUploading && value && (
-          <div className="absolute inset-x-0 bottom-0 flex items-center justify-center gap-2 bg-black/55 px-3 py-2 text-xs text-white opacity-0 transition group-hover:opacity-100">
-            <UploadCloud className="size-3.5" /> Ganti foto
-          </div>
-        )}
       </button>
+
+      {value && !isUploading && (
+        <Button
+          type="button"
+          size="sm"
+          variant="outline"
+          className="w-full"
+          onClick={() => inputRef.current?.click()}
+        >
+          <UploadCloud className="size-3.5" /> Ganti foto
+        </Button>
+      )}
 
       <input
         ref={inputRef}
@@ -197,7 +251,7 @@ export function MediaUploadField({
           <div className="flex items-center justify-between gap-3">
             <div>
               <p className="text-xs font-medium text-ink">Titik fokus foto</p>
-              <p className="mt-0.5 text-[11px] text-ink-soft/70">Geser sampai bagian penting foto berada di area yang tepat.</p>
+              <p className="mt-0.5 text-[11px] text-ink-soft/70">Klik/geser langsung pada foto atau gunakan slider di bawah.</p>
             </div>
             <Button
               type="button"
