@@ -78,6 +78,16 @@ export default async function EditInvitationPage({ params }: EditInvitationPageP
     bridePhotoPositionY: invitation.bridePhotoPositionY,
     quote: invitation.quote ?? "",
     videoUrl: invitation.videoUrl ?? "",
+    settings: {
+      showGallery: invitation.settings?.showGallery ?? true,
+      showRsvp: invitation.settings?.showRsvp ?? true,
+      showGift: invitation.settings?.showGift ?? true,
+      showStory: invitation.settings?.showStory ?? true,
+      showVideo: invitation.settings?.showVideo ?? true,
+      musicUrl: invitation.settings?.musicUrl ?? "",
+      templateVariant: invitation.settings?.templateVariant ?? "",
+      accentColor: invitation.settings?.accentColor ?? "",
+    },
     gallery: sortedGallery.map((item: Gallery) => ({
         imageUrl: item.imageUrl,
         imagePublicId: item.imagePublicId ?? "",

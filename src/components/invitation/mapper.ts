@@ -83,6 +83,15 @@ export function toInvitationViewModel(
         createdAt: rsvp.createdAt,
       })),
     templateSlug: invitation.template.slug,
+    settings: {
+      showGallery: invitation.settings?.showGallery ?? true,
+      showRsvp: invitation.settings?.showRsvp ?? true,
+      showGift: invitation.settings?.showGift ?? true,
+      showStory: invitation.settings?.showStory ?? true,
+      showVideo: invitation.settings?.showVideo ?? true,
+      templateVariant: invitation.settings?.templateVariant ?? null,
+      accentColor: invitation.settings?.accentColor ?? null,
+    },
     musicUrl: invitation.settings?.musicUrl ?? null,
   };
 }

@@ -59,7 +59,7 @@ export function Rsvp({ invitation, guestName }: SectionProps) {
             <div className="sm:col-span-2">
               <p className="mb-2 text-[10px] font-semibold tracking-[.22em] uppercase text-white/45">Kehadiran</p>
               <div className="grid grid-cols-3 gap-2">
-                {options.map(option => <label key={option.value} className={`cursor-pointer border px-3 py-3 text-center text-[10px] font-semibold uppercase tracking-[.14em] transition ${selected===option.value?"border-[#765cff] bg-[#765cff] text-white":"border-white/12 text-white/55 hover:border-white/30"}`}><input type="radio" value={option.value} className="sr-only" {...register("status")}/>{option.label}</label>)}
+                {options.map(option => <label key={option.value} className={`cursor-pointer border px-3 py-3 text-center text-[10px] font-semibold uppercase tracking-[.14em] transition ${selected===option.value?"border-[var(--modern-violet)] bg-[var(--modern-violet)] text-white":"border-white/12 text-white/55 hover:border-white/30"}`}><input type="radio" value={option.value} className="sr-only" {...register("status")}/>{option.label}</label>)}
               </div>
               <FieldError message={errors.status?.message}/>
             </div>
@@ -70,7 +70,7 @@ export function Rsvp({ invitation, guestName }: SectionProps) {
           {invitation.guestBook.length > 0 && <div className="mt-10 border-t border-white/12 pt-5"><p className="mb-4 text-[10px] tracking-[.28em] uppercase text-white/35">Latest notes</p><div className="grid gap-3">{invitation.guestBook.slice().reverse().slice(0,4).map(entry=><div key={entry.id} className="border border-white/10 p-4"><div className="flex items-center justify-between gap-4"><p className="text-sm font-bold uppercase tracking-tight">{entry.guestName}</p><span className="text-[9px] tracking-[.18em] uppercase text-[#b7a4ff]">{entry.status==="ATTENDING"?"Hadir":entry.status==="MAYBE"?"Maybe":"Tidak hadir"}</span></div>{entry.message&&<p className="mt-2 text-sm leading-6 text-white/45">{entry.message}</p>}</div>)}</div></div>}
         </div>
       </div>
-      <style>{`.modern-input{width:100%;height:48px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.035);padding:0 14px;color:white;outline:none;font-size:14px}.modern-input::placeholder{color:rgba(255,255,255,.25)}.modern-input:focus{border-color:#765cff}`}</style>
+      <style>{`.modern-input{width:100%;height:48px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.035);padding:0 14px;color:white;outline:none;font-size:14px}.modern-input::placeholder{color:rgba(255,255,255,.25)}.modern-input:focus{border-color:var(--modern-violet)}`}</style>
     </section>
   );
 }

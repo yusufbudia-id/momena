@@ -51,7 +51,7 @@ function PersonChapter({
         </div>
 
         <div className={`${reverse ? "lg:order-1 lg:text-right" : ""} relative z-10`}>
-          <p className="text-[10px] font-bold tracking-[.36em] text-[#765cff] uppercase">{number} / {label}</p>
+          <p className="text-[10px] font-bold tracking-[.36em] text-[var(--modern-violet)] uppercase">{number} / {label}</p>
           <h3 className="mt-3 text-[clamp(4rem,12vw,8rem)] font-black leading-[.76] tracking-[-.075em] uppercase">
             {name}
           </h3>

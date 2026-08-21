@@ -27,7 +27,7 @@ import { GalleryUploadPanel } from "./gallery-upload-panel";
 import { MediaUploadField } from "./media-upload-field";
 import { PublishResultDialog } from "./publish-result-dialog";
 
-const STEPS = ["Event", "Template", "Gallery", "Story", "Gift", "Publish"] as const;
+const STEPS = ["Event", "Template", "Gallery", "Story", "Gift", "Customize", "Publish"] as const;
 
 const STEP_FIELDS: Record<number, (keyof InvitationWizardFormValues)[]> = {
   0: [
@@ -60,7 +60,8 @@ const STEP_FIELDS: Record<number, (keyof InvitationWizardFormValues)[]> = {
   2: ["gallery"],
   3: ["stories"],
   4: ["gifts"],
-  5: [],
+  5: ["settings"],
+  6: [],
 };
 
 interface TemplateOption {
@@ -138,6 +139,16 @@ export function InvitationWizard({
       gallery: [],
       stories: [],
       gifts: [],
+      settings: {
+        showGallery: true,
+        showRsvp: true,
+        showGift: true,
+        showStory: true,
+        showVideo: true,
+        musicUrl: "",
+        templateVariant: "",
+        accentColor: "",
+      },
       ...defaultValues,
     },
   });
@@ -684,6 +695,98 @@ export function InvitationWizard({
         )}
 
         {step === 5 && (
+          <div className="space-y-6">
+            <div>
+              <h3 className="text-base font-semibold">Tampilan & Section</h3>
+              <p className="text-ink-soft mt-1 text-sm">Pilih bagian yang ingin ditampilkan pada undangan.</p>
+            </div>
+
+            <div className="grid gap-3 sm:grid-cols-2">
+              {[
+                ["settings.showGallery", "Gallery", "Tampilkan koleksi foto"],
+                ["settings.showStory", "Love Story", "Tampilkan perjalanan kisah cinta"],
+                ["settings.showGift", "Digital Gift", "Tampilkan rekening / e-wallet"],
+                ["settings.showRsvp", "RSVP", "Tampilkan form konfirmasi kehadiran"],
+                ["settings.showVideo", "Video", "Tampilkan video jika URL tersedia"],
+              ].map(([name, label, description]) => (
+                <label key={name} className="border-line flex cursor-pointer items-start gap-3 rounded-lg border p-4">
+                  <input
+                    type="checkbox"
+                    className="accent-accent mt-1 size-4"
+                    {...register(name as "settings.showGallery")}
+                  />
+                  <span>
+                    <span className="block text-sm font-medium">{label}</span>
+                    <span className="text-ink-soft mt-0.5 block text-xs">{description}</span>
+                  </span>
+                </label>
+              ))}
+            </div>
+
+            <div className="border-line rounded-lg border p-4">
+              <Label htmlFor="settings.musicUrl">Musik Undangan</Label>
+              <Input
+                id="settings.musicUrl"
+                className="mt-2"
+                placeholder="https://.../lagu.mp3"
+                {...register("settings.musicUrl")}
+              />
+              <p className="text-ink-soft mt-2 text-xs">Kosongkan jika tidak ingin memakai musik. Musik mulai setelah tamu menekan Buka Undangan.</p>
+              <FieldError message={errors.settings?.musicUrl?.message} />
+            </div>
+
+            {templates.find((t) => t.id === watch("templateId"))?.slug === "elegant" && (
+              <div className="border-line rounded-lg border p-4">
+                <Label>Varian Elegant</Label>
+                <div className="mt-3 grid grid-cols-2 gap-3">
+                  {[
+                    ["noir", "Noir", "Hitam, charcoal, dan gold"],
+                    ["ivory", "Ivory", "Warm paper dan botanical gold"],
+                  ].map(([value, label, description]) => {
+                    const selected = (watch("settings.templateVariant") || "noir") === value;
+                    return (
+                      <button
+                        key={value}
+                        type="button"
+                        onClick={() => setValue("settings.templateVariant", value, { shouldDirty: true })}
+                        className={cn(
+                          "rounded-lg border-2 p-4 text-left transition",
+                          selected ? "border-accent bg-accent-soft" : "border-line hover:border-ink-soft/40",
+                        )}
+                      >
+                        <span className="block text-sm font-semibold">{label}</span>
+                        <span className="text-ink-soft mt-1 block text-xs">{description}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            <div className="border-line rounded-lg border p-4">
+              <Label htmlFor="settings.accentColor">Accent Color</Label>
+              <div className="mt-2 flex items-center gap-3">
+                <input
+                  type="color"
+                  aria-label="Pilih accent color"
+                  value={watch("settings.accentColor") || "#765cff"}
+                  onChange={(event) => setValue("settings.accentColor", event.target.value, { shouldDirty: true, shouldValidate: true })}
+                  className="border-line h-10 w-14 cursor-pointer rounded border bg-transparent p-1"
+                />
+                <Input
+                  id="settings.accentColor"
+                  placeholder="#765CFF"
+                  {...register("settings.accentColor")}
+                />
+                <Button type="button" variant="outline" onClick={() => setValue("settings.accentColor", "", { shouldDirty: true })}>Reset</Button>
+              </div>
+              <p className="text-ink-soft mt-2 text-xs">Opsional. Kosong = warna bawaan template.</p>
+              <FieldError message={errors.settings?.accentColor?.message} />
+            </div>
+          </div>
+        )}
+
+        {step === 6 && (
           <div>
             <p className="text-ink-soft mb-4 text-sm">
               Cek sekali lagi sebelum disimpan atau dipublish.
@@ -701,6 +804,10 @@ export function InvitationWizard({
                 label="Template"
                 value={templates.find((t) => t.id === watch("templateId"))?.name ?? "—"}
               />
+              <SummaryItem label="Gallery" value={watch("settings.showGallery") ? "Aktif" : "Nonaktif"} />
+              <SummaryItem label="RSVP" value={watch("settings.showRsvp") ? "Aktif" : "Nonaktif"} />
+              <SummaryItem label="Gift" value={watch("settings.showGift") ? "Aktif" : "Nonaktif"} />
+              <SummaryItem label="Musik" value={watch("settings.musicUrl") ? "Aktif" : "Nonaktif"} />
               <SummaryItem label="Rangkaian Event" value={String(eventArray.fields.length)} />
               <SummaryItem label="Event Utama" value={watch("events.0.title") || "—"} />
               <SummaryItem

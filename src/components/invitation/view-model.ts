@@ -17,6 +17,17 @@ export interface InvitationEventView {
   id: string; type: string; title: string; eventDate: Date | null; startTime: string | null; endTime: string | null; location: string | null; address: string | null; mapsUrl: string | null;
 }
 
+
+export interface InvitationDisplaySettings {
+  showGallery: boolean;
+  showRsvp: boolean;
+  showGift: boolean;
+  showStory: boolean;
+  showVideo: boolean;
+  templateVariant: string | null;
+  accentColor: string | null;
+}
+
 export interface GiftMethodView {
   id: string;
   label: string; // nama bank / nama e-wallet
@@ -78,7 +89,7 @@ export interface InvitationViewModel {
   story: StoryItemView[];
   guestBook: GuestBookEntryView[];
   templateSlug: string;
-  /** Dari Settings.musicUrl — null kalau belum diisi (belum ada UI edit Settings). */
+  settings: InvitationDisplaySettings;
   musicUrl: string | null;
   /**
    * True hanya untuk `demoInvitationViewModel` (dipakai halaman preview

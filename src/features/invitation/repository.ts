@@ -136,7 +136,7 @@ function toStoryCreateData(stories: StoryItemInput[]) {
 export async function createInvitation(
   input: CreateInvitationInput,
 ): Promise<Invitation> {
-  const { events = [], gallery = [], gifts = [], stories = [], ...invitationData } = input;
+  const { settings, events = [], gallery = [], gifts = [], stories = [], ...invitationData } = input;
   const primaryEvent = events[0];
 
   return db.invitation.create({
@@ -146,7 +146,7 @@ export async function createInvitation(
       eventLocation: primaryEvent?.location ?? invitationData.eventLocation ?? null,
       eventAddress: primaryEvent?.address ?? invitationData.eventAddress ?? null,
       eventMapsUrl: primaryEvent?.mapsUrl ?? invitationData.eventMapsUrl ?? null,
-      settings: { create: {} }, // Settings dibuat otomatis dengan default
+      settings: { create: settings ?? {} },
       events: { create: toEventCreateData(events) },
       gallery: { create: toGalleryCreateData(gallery) },
       gifts: { create: toGiftCreateData(gifts) },
@@ -174,7 +174,7 @@ export async function updateInvitation(
     },
   });
 
-  const { events, gallery, gifts, stories, ...invitationData } = input;
+  const { settings, events, gallery, gifts, stories, ...invitationData } = input;
   if (events) {
     const primaryEvent = events[0];
     invitationData.eventDate = primaryEvent?.eventDate ?? null;
@@ -184,6 +184,14 @@ export async function updateInvitation(
   }
 
   const updated = await db.$transaction(async (tx) => {
+    if (settings) {
+      await tx.settings.upsert({
+        where: { invitationId: id },
+        create: { invitationId: id, ...settings },
+        update: settings,
+      });
+    }
+
     if (events) {
       await tx.invitationEvent.deleteMany({ where: { invitationId: id } });
       if (events.length > 0) {

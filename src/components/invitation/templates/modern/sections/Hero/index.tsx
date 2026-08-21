@@ -28,7 +28,7 @@ export function Hero({ invitation }: SectionProps) {
         <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent_55%,rgba(9,11,17,.72)_100%)]" />
       </div>
 
-      <div className="absolute left-[12%] top-[18%] size-32 rounded-full bg-[#765cff]/30 blur-3xl sm:size-48" />
+      <div className="absolute left-[12%] top-[18%] size-32 rounded-full bg-[var(--modern-violet)]/30 blur-3xl sm:size-48" />
       <div className="absolute bottom-[16%] right-[12%] size-32 rounded-full bg-[#ff5f9f]/25 blur-3xl sm:size-52" />
 
       <div className="relative mx-auto flex min-h-svh max-w-[1500px] flex-col justify-between px-5 py-6 sm:px-8 lg:px-12">

@@ -17,9 +17,11 @@ import {
   Gallery,
   Gift,
   Hero,
+  LoveStory,
   Location,
   Rsvp,
   StickyCta,
+  Video,
 } from "./sections";
 
 const minimalTheme = {
@@ -115,8 +117,15 @@ export function MinimalTemplate({ invitation, guestName }: SectionProps) {
     if (invitation.musicUrl) music.play();
   }
 
+  const themeStyle = {
+    ...minimalTheme,
+    ...(invitation.settings.accentColor
+      ? { "--minimal-accent": invitation.settings.accentColor, "--color-accent": invitation.settings.accentColor }
+      : {}),
+  } as CSSProperties;
+
   return (
-    <div style={minimalTheme} className="min-h-screen bg-[var(--minimal-paper)] text-[var(--minimal-ink)] selection:bg-[var(--minimal-soft)]">
+    <div style={themeStyle} className="min-h-screen bg-[var(--minimal-paper)] text-[var(--minimal-ink)] selection:bg-[var(--minimal-soft)]">
       <AnimatePresence>
         {!isOpen && <CoverGate invitation={invitation} guestName={guestName} onOpen={handleOpen} />}
       </AnimatePresence>
@@ -127,13 +136,15 @@ export function MinimalTemplate({ invitation, guestName }: SectionProps) {
         <Reveal duration={0.75} distance={18}><BrideGroom invitation={invitation} /></Reveal>
         <Reveal duration={0.75} distance={18}><Countdown invitation={invitation} /></Reveal>
         <Reveal duration={0.75} distance={18}><Location invitation={invitation} /></Reveal>
-        <Reveal duration={0.75} distance={18}><Gallery invitation={invitation} /></Reveal>
-        <Reveal duration={0.75} distance={18}><Gift invitation={invitation} /></Reveal>
-        <Reveal duration={0.75} distance={18}><Rsvp invitation={invitation} guestName={guestName} /></Reveal>
+        {invitation.settings.showGallery && <Reveal duration={0.75} distance={18}><Gallery invitation={invitation} /></Reveal>}
+        {invitation.settings.showStory && <Reveal duration={0.75} distance={18}><LoveStory invitation={invitation} /></Reveal>}
+        {invitation.settings.showVideo && <Reveal duration={0.75} distance={18}><Video invitation={invitation} /></Reveal>}
+        {invitation.settings.showGift && <Reveal duration={0.75} distance={18}><Gift invitation={invitation} /></Reveal>}
+        {invitation.settings.showRsvp && <Reveal duration={0.75} distance={18}><Rsvp invitation={invitation} guestName={guestName} /></Reveal>}
         <Footer invitation={invitation} />
       </main>
 
-      <StickyCta invitation={invitation} />
+      {invitation.settings.showRsvp && <StickyCta invitation={invitation} />}
       {invitation.musicUrl && (
         <MusicToggle
           musicUrl={invitation.musicUrl}

@@ -40,7 +40,7 @@ function Progress() {
   return (
     <motion.div
       style={{ scaleX: scrollYProgress }}
-      className="fixed inset-x-0 top-0 z-40 h-[3px] origin-left bg-[linear-gradient(90deg,#765cff,#ff5f9f,#d8ff58)]"
+      className="fixed inset-x-0 top-0 z-40 h-[3px] origin-left bg-[linear-gradient(90deg,var(--modern-violet),#ff5f9f,#d8ff58)]"
     />
   );
 }
@@ -69,7 +69,7 @@ function CoverGate({
         />
       )}
       <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(5,6,10,.12),rgba(5,6,10,.92))]" />
-      <div className="absolute -right-16 top-20 h-48 w-48 rounded-full bg-[#765cff]/35 blur-3xl" />
+      <div className="absolute -right-16 top-20 h-48 w-48 rounded-full bg-[var(--modern-violet)]/35 blur-3xl" />
       <div className="absolute -left-12 bottom-24 h-44 w-44 rounded-full bg-[#ff5f9f]/25 blur-3xl" />
 
       <div className="relative mx-auto flex min-h-svh max-w-[1500px] flex-col justify-between px-5 py-6 sm:px-8 sm:py-8 lg:px-12">
@@ -136,9 +136,16 @@ export function ModernTemplate({ invitation, guestName }: SectionProps) {
     if (invitation.musicUrl) music.play();
   }
 
+  const themeStyle = {
+    ...modernTheme,
+    ...(invitation.settings.accentColor
+      ? { "--color-accent": invitation.settings.accentColor, "--modern-violet": invitation.settings.accentColor }
+      : {}),
+  } as React.CSSProperties;
+
   return (
     <div
-      style={modernTheme}
+      style={themeStyle}
       className="min-h-screen overflow-x-hidden bg-[#0b0d13] font-sans text-white selection:bg-[#d8ff58] selection:text-[#101218]"
     >
       <Progress />
@@ -152,19 +159,21 @@ export function ModernTemplate({ invitation, guestName }: SectionProps) {
         <Hero invitation={invitation} />
         <Interlude label="Meet the couple" number="01" />
         <BrideGroom invitation={invitation} />
-        <Interlude label="Visual diary" number="02" />
-        <Gallery invitation={invitation} />
+        {invitation.settings.showGallery && (<>
+          <Interlude label="Visual diary" number="02" />
+          <Gallery invitation={invitation} />
+        </>)}
         <Countdown invitation={invitation} />
         <Location invitation={invitation} />
-        <LoveStory invitation={invitation} />
+        {invitation.settings.showStory && <LoveStory invitation={invitation} />}
         <Quote invitation={invitation} />
-        <Video invitation={invitation} />
-        <Gift invitation={invitation} />
-        <Rsvp invitation={invitation} guestName={guestName} />
+        {invitation.settings.showVideo && <Video invitation={invitation} />}
+        {invitation.settings.showGift && <Gift invitation={invitation} />}
+        {invitation.settings.showRsvp && <Rsvp invitation={invitation} guestName={guestName} />}
         <Footer invitation={invitation} />
       </main>
 
-      <StickyCta invitation={invitation} />
+      {invitation.settings.showRsvp && <StickyCta invitation={invitation} />}
       {invitation.musicUrl && (
         <MusicToggle
           musicUrl={invitation.musicUrl}

@@ -2,6 +2,8 @@ export { Hero } from "./Hero";
 export { BrideGroom } from "./BrideGroom";
 export { Countdown } from "./Countdown";
 export { Gallery } from "./Gallery";
+export { LoveStory } from "./LoveStory";
+export { Video } from "./Video";
 export { Gift } from "./Gift";
 export { Location } from "./Location";
 export { Rsvp } from "./Rsvp";

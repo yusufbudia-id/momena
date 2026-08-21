@@ -682,9 +682,9 @@ function ChapterNav({ invitation }: SectionProps) {
   const items = [
     { href: "#couple", label: "Couple", show: Boolean(invitation.couple) },
     { href: "#details", label: "Details", show: invitation.events.length > 0 || Boolean(invitation.eventDate) },
-    { href: "#gallery", label: "Gallery", show: invitation.gallery.length > 0 },
-    { href: "#story", label: "Story", show: invitation.story.length > 0 },
-    { href: "#rsvp", label: "RSVP", show: true },
+    { href: "#gallery", label: "Gallery", show: invitation.settings.showGallery && invitation.gallery.length > 0 },
+    { href: "#story", label: "Story", show: invitation.settings.showStory && invitation.story.length > 0 },
+    { href: "#rsvp", label: "RSVP", show: invitation.settings.showRsvp },
   ].filter((item) => item.show);
 
   return (
@@ -827,12 +827,14 @@ function CoverGate({
 export function ElegantTemplate({ invitation, guestName }: SectionProps) {
   const { isOpen, open } = useInvitationGate();
   const music = useMusicToggle();
-  const [variant, setVariant] = useState<ElegantVariant>("noir");
+  const savedVariant: ElegantVariant = invitation.settings.templateVariant === "ivory" ? "ivory" : "noir";
+  const [variant, setVariant] = useState<ElegantVariant>(savedVariant);
 
   useEffect(() => {
+    if (!invitation.isPreview) return;
     const requested = new URLSearchParams(window.location.search).get("variant");
     if (requested === "ivory" || requested === "noir") setVariant(requested);
-  }, []);
+  }, [invitation.isPreview]);
 
   function switchVariant(next: ElegantVariant) {
     setVariant(next);
@@ -851,7 +853,12 @@ export function ElegantTemplate({ invitation, guestName }: SectionProps) {
 
   return (
     <div
-      style={elegantThemes[variant]}
+      style={{
+        ...elegantThemes[variant],
+        ...(invitation.settings.accentColor
+          ? ({ "--color-accent": invitation.settings.accentColor, "--color-gold-light": invitation.settings.accentColor } as React.CSSProperties)
+          : {}),
+      }}
       data-elegant-variant={variant}
       className="momena-luxe luxe-paper min-h-screen bg-[var(--color-paper)] text-[var(--color-ink)] selection:bg-[var(--color-accent)]/25 [&_h1]:tracking-wide [&_h2]:font-medium [&_h2]:tracking-wide"
     >
@@ -916,19 +923,23 @@ export function ElegantTemplate({ invitation, guestName }: SectionProps) {
         </Reveal>
         </div>
 
-        <FlowMarker label="Memories" />
+        {(invitation.settings.showGallery || invitation.settings.showStory) && <FlowMarker label="Memories" />}
 
-        <div id="gallery">
-          <Reveal duration={0.9} distance={24} className="luxe-section my-12 sm:my-16">
-            <FramedGallery invitation={invitation} />
-          </Reveal>
-        </div>
+        {invitation.settings.showGallery && (
+          <div id="gallery">
+            <Reveal duration={0.9} distance={24} className="luxe-section my-12 sm:my-16">
+              <FramedGallery invitation={invitation} />
+            </Reveal>
+          </div>
+        )}
 
-        <div id="story">
-          <Reveal duration={0.9} distance={24} className="luxe-section my-12 sm:my-16">
-          <LoveStory invitation={invitation} />
-        </Reveal>
-        </div>
+        {invitation.settings.showStory && (
+          <div id="story">
+            <Reveal duration={0.9} distance={24} className="luxe-section my-12 sm:my-16">
+              <LoveStory invitation={invitation} />
+            </Reveal>
+          </div>
+        )}
 
         <Ornament variant="diamond" />
 
@@ -942,32 +953,38 @@ export function ElegantTemplate({ invitation, guestName }: SectionProps) {
           <Quote invitation={invitation} />
         </Reveal>
 
-        <Reveal duration={0.9} distance={24} className="luxe-section my-12 sm:my-16">
-          <Video invitation={invitation} />
-        </Reveal>
+        {invitation.settings.showVideo && (
+          <Reveal duration={0.9} distance={24} className="luxe-section my-12 sm:my-16">
+            <Video invitation={invitation} />
+          </Reveal>
+        )}
 
-        <FlowMarker label="Blessing" />
+        {(invitation.settings.showGift || invitation.settings.showRsvp) && <FlowMarker label="Blessing" />}
 
         <Ornament variant="laurel" />
 
-        <Reveal duration={0.9} distance={24} className="luxe-section">
-          <FramedCard>
-            <Gift invitation={invitation} />
-          </FramedCard>
-        </Reveal>
+        {invitation.settings.showGift && (
+          <Reveal duration={0.9} distance={24} className="luxe-section">
+            <FramedCard>
+              <Gift invitation={invitation} />
+            </FramedCard>
+          </Reveal>
+        )}
 
-        <Reveal duration={0.9} distance={24} className="luxe-section my-12 sm:my-16">
-          <FramedCard>
-            <Rsvp invitation={invitation} guestName={guestName} />
-          </FramedCard>
-        </Reveal>
+        {invitation.settings.showRsvp && (
+          <Reveal duration={0.9} distance={24} className="luxe-section my-12 sm:my-16">
+            <FramedCard>
+              <Rsvp invitation={invitation} guestName={guestName} />
+            </FramedCard>
+          </Reveal>
+        )}
 
         <Ornament variant="diamond" />
 
         <Footer invitation={invitation} />
       </div>
 
-      <StickyCta invitation={invitation} />
+      {invitation.settings.showRsvp && <StickyCta invitation={invitation} />}
       {invitation.musicUrl && (
         <MusicToggle
           musicUrl={invitation.musicUrl}

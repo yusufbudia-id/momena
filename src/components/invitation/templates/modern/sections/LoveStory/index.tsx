@@ -6,7 +6,7 @@ export function LoveStory({ invitation }: SectionProps) {
   return (
     <section className="overflow-hidden bg-[#ffedf4] px-5 py-18 text-[#101218] sm:px-8 sm:py-24 lg:px-12">
       <div className="mx-auto max-w-[1500px]">
-        <p className="text-[10px] font-bold tracking-[.35em] text-[#765cff] uppercase">Story chapters</p>
+        <p className="text-[10px] font-bold tracking-[.35em] text-[var(--modern-violet)] uppercase">Story chapters</p>
         <h2 className="mt-3 text-[clamp(3.8rem,10vw,8rem)] font-black leading-[.78] tracking-[-.07em] uppercase">How we<br />got here.</h2>
 
         <div className="mt-12">

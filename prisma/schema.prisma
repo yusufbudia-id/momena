@@ -256,8 +256,12 @@ model Settings {
   showGallery Boolean @default(true)
   showRsvp    Boolean @default(true)
   showGift    Boolean @default(true)
+  showStory   Boolean @default(true)
+  showVideo   Boolean @default(true)
 
-  musicUrl String?
+  musicUrl        String?
+  templateVariant String?
+  accentColor     String?
 
   isPasswordProtected Boolean @default(false)
   accessCode          String?

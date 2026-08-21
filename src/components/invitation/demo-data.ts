@@ -86,6 +86,15 @@ const baseDemo: Omit<InvitationViewModel, "coverImageUrl" | "groomPhotoUrl" | "b
       createdAt: new Date(),
     },
   ],
+  settings: {
+    showGallery: true,
+    showRsvp: true,
+    showGift: true,
+    showStory: true,
+    showVideo: true,
+    templateVariant: null,
+    accentColor: null,
+  },
   musicUrl: null,
   isPreview: true,
 };
