@@ -32,6 +32,8 @@ export function toInvitationViewModel(
     quote: invitation.quote,
     description: invitation.description,
     coverImageUrl: invitation.coverImageUrl,
+    groomPhotoUrl: invitation.groomPhotoUrl,
+    bridePhotoUrl: invitation.bridePhotoUrl,
     videoUrl: invitation.videoUrl,
     eventDate: invitation.eventDate,
     eventLocation: invitation.eventLocation,

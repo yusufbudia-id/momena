@@ -53,6 +53,11 @@ const invitationBaseSchema = {
     .optional()
     .nullable()
     .or(z.literal("")),
+  coverImagePublicId: z.string().max(255).optional().nullable().or(z.literal("")),
+  groomPhotoUrl: z.string().url("URL foto mempelai pria tidak valid").optional().nullable().or(z.literal("")),
+  groomPhotoPublicId: z.string().max(255).optional().nullable().or(z.literal("")),
+  bridePhotoUrl: z.string().url("URL foto mempelai wanita tidak valid").optional().nullable().or(z.literal("")),
+  bridePhotoPublicId: z.string().max(255).optional().nullable().or(z.literal("")),
   quote: z.string().max(500).optional().nullable(),
   videoUrl: z
     .string()
@@ -64,6 +69,7 @@ const invitationBaseSchema = {
 
 export const galleryItemSchema = z.object({
   imageUrl: z.string().url("URL foto tidak valid"),
+  imagePublicId: z.string().max(255).optional().nullable().or(z.literal("")),
   caption: z.string().max(150).optional().nullable(),
 });
 
@@ -121,6 +127,11 @@ export const invitationWizardFormSchema = z.object({
   eventMapsUrl: invitationBaseSchema.eventMapsUrl,
   description: invitationBaseSchema.description,
   coverImageUrl: invitationBaseSchema.coverImageUrl,
+  coverImagePublicId: invitationBaseSchema.coverImagePublicId,
+  groomPhotoUrl: invitationBaseSchema.groomPhotoUrl,
+  groomPhotoPublicId: invitationBaseSchema.groomPhotoPublicId,
+  bridePhotoUrl: invitationBaseSchema.bridePhotoUrl,
+  bridePhotoPublicId: invitationBaseSchema.bridePhotoPublicId,
   quote: invitationBaseSchema.quote,
   videoUrl: invitationBaseSchema.videoUrl,
   gallery: z.array(galleryItemSchema).max(20).default([]),

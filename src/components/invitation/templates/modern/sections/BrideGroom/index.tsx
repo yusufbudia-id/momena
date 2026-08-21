@@ -81,7 +81,7 @@ export function BrideGroom({ invitation }: SectionProps) {
         name={first}
         parents={firstParents}
         instagram={firstInstagram}
-        image={invitation.gallery[0]?.imageUrl ?? null}
+        image={invitation.groomPhotoUrl ?? invitation.gallery[0]?.imageUrl ?? null}
         label="The groom"
         number="01"
       />
@@ -89,7 +89,7 @@ export function BrideGroom({ invitation }: SectionProps) {
         name={second}
         parents={secondParents}
         instagram={secondInstagram}
-        image={invitation.gallery[1]?.imageUrl ?? null}
+        image={invitation.bridePhotoUrl ?? invitation.gallery[1]?.imageUrl ?? null}
         label="The bride"
         number="02"
         reverse

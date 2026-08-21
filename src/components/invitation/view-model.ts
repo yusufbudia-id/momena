@@ -55,6 +55,8 @@ export interface InvitationViewModel {
   quote: string | null;
   description: string | null;
   coverImageUrl: string | null;
+  groomPhotoUrl: string | null;
+  bridePhotoUrl: string | null;
   videoUrl: string | null;
   eventDate: Date | null;
   eventLocation: string | null;

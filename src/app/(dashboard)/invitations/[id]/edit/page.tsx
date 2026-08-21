@@ -53,11 +53,20 @@ export default async function EditInvitationPage({ params }: EditInvitationPageP
     eventMapsUrl: invitation.eventMapsUrl ?? "",
     description: invitation.description ?? "",
     coverImageUrl: invitation.coverImageUrl ?? "",
+    coverImagePublicId: invitation.coverImagePublicId ?? "",
+    groomPhotoUrl: invitation.groomPhotoUrl ?? "",
+    groomPhotoPublicId: invitation.groomPhotoPublicId ?? "",
+    bridePhotoUrl: invitation.bridePhotoUrl ?? "",
+    bridePhotoPublicId: invitation.bridePhotoPublicId ?? "",
     quote: invitation.quote ?? "",
     videoUrl: invitation.videoUrl ?? "",
     gallery: invitation.gallery
       .sort((a: Gallery, b: Gallery) => a.order - b.order)
-      .map((item: Gallery) => ({ imageUrl: item.imageUrl, caption: item.caption ?? "" })),
+      .map((item: Gallery) => ({
+        imageUrl: item.imageUrl,
+        imagePublicId: item.imagePublicId ?? "",
+        caption: item.caption ?? "",
+      })),
     stories: invitation.stories
       .sort((a: Story, b: Story) => a.order - b.order)
       .map((item: Story) => ({

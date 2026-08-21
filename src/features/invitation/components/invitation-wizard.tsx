@@ -1,7 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Banknote, Check, Heart, ImagePlus, Plus, Trash2, Wallet } from "lucide-react";
+import { Banknote, Check, Heart, Plus, Trash2, Wallet } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
@@ -23,6 +23,8 @@ import {
   type InvitationWizardFormValues,
 } from "../validation";
 
+import { GalleryUploadPanel } from "./gallery-upload-panel";
+import { MediaUploadField } from "./media-upload-field";
 import { PublishResultDialog } from "./publish-result-dialog";
 
 const STEPS = ["Event", "Template", "Gallery", "Story", "Gift", "Publish"] as const;
@@ -43,6 +45,11 @@ const STEP_FIELDS: Record<number, (keyof InvitationWizardFormValues)[]> = {
     "eventMapsUrl",
     "description",
     "coverImageUrl",
+    "coverImagePublicId",
+    "groomPhotoUrl",
+    "groomPhotoPublicId",
+    "bridePhotoUrl",
+    "bridePhotoPublicId",
     "quote",
     "videoUrl",
   ],
@@ -108,6 +115,11 @@ export function InvitationWizard({
       eventMapsUrl: "",
       description: "",
       coverImageUrl: "",
+      coverImagePublicId: "",
+      groomPhotoUrl: "",
+      groomPhotoPublicId: "",
+      bridePhotoUrl: "",
+      bridePhotoPublicId: "",
       quote: "",
       videoUrl: "",
       gallery: [],
@@ -305,16 +317,53 @@ export function InvitationWizard({
             </div>
 
             <div className="sm:col-span-2">
-              <Label htmlFor="coverImageUrl">URL Foto Cover</Label>
-              <Input
-                id="coverImageUrl"
-                placeholder="https://…"
-                {...register("coverImageUrl")}
-              />
+              <div className="mb-3">
+                <p className="text-sm font-medium text-ink">Foto Undangan</p>
+                <p className="mt-1 text-xs text-ink-soft">
+                  Upload foto langsung. Cover disarankan 3:4/4:5, foto mempelai 4:5.
+                </p>
+              </div>
+              <div className="grid gap-4 sm:grid-cols-3">
+                <MediaUploadField
+                  label="Foto Cover"
+                  value={watch("coverImageUrl")}
+                  publicId={watch("coverImagePublicId")}
+                  onChange={(media) => {
+                    setValue("coverImageUrl", media?.url ?? "", { shouldValidate: true });
+                    setValue("coverImagePublicId", media?.publicId ?? "");
+                  }}
+                  helper="Dipakai pada opening dan hero."
+                />
+                <MediaUploadField
+                  label="Foto Mempelai Pria"
+                  value={watch("groomPhotoUrl")}
+                  publicId={watch("groomPhotoPublicId")}
+                  onChange={(media) => {
+                    setValue("groomPhotoUrl", media?.url ?? "", { shouldValidate: true });
+                    setValue("groomPhotoPublicId", media?.publicId ?? "");
+                  }}
+                  helper="Foto portrait khusus Groom."
+                />
+                <MediaUploadField
+                  label="Foto Mempelai Wanita"
+                  value={watch("bridePhotoUrl")}
+                  publicId={watch("bridePhotoPublicId")}
+                  onChange={(media) => {
+                    setValue("bridePhotoUrl", media?.url ?? "", { shouldValidate: true });
+                    setValue("bridePhotoPublicId", media?.publicId ?? "");
+                  }}
+                  helper="Foto portrait khusus Bride."
+                />
+              </div>
+              <input type="hidden" {...register("coverImageUrl")} />
+              <input type="hidden" {...register("coverImagePublicId")} />
+              <input type="hidden" {...register("groomPhotoUrl")} />
+              <input type="hidden" {...register("groomPhotoPublicId")} />
+              <input type="hidden" {...register("bridePhotoUrl")} />
+              <input type="hidden" {...register("bridePhotoPublicId")} />
               <FieldError message={errors.coverImageUrl?.message} />
-              <p className="text-ink-soft/70 mt-1 text-xs">
-                Upload langsung (Cloudinary) menyusul — untuk sekarang tempel URL foto.
-              </p>
+              <FieldError message={errors.groomPhotoUrl?.message} />
+              <FieldError message={errors.bridePhotoUrl?.message} />
             </div>
 
             <div>
@@ -394,57 +443,15 @@ export function InvitationWizard({
         )}
 
         {step === 2 && (
-          <div>
-            <div className="mb-4 flex items-center justify-between">
-              <p className="text-ink-soft text-sm">
-                Tambahkan foto untuk galeri undangan.
-              </p>
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={() => galleryArray.append({ imageUrl: "", caption: "" })}
-              >
-                <Plus className="size-3.5" /> Tambah Foto
-              </Button>
-            </div>
-
-            {galleryArray.fields.length === 0 && (
-              <div className="border-line text-ink-soft flex flex-col items-center gap-2 rounded-lg border border-dashed py-10 text-center text-sm">
-                <ImagePlus className="size-6" />
-                Belum ada foto ditambahkan.
-              </div>
-            )}
-
-            <div className="flex flex-col gap-3">
-              {galleryArray.fields.map((field, index) => (
-                <div
-                  key={field.id}
-                  className="border-line flex items-start gap-2 rounded-lg border p-3"
-                >
-                  <div className="flex-1 space-y-2">
-                    <Input
-                      placeholder="URL foto"
-                      {...register(`gallery.${index}.imageUrl`)}
-                    />
-                    <FieldError message={errors.gallery?.[index]?.imageUrl?.message} />
-                    <Input
-                      placeholder="Caption (opsional)"
-                      {...register(`gallery.${index}.caption`)}
-                    />
-                  </div>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => galleryArray.remove(index)}
-                  >
-                    <Trash2 className="size-4 text-red-600" />
-                  </Button>
-                </div>
-              ))}
-            </div>
-          </div>
+          <GalleryUploadPanel
+            items={watch("gallery") ?? []}
+            onAppend={(item) => galleryArray.append(item)}
+            onRemove={(index) => galleryArray.remove(index)}
+            onMove={(from, to) => galleryArray.move(from, to)}
+            onCaptionChange={(index, caption) =>
+              setValue(`gallery.${index}.caption`, caption, { shouldDirty: true })
+            }
+          />
         )}
 
         {step === 3 && (

@@ -84,7 +84,7 @@ export function BrideGroom({ invitation }: SectionProps) {
             name={first}
             parents={firstParents}
             instagram={firstInstagram}
-            src={invitation.gallery[0]?.imageUrl ?? null}
+            src={invitation.groomPhotoUrl ?? invitation.gallery[0]?.imageUrl ?? null}
             index="01"
           />
           <div className="sm:pt-20">
@@ -92,7 +92,7 @@ export function BrideGroom({ invitation }: SectionProps) {
               name={second}
               parents={secondParents}
               instagram={secondInstagram}
-              src={invitation.gallery[1]?.imageUrl ?? null}
+              src={invitation.bridePhotoUrl ?? invitation.gallery[1]?.imageUrl ?? null}
               index="02"
             />
           </div>

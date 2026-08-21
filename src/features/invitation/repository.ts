@@ -1,3 +1,4 @@
+import { deleteImages } from "@/features/media/cloudinary";
 import { db } from "@/lib/db";
 
 import type {
@@ -150,9 +151,19 @@ export async function updateInvitation(
   id: string,
   input: UpdateInvitationInput,
 ): Promise<Invitation> {
+  const existing = await db.invitation.findUnique({
+    where: { id },
+    select: {
+      coverImagePublicId: true,
+      groomPhotoPublicId: true,
+      bridePhotoPublicId: true,
+      gallery: { select: { imagePublicId: true } },
+    },
+  });
+
   const { gallery, gifts, stories, ...invitationData } = input;
 
-  return db.$transaction(async (tx) => {
+  const updated = await db.$transaction(async (tx) => {
     if (gallery) {
       await tx.gallery.deleteMany({ where: { invitationId: id } });
       if (gallery.length > 0) {
@@ -191,10 +202,60 @@ export async function updateInvitation(
 
     return tx.invitation.update({ where: { id }, data: invitationData });
   });
+
+  if (existing) {
+    const stalePublicIds: Array<string | null | undefined> = [];
+    const has = (key: keyof UpdateInvitationInput) =>
+      Object.prototype.hasOwnProperty.call(input, key);
+
+    if (has("coverImagePublicId") && existing.coverImagePublicId !== input.coverImagePublicId) {
+      stalePublicIds.push(existing.coverImagePublicId);
+    }
+    if (has("groomPhotoPublicId") && existing.groomPhotoPublicId !== input.groomPhotoPublicId) {
+      stalePublicIds.push(existing.groomPhotoPublicId);
+    }
+    if (has("bridePhotoPublicId") && existing.bridePhotoPublicId !== input.bridePhotoPublicId) {
+      stalePublicIds.push(existing.bridePhotoPublicId);
+    }
+
+    if (gallery) {
+      const nextIds = new Set(gallery.map((item) => item.imagePublicId).filter(Boolean));
+      for (const item of existing.gallery) {
+        if (item.imagePublicId && !nextIds.has(item.imagePublicId)) {
+          stalePublicIds.push(item.imagePublicId);
+        }
+      }
+    }
+
+    await deleteImages(stalePublicIds);
+  }
+
+  return updated;
 }
 
 export async function deleteInvitation(id: string): Promise<Invitation> {
-  return db.invitation.delete({ where: { id } });
+  const existing = await db.invitation.findUnique({
+    where: { id },
+    select: {
+      coverImagePublicId: true,
+      groomPhotoPublicId: true,
+      bridePhotoPublicId: true,
+      gallery: { select: { imagePublicId: true } },
+    },
+  });
+
+  const deleted = await db.invitation.delete({ where: { id } });
+
+  if (existing) {
+    await deleteImages([
+      existing.coverImagePublicId,
+      existing.groomPhotoPublicId,
+      existing.bridePhotoPublicId,
+      ...existing.gallery.map((item) => item.imagePublicId),
+    ]);
+  }
+
+  return deleted;
 }
 
 export async function publishInvitation(id: string): Promise<Invitation> {

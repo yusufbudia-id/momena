@@ -97,7 +97,12 @@ model Invitation {
   eventAddress     String?
   eventMapsUrl     String?
   description      String?
-  coverImageUrl    String?
+  coverImageUrl       String?
+  coverImagePublicId  String?
+  groomPhotoUrl       String?
+  groomPhotoPublicId  String?
+  bridePhotoUrl       String?
+  bridePhotoPublicId  String?
   quote            String? // kutipan/ayat pendek — dipakai section Quote
   videoUrl         String? // URL video (YouTube/Vimeo) — dipakai section Video
 
@@ -125,8 +130,9 @@ model Gallery {
   invitationId String
   invitation   Invitation @relation(fields: [invitationId], references: [id], onDelete: Cascade)
 
-  imageUrl String
-  caption  String?
+  imageUrl      String
+  imagePublicId String?
+  caption       String?
   order    Int     @default(0)
 
   createdAt DateTime @default(now())

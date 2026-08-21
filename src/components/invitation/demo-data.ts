@@ -1,6 +1,6 @@
 import type { InvitationViewModel } from "./view-model";
 
-const baseDemo: Omit<InvitationViewModel, "coverImageUrl" | "gallery" | "templateSlug"> = {
+const baseDemo: Omit<InvitationViewModel, "coverImageUrl" | "groomPhotoUrl" | "bridePhotoUrl" | "gallery" | "templateSlug"> = {
   id: "demo",
   slug: "ardi-laras",
   title: "Pernikahan Ardi & Laras",
@@ -104,6 +104,8 @@ export function getDemoInvitationViewModel(templateSlug: string): InvitationView
       ...baseDemo,
       title: "ARDI × LARAS",
       coverImageUrl: "/demo/modern/cover.svg",
+      groomPhotoUrl: "/demo/modern/gallery-1.svg",
+      bridePhotoUrl: "/demo/modern/gallery-2.svg",
       gallery: gallery("modern"),
       templateSlug: "modern",
     };
@@ -114,6 +116,8 @@ export function getDemoInvitationViewModel(templateSlug: string): InvitationView
       ...baseDemo,
       title: "Ardi & Laras",
       coverImageUrl: "/demo/minimal/cover.svg",
+      groomPhotoUrl: "/demo/minimal/gallery-1.svg",
+      bridePhotoUrl: "/demo/minimal/gallery-2.svg",
       gallery: gallery("minimal"),
       templateSlug: "minimal",
     };
@@ -123,6 +127,8 @@ export function getDemoInvitationViewModel(templateSlug: string): InvitationView
     ...baseDemo,
     title: "The Wedding of Ardi & Laras",
     coverImageUrl: "/demo/elegant/cover-couple.svg",
+    groomPhotoUrl: "/demo/elegant/groom-portrait.svg",
+    bridePhotoUrl: "/demo/elegant/bride-portrait.svg",
     gallery: elegantGallery,
     templateSlug: templateSlug || "elegant",
   };

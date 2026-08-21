@@ -57,8 +57,8 @@ export function BrideGroom({ invitation }: SectionProps) {
 
   const { first, second, firstParents, secondParents, firstInstagram, secondInstagram } =
     invitation.couple;
-  const firstPhoto = invitation.gallery[0]?.imageUrl ?? null;
-  const secondPhoto = invitation.gallery[1]?.imageUrl ?? null;
+  const firstPhoto = invitation.groomPhotoUrl ?? invitation.gallery[0]?.imageUrl ?? null;
+  const secondPhoto = invitation.bridePhotoUrl ?? invitation.gallery[1]?.imageUrl ?? null;
 
   return (
     <section className="relative overflow-hidden px-1 py-10 sm:px-6 sm:py-20">

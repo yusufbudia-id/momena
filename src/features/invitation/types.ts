@@ -29,6 +29,7 @@ export type InvitationListItem = Prisma.InvitationGetPayload<{
 
 export type GalleryItemInput = {
   imageUrl: string;
+  imagePublicId?: string | null;
   caption?: string | null;
 };
 
@@ -66,6 +67,11 @@ export type CreateInvitationInput = {
   eventMapsUrl?: string | null;
   description?: string | null;
   coverImageUrl?: string | null;
+  coverImagePublicId?: string | null;
+  groomPhotoUrl?: string | null;
+  groomPhotoPublicId?: string | null;
+  bridePhotoUrl?: string | null;
+  bridePhotoPublicId?: string | null;
   quote?: string | null;
   videoUrl?: string | null;
   gallery?: GalleryItemInput[];
