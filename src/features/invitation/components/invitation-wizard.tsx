@@ -413,7 +413,23 @@ export function InvitationWizard({
                 {eventArray.fields.map((field,index)=>(
                   <div key={field.id} onDragOver={(event) => event.preventDefault()} onDrop={(event) => { event.preventDefault(); if (eventDragIndex !== null && eventDragIndex !== index) eventArray.move(eventDragIndex,index); setEventDragIndex(null); }} className={`rounded-xl border border-line bg-surface p-4 transition ${eventDragIndex === index ? "opacity-50 ring-2 ring-accent" : ""}`}>
                     <div className="mb-4 flex items-center justify-between gap-3">
-                      <div className="flex items-center gap-2"><GripVertical draggable onDragStart={() => setEventDragIndex(index)} onDragEnd={() => setEventDragIndex(null)} className="size-4 cursor-grab text-ink-soft active:cursor-grabbing" /><div><p className="text-sm font-medium text-ink">{watch(`events.${index}.title`) || `Event ${index+1}`}</p><p className="text-[11px] text-ink-soft">Drag untuk mengubah urutan.</p></div></div>
+                      <div className="flex items-center gap-2">
+                        <button
+                          type="button"
+                          draggable
+                          aria-label={`Geser urutan ${watch(`events.${index}.title`) || `Event ${index + 1}`}`}
+                          onDragStart={(event) => {
+                            event.dataTransfer.effectAllowed = "move";
+                            event.dataTransfer.setData("text/plain", String(index));
+                            setEventDragIndex(index);
+                          }}
+                          onDragEnd={() => setEventDragIndex(null)}
+                          className="cursor-grab rounded p-1 text-ink-soft hover:bg-muted active:cursor-grabbing"
+                        >
+                          <GripVertical className="size-4" />
+                        </button>
+                        <div><p className="text-sm font-medium text-ink">{watch(`events.${index}.title`) || `Event ${index+1}`}</p><p className="text-[11px] text-ink-soft">Drag untuk mengubah urutan.</p></div>
+                      </div>
                       <Button type="button" variant="ghost" size="icon" onClick={()=>eventArray.remove(index)}><Trash2 className="size-4" /></Button>
                     </div>
                     <div className="grid gap-3 sm:grid-cols-2">
@@ -635,7 +651,20 @@ export function InvitationWizard({
               {storyArray.fields.map((field, index) => (
                 <div key={field.id} onDragOver={(event) => event.preventDefault()} onDrop={(event) => { event.preventDefault(); if (storyDragIndex !== null && storyDragIndex !== index) storyArray.move(storyDragIndex,index); setStoryDragIndex(null); }} className={`border-line rounded-lg border p-3 transition ${storyDragIndex === index ? "opacity-50 ring-2 ring-accent" : ""}`}>
                   <div className="flex items-start gap-2">
-                    <GripVertical draggable onDragStart={() => setStoryDragIndex(index)} onDragEnd={() => setStoryDragIndex(null)} className="mt-2 size-4 shrink-0 cursor-grab text-ink-soft active:cursor-grabbing" />
+                    <button
+                      type="button"
+                      draggable
+                      aria-label={`Geser urutan momen ${index + 1}`}
+                      onDragStart={(event) => {
+                        event.dataTransfer.effectAllowed = "move";
+                        event.dataTransfer.setData("text/plain", String(index));
+                        setStoryDragIndex(index);
+                      }}
+                      onDragEnd={() => setStoryDragIndex(null)}
+                      className="mt-1 shrink-0 cursor-grab rounded p-1 text-ink-soft hover:bg-muted active:cursor-grabbing"
+                    >
+                      <GripVertical className="size-4" />
+                    </button>
                     <div className="flex-1 space-y-2">
                       <Input
                         placeholder="Judul momen, mis. Pertama Bertemu"
