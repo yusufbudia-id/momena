@@ -13,6 +13,18 @@ interface EditInvitationPageProps {
   params: Promise<{ id: string }>;
 }
 
+function normalizeFontFamily(value: string | null | undefined): InvitationWizardFormValues["settings"]["fontFamily"] {
+  return value === "serif" || value === "sans" || value === "display" ? value : "default";
+}
+
+function normalizeHeroLayout(value: string | null | undefined): InvitationWizardFormValues["settings"]["heroLayout"] {
+  return value === "centered" || value === "split" ? value : "default";
+}
+
+function normalizeDecorationLevel(value: string | null | undefined): InvitationWizardFormValues["settings"]["decorationLevel"] {
+  return value === "minimal" || value === "rich" ? value : "medium";
+}
+
 export default async function EditInvitationPage({ params }: EditInvitationPageProps) {
   const { id } = await params;
 
@@ -87,9 +99,9 @@ export default async function EditInvitationPage({ params }: EditInvitationPageP
       musicUrl: invitation.settings?.musicUrl ?? "",
       templateVariant: invitation.settings?.templateVariant ?? "",
       accentColor: invitation.settings?.accentColor ?? "",
-      fontFamily: invitation.settings?.fontFamily ?? "default",
-      heroLayout: invitation.settings?.heroLayout ?? "default",
-      decorationLevel: invitation.settings?.decorationLevel ?? "medium",
+      fontFamily: normalizeFontFamily(invitation.settings?.fontFamily),
+      heroLayout: normalizeHeroLayout(invitation.settings?.heroLayout),
+      decorationLevel: normalizeDecorationLevel(invitation.settings?.decorationLevel),
     },
     gallery: sortedGallery.map((item: Gallery) => ({
         imageUrl: item.imageUrl,
