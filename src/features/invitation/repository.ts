@@ -132,12 +132,24 @@ function toStoryCreateData(stories: StoryItemInput[]) {
   return stories.map((item, index) => ({ ...item, order: index }));
 }
 
+function toSettingsData(settings: CreateInvitationInput["settings"] | UpdateInvitationInput["settings"]) {
+  if (!settings) return {};
+
+  const { decorationLevel, ...rest } = settings;
+
+  return {
+    ...rest,
+    ...(decorationLevel == null ? {} : { decorationLevel }),
+  };
+}
+
 /** Membuat invitation beserta gallery, gift, & story-nya dalam satu operasi. */
 export async function createInvitation(
   input: CreateInvitationInput,
 ): Promise<Invitation> {
   const { settings, events = [], gallery = [], gifts = [], stories = [], ...invitationData } = input;
   const primaryEvent = events[0];
+  const settingsData = toSettingsData(settings);
 
   return db.invitation.create({
     data: {
@@ -146,7 +158,7 @@ export async function createInvitation(
       eventLocation: primaryEvent?.location ?? invitationData.eventLocation ?? null,
       eventAddress: primaryEvent?.address ?? invitationData.eventAddress ?? null,
       eventMapsUrl: primaryEvent?.mapsUrl ?? invitationData.eventMapsUrl ?? null,
-      settings: { create: settings ?? {} },
+      settings: { create: settingsData },
       events: { create: toEventCreateData(events) },
       gallery: { create: toGalleryCreateData(gallery) },
       gifts: { create: toGiftCreateData(gifts) },
@@ -176,6 +188,7 @@ export async function updateInvitation(
   });
 
   const { settings, events, gallery, gifts, stories, ...invitationData } = input;
+  const settingsData = toSettingsData(settings);
   if (events) {
     const primaryEvent = events[0];
     invitationData.eventDate = primaryEvent?.eventDate ?? null;
@@ -188,8 +201,8 @@ export async function updateInvitation(
     if (settings) {
       await tx.settings.upsert({
         where: { invitationId: id },
-        create: { invitationId: id, ...settings },
-        update: settings,
+        create: { invitationId: id, ...settingsData },
+        update: settingsData,
       });
     }
 
