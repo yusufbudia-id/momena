@@ -171,6 +171,7 @@ export async function updateInvitation(
       groomPhotoPublicId: true,
       bridePhotoPublicId: true,
       gallery: { select: { imagePublicId: true } },
+      gifts: { select: { qrImagePublicId: true } },
     },
   });
 
@@ -256,9 +257,13 @@ export async function updateInvitation(
     if (gallery) {
       const nextIds = new Set(gallery.map((item) => item.imagePublicId).filter(Boolean));
       for (const item of existing.gallery) {
-        if (item.imagePublicId && !nextIds.has(item.imagePublicId)) {
-          stalePublicIds.push(item.imagePublicId);
-        }
+        if (item.imagePublicId && !nextIds.has(item.imagePublicId)) stalePublicIds.push(item.imagePublicId);
+      }
+    }
+    if (gifts) {
+      const nextIds = new Set(gifts.map((item) => item.qrImagePublicId).filter(Boolean));
+      for (const item of existing.gifts) {
+        if (item.qrImagePublicId && !nextIds.has(item.qrImagePublicId)) stalePublicIds.push(item.qrImagePublicId);
       }
     }
 
@@ -276,6 +281,7 @@ export async function deleteInvitation(id: string): Promise<Invitation> {
       groomPhotoPublicId: true,
       bridePhotoPublicId: true,
       gallery: { select: { imagePublicId: true } },
+      gifts: { select: { qrImagePublicId: true } },
     },
   });
 
@@ -287,6 +293,7 @@ export async function deleteInvitation(id: string): Promise<Invitation> {
       existing.groomPhotoPublicId,
       existing.bridePhotoPublicId,
       ...existing.gallery.map((item) => item.imagePublicId),
+      ...existing.gifts.map((item) => item.qrImagePublicId),
     ]);
   }
 

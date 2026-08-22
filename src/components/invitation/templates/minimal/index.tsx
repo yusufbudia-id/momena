@@ -9,6 +9,7 @@ import { useMusicToggle } from "../../hooks/use-music-toggle";
 import { MusicToggle } from "../../music-toggle";
 import { Reveal } from "../../reveal";
 import type { SectionProps } from "../../types";
+import { decorationOpacity, invitationFontStack } from "../../customization";
 
 import {
   BrideGroom,
@@ -109,7 +110,7 @@ function IntroNote({ invitation }: SectionProps) {
 }
 
 export function MinimalTemplate({ invitation, guestName }: SectionProps) {
-  const { isOpen, open } = useInvitationGate();
+  const { isOpen, open } = useInvitationGate({ initialOpen: !!invitation.editorPreview, lockBody: !invitation.editorPreview });
   const music = useMusicToggle();
 
   function handleOpen() {
@@ -122,10 +123,12 @@ export function MinimalTemplate({ invitation, guestName }: SectionProps) {
     ...(invitation.settings.accentColor
       ? { "--minimal-accent": invitation.settings.accentColor, "--color-accent": invitation.settings.accentColor }
       : {}),
+    fontFamily: invitationFontStack(invitation.settings.fontFamily),
+    "--momena-decoration-opacity": decorationOpacity(invitation.settings.decorationLevel),
   } as CSSProperties;
 
   return (
-    <div style={themeStyle} className="min-h-screen bg-[var(--minimal-paper)] text-[var(--minimal-ink)] selection:bg-[var(--minimal-soft)]">
+    <div style={themeStyle} data-hero-layout={invitation.settings.heroLayout ?? "default"} data-decoration={invitation.settings.decorationLevel} className={`min-h-screen bg-[var(--minimal-paper)] text-[var(--minimal-ink)] selection:bg-[var(--minimal-soft)] ${invitation.settings.fontFamily && invitation.settings.fontFamily !== "default" ? "[&_.font-display]:!font-[inherit]" : ""}`}>
       <AnimatePresence>
         {!isOpen && <CoverGate invitation={invitation} guestName={guestName} onOpen={handleOpen} />}
       </AnimatePresence>
@@ -144,8 +147,8 @@ export function MinimalTemplate({ invitation, guestName }: SectionProps) {
         <Footer invitation={invitation} />
       </main>
 
-      {invitation.settings.showRsvp && <StickyCta invitation={invitation} />}
-      {invitation.musicUrl && (
+      {invitation.settings.showRsvp && !invitation.editorPreview && <StickyCta invitation={invitation} />}
+      {invitation.musicUrl && !invitation.editorPreview && (
         <MusicToggle
           musicUrl={invitation.musicUrl}
           audioRef={music.audioRef}

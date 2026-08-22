@@ -234,8 +234,10 @@ model Gift {
   ewalletName   String?
   ewalletNumber String?
 
-  note  String?
-  order Int     @default(0)
+  note            String?
+  qrImageUrl      String?
+  qrImagePublicId String?
+  order           Int     @default(0)
 
   createdAt DateTime @default(now())
 
@@ -262,6 +264,9 @@ model Settings {
   musicUrl        String?
   templateVariant String?
   accentColor     String?
+  fontFamily      String?
+  heroLayout      String?
+  decorationLevel String @default("medium")
 
   isPasswordProtected Boolean @default(false)
   accessCode          String?

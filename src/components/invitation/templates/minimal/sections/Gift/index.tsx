@@ -38,6 +38,7 @@ export function Gift({ invitation }: SectionProps) {
                 {gift.number && <p className="mt-2 text-lg tracking-[0.08em] text-[var(--minimal-ink)]">{gift.number}</p>}
                 {gift.holderName && <p className="mt-1 text-sm text-[var(--minimal-muted)]">a.n. {gift.holderName}</p>}
                 {gift.note && <p className="mt-1 text-sm leading-6 text-[var(--minimal-muted)]">{gift.note}</p>}
+                {gift.qrImageUrl && <div className="mt-3 w-28 border border-[var(--minimal-line)] bg-white p-2">{/* eslint-disable-next-line @next/next/no-img-element -- QR Cloudinary dinamis */}<img src={gift.qrImageUrl} alt={`QR ${gift.label}`} className="aspect-square w-full object-contain" /></div>}
               </div>
               {gift.number && (
                 <button

@@ -39,6 +39,7 @@ const baseDemo: Omit<InvitationViewModel, "coverImageUrl" | "groomPhotoUrl" | "b
       number: "1234567890",
       holderName: "Ardi Wijaya",
       note: null,
+      qrImageUrl: null,
     },
     {
       id: "demo-gift-2",
@@ -46,6 +47,7 @@ const baseDemo: Omit<InvitationViewModel, "coverImageUrl" | "groomPhotoUrl" | "b
       number: "081234567890",
       holderName: "Laras Rahma",
       note: "Konfirmasi hadiah dapat dilakukan melalui WhatsApp.",
+      qrImageUrl: null,
     },
   ],
   story: [
@@ -94,6 +96,9 @@ const baseDemo: Omit<InvitationViewModel, "coverImageUrl" | "groomPhotoUrl" | "b
     showVideo: true,
     templateVariant: null,
     accentColor: null,
+    fontFamily: "default",
+    heroLayout: "default",
+    decorationLevel: "medium",
   },
   musicUrl: null,
   isPreview: true,

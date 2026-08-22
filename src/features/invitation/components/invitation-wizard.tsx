@@ -1,9 +1,9 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Banknote, CalendarDays, Check, Heart, MapPin, Plus, Trash2, Wallet } from "lucide-react";
+import { Banknote, CalendarDays, Check, GripVertical, Heart, MapPin, Plus, Trash2, Wallet } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { toast } from "sonner";
 
@@ -24,6 +24,7 @@ import {
 } from "../validation";
 
 import { GalleryUploadPanel } from "./gallery-upload-panel";
+import { LiveInvitationPreview } from "./live-invitation-preview";
 import { MediaUploadField } from "./media-upload-field";
 import { PublishResultDialog } from "./publish-result-dialog";
 
@@ -92,6 +93,13 @@ export function InvitationWizard({
   const [serverError, setServerError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [publishedSlug, setPublishedSlug] = useState<string | null>(null);
+  const [eventDragIndex, setEventDragIndex] = useState<number | null>(null);
+  const [storyDragIndex, setStoryDragIndex] = useState<number | null>(null);
+  const [saveState, setSaveState] = useState<"idle" | "saving" | "saved" | "error" | "local">("idle");
+  const autosaveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const autosaveInFlightRef = useRef(false);
+  const lastSavedRef = useRef<string>("");
+  const createDraftKey = "momena:create-draft:v1";
 
   const {
     register,
@@ -100,6 +108,7 @@ export function InvitationWizard({
     trigger,
     watch,
     setValue,
+    reset,
     formState: { errors, touchedFields },
   } = useForm<InvitationWizardFormValues>({
     resolver: zodResolver(invitationWizardFormSchema),
@@ -148,6 +157,9 @@ export function InvitationWizard({
         musicUrl: "",
         templateVariant: "",
         accentColor: "",
+        fontFamily: "default",
+        heroLayout: "default",
+        decorationLevel: "medium",
       },
       ...defaultValues,
     },
@@ -193,6 +205,8 @@ export function InvitationWizard({
       return;
     }
 
+    if (mode === "create") localStorage.removeItem(createDraftKey);
+
     if (action === "draft") {
       toast.success("Invitation disimpan sebagai draft");
       router.push("/invitations");
@@ -213,13 +227,94 @@ export function InvitationWizard({
     setPublishedSlug(publishResult.data.slug);
   }
 
+  const liveValues = watch();
+
+  useEffect(() => {
+    if (mode !== "create") return;
+    try {
+      const raw = localStorage.getItem(createDraftKey);
+      if (!raw) return;
+      const parsed = invitationWizardFormSchema.safeParse(JSON.parse(raw));
+      if (!parsed.success) return;
+      reset(parsed.data);
+      lastSavedRef.current = JSON.stringify(parsed.data);
+      setSaveState("local");
+      toast.info("Draft lokal sebelumnya dipulihkan.");
+    } catch {
+      localStorage.removeItem(createDraftKey);
+    }
+  // Hanya sekali saat wizard create dibuka.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mode]);
+
+  useEffect(() => {
+    const serialized = JSON.stringify(liveValues);
+    if (!lastSavedRef.current) {
+      lastSavedRef.current = serialized;
+      return;
+    }
+    if (serialized === lastSavedRef.current || autosaveInFlightRef.current) return;
+
+    if (autosaveTimerRef.current) clearTimeout(autosaveTimerRef.current);
+    autosaveTimerRef.current = setTimeout(() => {
+      if (mode === "create") {
+        try {
+          localStorage.setItem(createDraftKey, serialized);
+          lastSavedRef.current = serialized;
+          setSaveState("local");
+        } catch {
+          setSaveState("error");
+        }
+        return;
+      }
+
+      const parsed = invitationWizardFormSchema.safeParse(liveValues);
+      if (!parsed.success) return;
+      autosaveInFlightRef.current = true;
+      setSaveState("saving");
+      void onSubmit(parsed.data).then((result) => {
+        if (result.success) {
+          lastSavedRef.current = serialized;
+          setSaveState("saved");
+        } else {
+          setSaveState("error");
+        }
+        autosaveInFlightRef.current = false;
+      }).catch(() => { autosaveInFlightRef.current = false; setSaveState("error"); });
+    }, 1600);
+
+    return () => {
+      if (autosaveTimerRef.current) clearTimeout(autosaveTimerRef.current);
+    };
+  }, [liveValues, mode, onSubmit]);
+
+  useEffect(() => {
+    if (mode !== "edit") return;
+    const handler = (event: BeforeUnloadEvent) => {
+      if (JSON.stringify(liveValues) === lastSavedRef.current) return;
+      event.preventDefault();
+    };
+    window.addEventListener("beforeunload", handler);
+    return () => window.removeEventListener("beforeunload", handler);
+  }, [liveValues, mode, saveState]);
+
   return (
     <div>
-      <WizardSteps current={step} />
+      <div className="mb-3 flex items-center justify-between gap-3">
+        <WizardSteps current={step} />
+        <div className="shrink-0 text-xs text-ink-soft" aria-live="polite">
+          {saveState === "saving" && "Menyimpan…"}
+          {saveState === "saved" && "✓ Tersimpan"}
+          {saveState === "local" && (mode === "create" ? "✓ Draft lokal tersimpan" : "")}
+          {saveState === "error" && <span className="text-red-600">Autosave gagal</span>}
+        </div>
+      </div>
 
+      <div className="mt-6 grid gap-5 xl:grid-cols-[minmax(0,1fr)_minmax(390px,0.72fr)] xl:items-start">
+        <div className="order-2 xl:order-1">
       <form
         onSubmit={(e) => e.preventDefault()}
-        className="border-line bg-surface mt-6 rounded-xl border p-6"
+        className="border-line bg-surface rounded-xl border p-6"
       >
         {step === 0 && (
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -316,9 +411,9 @@ export function InvitationWizard({
               </div>
               <div className="space-y-4">
                 {eventArray.fields.map((field,index)=>(
-                  <div key={field.id} className="rounded-xl border border-line bg-surface p-4">
+                  <div key={field.id} onDragOver={(event) => event.preventDefault()} onDrop={(event) => { event.preventDefault(); if (eventDragIndex !== null && eventDragIndex !== index) eventArray.move(eventDragIndex,index); setEventDragIndex(null); }} className={`rounded-xl border border-line bg-surface p-4 transition ${eventDragIndex === index ? "opacity-50 ring-2 ring-accent" : ""}`}>
                     <div className="mb-4 flex items-center justify-between gap-3">
-                      <div><p className="text-sm font-medium text-ink">{watch(`events.${index}.title`) || `Event ${index+1}`}</p><p className="text-[11px] text-ink-soft">Urutan ini dipakai di undangan.</p></div>
+                      <div className="flex items-center gap-2"><GripVertical draggable onDragStart={() => setEventDragIndex(index)} onDragEnd={() => setEventDragIndex(null)} className="size-4 cursor-grab text-ink-soft active:cursor-grabbing" /><div><p className="text-sm font-medium text-ink">{watch(`events.${index}.title`) || `Event ${index+1}`}</p><p className="text-[11px] text-ink-soft">Drag untuk mengubah urutan.</p></div></div>
                       <Button type="button" variant="ghost" size="icon" onClick={()=>eventArray.remove(index)}><Trash2 className="size-4" /></Button>
                     </div>
                     <div className="grid gap-3 sm:grid-cols-2">
@@ -538,8 +633,9 @@ export function InvitationWizard({
 
             <div className="flex flex-col gap-3">
               {storyArray.fields.map((field, index) => (
-                <div key={field.id} className="border-line rounded-lg border p-3">
+                <div key={field.id} onDragOver={(event) => event.preventDefault()} onDrop={(event) => { event.preventDefault(); if (storyDragIndex !== null && storyDragIndex !== index) storyArray.move(storyDragIndex,index); setStoryDragIndex(null); }} className={`border-line rounded-lg border p-3 transition ${storyDragIndex === index ? "opacity-50 ring-2 ring-accent" : ""}`}>
                   <div className="flex items-start gap-2">
+                    <GripVertical draggable onDragStart={() => setStoryDragIndex(index)} onDragEnd={() => setStoryDragIndex(null)} className="mt-2 size-4 shrink-0 cursor-grab text-ink-soft active:cursor-grabbing" />
                     <div className="flex-1 space-y-2">
                       <Input
                         placeholder="Judul momen, mis. Pertama Bertemu"
@@ -591,6 +687,8 @@ export function InvitationWizard({
                     accountNumber: "",
                     accountHolder: "",
                     note: "",
+                    qrImageUrl: "",
+                    qrImagePublicId: "",
                   })
                 }
               >
@@ -687,6 +785,19 @@ export function InvitationWizard({
                       placeholder="Catatan (opsional)"
                       {...register(`gifts.${index}.note`)}
                     />
+                    <div className="mt-3 max-w-[240px]">
+                      <MediaUploadField
+                        label="QR Pembayaran (opsional)"
+                        value={watch(`gifts.${index}.qrImageUrl`) || ""}
+                        publicId={watch(`gifts.${index}.qrImagePublicId`) || ""}
+                        aspectClassName="aspect-square"
+                        helper="Upload QRIS / QR e-wallet jika diperlukan."
+                        onChange={(media) => {
+                          setValue(`gifts.${index}.qrImageUrl`, media?.url ?? "", { shouldDirty: true });
+                          setValue(`gifts.${index}.qrImagePublicId`, media?.publicId ?? "", { shouldDirty: true });
+                        }}
+                      />
+                    </div>
                   </div>
                 );
               })}
@@ -782,6 +893,32 @@ export function InvitationWizard({
               </div>
               <p className="text-ink-soft mt-2 text-xs">Opsional. Kosong = warna bawaan template.</p>
               <FieldError message={errors.settings?.accentColor?.message} />
+              <div className="mt-3 flex flex-wrap gap-2">
+                {["#765CFF", "#C9A25C", "#8A9A7B", "#E85D75", "#2E7D6E"].map((color) => (
+                  <button key={color} type="button" aria-label={`Gunakan warna ${color}`} onClick={() => setValue("settings.accentColor", color, { shouldDirty: true })} className="size-8 rounded-full border-2 border-white shadow ring-1 ring-line" style={{ backgroundColor: color }} />
+                ))}
+              </div>
+            </div>
+
+            <div className="grid gap-4 sm:grid-cols-3">
+              <div className="border-line rounded-lg border p-4">
+                <Label htmlFor="settings.fontFamily">Font Style</Label>
+                <select id="settings.fontFamily" {...register("settings.fontFamily")} className="border-input bg-background mt-2 h-10 w-full rounded-md border px-3 text-sm">
+                  <option value="default">Template Default</option><option value="serif">Classic Serif</option><option value="sans">Clean Sans</option><option value="display">Editorial Display</option>
+                </select>
+              </div>
+              <div className="border-line rounded-lg border p-4">
+                <Label htmlFor="settings.heroLayout">Hero Layout</Label>
+                <select id="settings.heroLayout" {...register("settings.heroLayout")} className="border-input bg-background mt-2 h-10 w-full rounded-md border px-3 text-sm">
+                  <option value="default">Default</option><option value="centered">Centered</option><option value="split">Split</option>
+                </select>
+              </div>
+              <div className="border-line rounded-lg border p-4">
+                <Label htmlFor="settings.decorationLevel">Dekorasi</Label>
+                <select id="settings.decorationLevel" {...register("settings.decorationLevel")} className="border-input bg-background mt-2 h-10 w-full rounded-md border px-3 text-sm">
+                  <option value="minimal">Minimal</option><option value="medium">Medium</option><option value="rich">Rich</option>
+                </select>
+              </div>
             </div>
           </div>
         )}
@@ -856,6 +993,11 @@ export function InvitationWizard({
           )}
         </div>
       </form>
+        </div>
+        <div className="order-1 xl:order-2">
+          <LiveInvitationPreview values={liveValues} templates={templates} />
+        </div>
+      </div>
 
       {publishedSlug && (
         <PublishResultDialog

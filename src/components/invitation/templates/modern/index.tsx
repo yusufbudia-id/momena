@@ -6,6 +6,7 @@ import { useInvitationGate } from "../../hooks/use-invitation-gate";
 import { useMusicToggle } from "../../hooks/use-music-toggle";
 import { MusicToggle } from "../../music-toggle";
 import type { SectionProps } from "../../types";
+import { decorationOpacity, invitationFontStack } from "../../customization";
 import {
   BrideGroom,
   Countdown,
@@ -128,7 +129,7 @@ function Interlude({ label, number }: { label: string; number: string }) {
 }
 
 export function ModernTemplate({ invitation, guestName }: SectionProps) {
-  const { isOpen, open } = useInvitationGate();
+  const { isOpen, open } = useInvitationGate({ initialOpen: !!invitation.editorPreview, lockBody: !invitation.editorPreview });
   const music = useMusicToggle();
 
   function handleOpen() {
@@ -141,14 +142,18 @@ export function ModernTemplate({ invitation, guestName }: SectionProps) {
     ...(invitation.settings.accentColor
       ? { "--color-accent": invitation.settings.accentColor, "--modern-violet": invitation.settings.accentColor }
       : {}),
+    fontFamily: invitationFontStack(invitation.settings.fontFamily),
+    "--momena-decoration-opacity": decorationOpacity(invitation.settings.decorationLevel),
   } as React.CSSProperties;
 
   return (
     <div
       style={themeStyle}
+      data-hero-layout={invitation.settings.heroLayout ?? "default"}
+      data-decoration={invitation.settings.decorationLevel}
       className="min-h-screen overflow-x-hidden bg-[#0b0d13] font-sans text-white selection:bg-[#d8ff58] selection:text-[#101218]"
     >
-      <Progress />
+      {!invitation.editorPreview && <Progress />}
       <AnimatePresence>
         {!isOpen && (
           <CoverGate invitation={invitation} guestName={guestName} onOpen={handleOpen} />
@@ -173,8 +178,8 @@ export function ModernTemplate({ invitation, guestName }: SectionProps) {
         <Footer invitation={invitation} />
       </main>
 
-      {invitation.settings.showRsvp && <StickyCta invitation={invitation} />}
-      {invitation.musicUrl && (
+      {invitation.settings.showRsvp && !invitation.editorPreview && <StickyCta invitation={invitation} />}
+      {invitation.musicUrl && !invitation.editorPreview && (
         <MusicToggle
           musicUrl={invitation.musicUrl}
           audioRef={music.audioRef}

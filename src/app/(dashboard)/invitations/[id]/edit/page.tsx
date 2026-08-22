@@ -87,6 +87,9 @@ export default async function EditInvitationPage({ params }: EditInvitationPageP
       musicUrl: invitation.settings?.musicUrl ?? "",
       templateVariant: invitation.settings?.templateVariant ?? "",
       accentColor: invitation.settings?.accentColor ?? "",
+      fontFamily: invitation.settings?.fontFamily ?? "default",
+      heroLayout: invitation.settings?.heroLayout ?? "default",
+      decorationLevel: invitation.settings?.decorationLevel ?? "medium",
     },
     gallery: sortedGallery.map((item: Gallery) => ({
         imageUrl: item.imageUrl,
@@ -110,12 +113,16 @@ export default async function EditInvitationPage({ params }: EditInvitationPageP
               accountNumber: item.accountNumber ?? "",
               accountHolder: item.accountHolder ?? "",
               note: item.note ?? "",
+              qrImageUrl: item.qrImageUrl ?? "",
+              qrImagePublicId: item.qrImagePublicId ?? "",
             }
           : {
               method: "E_WALLET" as const,
               ewalletName: item.ewalletName ?? "",
               ewalletNumber: item.ewalletNumber ?? "",
               note: item.note ?? "",
+              qrImageUrl: item.qrImageUrl ?? "",
+              qrImagePublicId: item.qrImagePublicId ?? "",
             },
       ),
   };

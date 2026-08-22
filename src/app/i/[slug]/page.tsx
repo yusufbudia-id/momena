@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { toInvitationViewModel } from "@/components/invitation/mapper";
+import { ShareInvitation } from "@/components/invitation/share-invitation";
 import { getTemplateComponent } from "@/components/invitation/templates/registry";
 import { getInvitationBySlug } from "@/features/invitation/repository";
 
@@ -28,10 +29,18 @@ export async function generateMetadata({
     title: `${invitation.title} | Momena`,
     description,
     openGraph: {
+      type: "website",
       title: invitation.title,
       description,
-      images: invitation.coverImageUrl ? [{ url: invitation.coverImageUrl }] : undefined,
+      images: invitation.coverImageUrl ? [{ url: invitation.coverImageUrl, alt: invitation.title }] : undefined,
     },
+    twitter: {
+      card: "summary_large_image",
+      title: invitation.title,
+      description,
+      images: invitation.coverImageUrl ? [invitation.coverImageUrl] : undefined,
+    },
+    robots: { index: true, follow: true },
   };
 }
 
@@ -61,5 +70,8 @@ export default async function InvitationPage({
     notFound();
   }
 
-  return <Template invitation={toInvitationViewModel(invitation)} guestName={to} />;
+  return (<>
+    <Template invitation={toInvitationViewModel(invitation)} guestName={to} />
+    <ShareInvitation title={invitation.title} />
+  </>);
 }

@@ -61,6 +61,12 @@ export function Gift({ invitation }: SectionProps) {
                     {gift.note}
                   </p>
                 )}
+                {gift.qrImageUrl && (
+                  <div className="mt-4 w-32 border border-[var(--color-accent)]/20 bg-white p-2">
+                    {/* eslint-disable-next-line @next/next/no-img-element -- QR Cloudinary dinamis */}
+                    <img src={gift.qrImageUrl} alt={`QR ${gift.label}`} className="aspect-square w-full object-contain" />
+                  </div>
+                )}
               </div>
 
               {gift.number && (

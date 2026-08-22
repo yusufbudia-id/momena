@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowDown, ArrowUp, ImagePlus, Loader2, Trash2 } from "lucide-react";
+import { ArrowDown, ArrowUp, GripVertical, ImagePlus, Loader2, Trash2 } from "lucide-react";
 import { useRef, useState } from "react";
 import { toast } from "sonner";
 
@@ -62,6 +62,7 @@ export function GalleryUploadPanel({
   const [uploading, setUploading] = useState(false);
   const sessionUploadsRef = useRef(new Set<string>());
   const [progress, setProgress] = useState({ current: 0, total: 0, percent: 0 });
+  const [dragIndex, setDragIndex] = useState<number | null>(null);
 
   async function handleFiles(files: FileList | null) {
     if (!files?.length) return;
@@ -190,13 +191,16 @@ export function GalleryUploadPanel({
       ) : (
         <div className="grid gap-4 sm:grid-cols-2">
           {items.map((item, index) => (
-            <div key={`${item.imageUrl}-${index}`} className="overflow-hidden rounded-xl border border-line bg-surface">
+            <div
+              key={`${item.imageUrl}-${index}`}
+              onDragOver={(event) => event.preventDefault()}
+              onDrop={(event) => { event.preventDefault(); if (dragIndex !== null && dragIndex !== index) onMove(dragIndex, index); setDragIndex(null); }}
+              className={`overflow-hidden rounded-xl border border-line bg-surface transition ${dragIndex === index ? "opacity-50 ring-2 ring-accent" : ""}`}
+            >
               <div className="relative aspect-[4/3] bg-paper">
                 {/* eslint-disable-next-line @next/next/no-img-element -- preview URL Cloudinary dinamis */}
                 <img src={item.imageUrl} alt="" className="h-full w-full object-cover" />
-                <div className="absolute top-2 left-2 rounded-full bg-black/65 px-2 py-1 text-[10px] text-white">
-                  {index + 1}
-                </div>
+                <div draggable onDragStart={() => setDragIndex(index)} onDragEnd={() => setDragIndex(null)} className="absolute top-2 left-2 flex cursor-grab items-center gap-1 rounded-full bg-black/65 px-2 py-1 text-[10px] text-white active:cursor-grabbing"><GripVertical className="size-3" />{index + 1}</div>
               </div>
               <div className="space-y-3 p-3">
                 <Input

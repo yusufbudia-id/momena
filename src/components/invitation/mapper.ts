@@ -63,6 +63,7 @@ export function toInvitationViewModel(
         number: gift.method === "BANK_TRANSFER" ? gift.accountNumber : gift.ewalletNumber,
         holderName: gift.method === "BANK_TRANSFER" ? gift.accountHolder : null,
         note: gift.note,
+        qrImageUrl: gift.qrImageUrl,
       })),
     story: [...invitation.stories]
       .sort((a, b) => a.order - b.order)
@@ -91,6 +92,9 @@ export function toInvitationViewModel(
       showVideo: invitation.settings?.showVideo ?? true,
       templateVariant: invitation.settings?.templateVariant ?? null,
       accentColor: invitation.settings?.accentColor ?? null,
+      fontFamily: invitation.settings?.fontFamily ?? "default",
+      heroLayout: invitation.settings?.heroLayout ?? "default",
+      decorationLevel: invitation.settings?.decorationLevel ?? "medium",
     },
     musicUrl: invitation.settings?.musicUrl ?? null,
   };

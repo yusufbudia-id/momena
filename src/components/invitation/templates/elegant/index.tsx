@@ -12,6 +12,7 @@ import { MusicToggle } from "../../music-toggle";
 import { Reveal } from "../../reveal";
 import type { SectionProps } from "../../types";
 import type { InvitationViewModel } from "../../view-model";
+import { decorationOpacity, invitationFontStack } from "../../customization";
 
 import {
   BrideGroom,
@@ -121,6 +122,9 @@ function LuxuryRuntimeStyles() {
       .momena-luxe::selection {
         background: rgba(201, 162, 92, .28);
       }
+
+      .momena-luxe .luxe-variant-ornament::before,
+      .momena-luxe .luxe-variant-ornament::after { opacity: var(--momena-decoration-opacity, .75) !important; }
 
       @keyframes luxeFloat {
         0%, 100% { transform: translate3d(0, 0, 0) scale(1); opacity: .28; }
@@ -825,7 +829,7 @@ function CoverGate({
  * ikut tidak render karena kontennya kosong.
  */
 export function ElegantTemplate({ invitation, guestName }: SectionProps) {
-  const { isOpen, open } = useInvitationGate();
+  const { isOpen, open } = useInvitationGate({ initialOpen: !!invitation.editorPreview, lockBody: !invitation.editorPreview });
   const music = useMusicToggle();
   const savedVariant: ElegantVariant = invitation.settings.templateVariant === "ivory" ? "ivory" : "noir";
   const [variant, setVariant] = useState<ElegantVariant>(savedVariant);
@@ -858,16 +862,20 @@ export function ElegantTemplate({ invitation, guestName }: SectionProps) {
         ...(invitation.settings.accentColor
           ? ({ "--color-accent": invitation.settings.accentColor, "--color-gold-light": invitation.settings.accentColor } as React.CSSProperties)
           : {}),
+        fontFamily: invitationFontStack(invitation.settings.fontFamily),
+        ...({ "--momena-decoration-opacity": decorationOpacity(invitation.settings.decorationLevel) } as React.CSSProperties),
       }}
       data-elegant-variant={variant}
-      className="momena-luxe luxe-paper min-h-screen bg-[var(--color-paper)] text-[var(--color-ink)] selection:bg-[var(--color-accent)]/25 [&_h1]:tracking-wide [&_h2]:font-medium [&_h2]:tracking-wide"
+      data-hero-layout={invitation.settings.heroLayout ?? "default"}
+      data-decoration={invitation.settings.decorationLevel}
+      className={`momena-luxe luxe-paper min-h-screen bg-[var(--color-paper)] text-[var(--color-ink)] selection:bg-[var(--color-accent)]/25 [&_h1]:tracking-wide [&_h2]:font-medium [&_h2]:tracking-wide ${invitation.settings.fontFamily && invitation.settings.fontFamily !== "default" ? "[&_.font-display]:!font-[inherit]" : ""}`}
     >
       <LuxuryRuntimeStyles />
       <AtmosphereBackground />
-      <ScrollProgressBar />
+      {!invitation.editorPreview && <ScrollProgressBar />}
       {isOpen && <ChapterNav invitation={invitation} />}
 
-      {invitation.isPreview && (
+      {invitation.isPreview && !invitation.editorPreview && (
         <div className="fixed top-[4.75rem] right-3 z-[65] flex overflow-hidden border border-[var(--color-accent)]/30 bg-[var(--color-surface)]/92 p-1 shadow-[0_12px_40px_rgba(0,0,0,.18)] backdrop-blur-md sm:top-20 sm:right-5">
           {(["noir", "ivory"] as ElegantVariant[]).map((item) => (
             <button
@@ -984,8 +992,8 @@ export function ElegantTemplate({ invitation, guestName }: SectionProps) {
         <Footer invitation={invitation} />
       </div>
 
-      {invitation.settings.showRsvp && <StickyCta invitation={invitation} />}
-      {invitation.musicUrl && (
+      {invitation.settings.showRsvp && !invitation.editorPreview && <StickyCta invitation={invitation} />}
+      {invitation.musicUrl && !invitation.editorPreview && (
         <MusicToggle
           musicUrl={invitation.musicUrl}
           audioRef={music.audioRef}

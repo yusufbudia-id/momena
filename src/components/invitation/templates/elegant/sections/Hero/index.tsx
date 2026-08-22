@@ -14,6 +14,7 @@ function Corner({ className }: { className: string }) {
 export function Hero({ invitation }: SectionProps) {
   const first = invitation.couple?.first ?? invitation.title;
   const second = invitation.couple?.second ?? "";
+  const split = invitation.settings.heroLayout === "split";
 
   const dateParts = invitation.eventDate
     ? {
@@ -23,6 +24,41 @@ export function Hero({ invitation }: SectionProps) {
         weekday: new Intl.DateTimeFormat("id-ID", { weekday: "long" }).format(invitation.eventDate),
       }
     : null;
+
+  if (split) {
+    return (
+      <section className="relative flex min-h-[88svh] items-center overflow-hidden px-3 py-10 sm:px-8 sm:py-20">
+        <div className="mx-auto grid w-full max-w-4xl gap-0 overflow-hidden border border-[var(--color-accent)]/28 bg-[var(--luxe-hero-fill)] shadow-[var(--luxe-hero-shadow)] sm:grid-cols-[.92fr_1.08fr]">
+          <div className="relative min-h-[420px] bg-[var(--color-surface)]/40 sm:min-h-[620px]">
+            {invitation.coverImageUrl ? (
+              <Image
+                src={invitation.coverImageUrl}
+                alt={invitation.title}
+                fill
+                priority
+                sizes="(min-width: 640px) 42vw, 100vw"
+                className="object-cover"
+                style={{ objectPosition: `${invitation.coverImagePositionX}% ${invitation.coverImagePositionY}%` }}
+              />
+            ) : (
+              <div className="flex h-full min-h-[420px] items-center justify-center font-display text-7xl italic text-[var(--color-accent)]/35">
+                {first.charAt(0)}{second.charAt(0)}
+              </div>
+            )}
+            <div className="absolute inset-4 border border-[var(--color-accent)]/28" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/35 via-transparent to-transparent" />
+          </div>
+          <div className="flex flex-col justify-center px-7 py-12 text-left sm:px-10">
+            <p className="text-[9px] tracking-[0.55em] text-[var(--color-accent)] uppercase">The Wedding Of</p>
+            <h1 className="font-display mt-7 text-[clamp(3.8rem,10vw,6.5rem)] leading-[.82] text-[var(--color-gold-light)] italic">{first}</h1>
+            {second && <><span className="font-display my-2 text-2xl text-[var(--color-accent)]/60 italic">&amp;</span><h1 className="font-display text-[clamp(3.8rem,10vw,6.5rem)] leading-[.82] text-[var(--color-gold-light)] italic">{second}</h1></>}
+            {dateParts && <div className="mt-8 border-t border-[var(--color-accent)]/20 pt-5 text-sm text-[var(--color-ink-soft)]"><p className="uppercase tracking-[.22em] text-[var(--color-accent)]">{dateParts.weekday}, {dateParts.day} {dateParts.month} {dateParts.year}</p>{invitation.eventLocation && <p className="mt-3 font-serif italic">{invitation.eventLocation}</p>}</div>}
+            <p className="mt-8 text-[9px] tracking-[.34em] text-[var(--color-accent)]/55 uppercase">{invitation.tagline || "With love & blessing"}</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="relative flex min-h-[92svh] items-center justify-center overflow-hidden px-1 py-10 text-center sm:px-8 sm:py-24">

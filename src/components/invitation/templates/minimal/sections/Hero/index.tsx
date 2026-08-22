@@ -5,6 +5,7 @@ import type { SectionProps } from "../../../../types";
 export function Hero({ invitation }: SectionProps) {
   const first = invitation.couple?.first ?? invitation.title;
   const second = invitation.couple?.second ?? "";
+  const centered = invitation.settings.heroLayout === "centered";
   const formattedDate = invitation.eventDate
     ? new Intl.DateTimeFormat("id-ID", {
         weekday: "long",
@@ -26,8 +27,8 @@ export function Hero({ invitation }: SectionProps) {
           </span>
         </div>
 
-        <div className="mt-7 grid items-end gap-7 sm:grid-cols-[1.08fr_.92fr] sm:gap-9">
-          <div className="order-2 sm:order-1 sm:pb-5">
+        <div className={`mt-7 grid items-end gap-7 sm:gap-9 ${centered ? "mx-auto max-w-xl text-center" : "sm:grid-cols-[1.08fr_.92fr]"}`}>
+          <div className={`${centered ? "order-2 mx-auto sm:pb-2" : "order-2 sm:order-1 sm:pb-5"}`}>
             <p className="text-[10px] tracking-[0.34em] text-[var(--minimal-accent)] uppercase">
               The Wedding Of
             </p>
@@ -60,7 +61,7 @@ export function Hero({ invitation }: SectionProps) {
             )}
           </div>
 
-          <div className="order-1 sm:order-2">
+          <div className={`${centered ? "order-1 mx-auto w-full max-w-[360px]" : "order-1 sm:order-2"}`}>
             <div className="relative aspect-[4/5] overflow-hidden bg-[var(--minimal-soft)]">
               {invitation.coverImageUrl ? (
                 <Image
@@ -79,7 +80,7 @@ export function Hero({ invitation }: SectionProps) {
                   </span>
                 </div>
               )}
-              <div className="pointer-events-none absolute inset-3 border border-white/50 mix-blend-soft-light" />
+              <div style={{ opacity: "var(--momena-decoration-opacity, .75)" }} className="pointer-events-none absolute inset-3 border border-white/50 mix-blend-soft-light" />
               <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1/4 bg-gradient-to-t from-black/20 to-transparent" />
             </div>
             <div className="mt-3 flex items-center justify-between text-[9px] tracking-[0.24em] text-[var(--minimal-muted)] uppercase">

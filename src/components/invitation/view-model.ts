@@ -26,6 +26,9 @@ export interface InvitationDisplaySettings {
   showVideo: boolean;
   templateVariant: string | null;
   accentColor: string | null;
+  fontFamily: string | null;
+  heroLayout: string | null;
+  decorationLevel: string;
 }
 
 export interface GiftMethodView {
@@ -34,6 +37,7 @@ export interface GiftMethodView {
   number: string | null;
   holderName: string | null; // hanya terisi untuk transfer bank
   note: string | null;
+  qrImageUrl: string | null;
 }
 
 /** Belum ada sumber data — selalu array kosong sampai schema Story dibuat. */
@@ -98,4 +102,6 @@ export interface InvitationViewModel {
    * database, submit sungguhan akan gagal (foreign key violation).
    */
   isPreview?: boolean;
+  /** Mode khusus live editor: gate/fixed controls dinonaktifkan agar preview tidak mengunci dashboard. */
+  editorPreview?: boolean;
 }
